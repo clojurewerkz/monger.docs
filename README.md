@@ -5,7 +5,7 @@ This is a documentation site for [monger](https://github.com/michaelklishin/mong
 
 ## How to regenerate the site
 
-In order to modify contents and launch dev environment, switch to Ruby 1.8.7 and run:
+In order to modify contents and launch dev environment, switch to Ruby 1.8.7 (JRuby and Rubinius in 1.8 mode also work fine) and run:
 
       cd _source
       bundle install
@@ -19,11 +19,8 @@ In order to recompile assets for publishing, run
 
 In order to add example to your docs, use example helper. Pass relative path to file (it should be located at ./source/content/examples folder) and Gist ID.
 
-  {% example working_with_queues/01b_declaring_a_queue_using_queue_constructor.rb, 998727 %}
+  {% example examples/01a_getting_started_snippet1.clj, 998727 %}
 
-In order to add link to YARD docs (relevant for Ruby projects), use yard_link helper, and YARD notation for object/method, for example:
-
-  {% yard_link AMQP::Queue#unbind %}
 
 ## License & Copyright
 

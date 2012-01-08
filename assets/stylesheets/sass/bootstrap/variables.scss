@@ -32,7 +32,7 @@ $baseline:          22px;
 // Griditude
 // Modify the grid styles in mixins.scss
 $gridColumns:       16;
-$gridColumnWidth:   40px;
+$gridColumnWidth:   50px;
 $gridGutterWidth:   20px;
 $extraSpace:        ($gridGutterWidth * 2); // For our grid calculations
 $siteWidth:         ($gridColumns * $gridColumnWidth) + ($gridGutterWidth * ($gridColumns - 1));
