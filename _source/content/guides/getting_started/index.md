@@ -18,6 +18,7 @@ It should take about 19 minutes to read and study the provided code examples. Th
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
 
+{% example sample_clojure_code.clj, 0 %}
 
 ## What version of Monger does this guide cover?
 

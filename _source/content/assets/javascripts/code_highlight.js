@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     var myCodeMirror = CodeMirror(this, {
         value: $code,
-        mode: 'ruby',
+        mode: 'clojure',
         lineNumbers: true,
         readOnly: true
     });
