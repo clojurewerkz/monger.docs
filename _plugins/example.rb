@@ -26,7 +26,7 @@ module Jekyll
     end
 
     def render(context)
-      %{<pre>#{File.open("./examples/#{@name}", "rb").read}</pre><span class="help-block">(if the example above isn't displayed, see this "gist":https://gist.github.com/#{@gist_id})</span>}
+      %{<pre>#{File.open("./examples/#{@name}").read}</pre><span class="help-block">(if the example above isn't displayed, see this "gist":https://gist.github.com/#{@gist_id})</span>}
     end
   end
 
