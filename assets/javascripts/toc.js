@@ -2,7 +2,7 @@ jQuery.fn.toc = function () {
   if(this.length === 0)
     return;
 
-  var listStack = [ $("<ul />")];
+  var listStack = [ $("<ul class='nav nav-list' />")];
   listStack[0].appendTo(this);
 
   Array.prototype.last = function() { return this[this.length - 1]};
@@ -22,7 +22,7 @@ jQuery.fn.toc = function () {
       var currentLevel = parseInt(el.tagName[1]);
 
       if(currentLevel > level) {
-        var nextLevelList = $("<ul />");
+        var nextLevelList = $("<ul class='nav nav-list'/>");
         nextLevelList.appendTo(listStack.last().children("li").last());
         listStack.push(nextLevelList);
       } else if(currentLevel < level) {

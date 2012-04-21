@@ -1,7 +1,7 @@
------
+---
 title: "Getting Started with Clojure & MongoDB using Monger"
 layout: article
------
+---
 
 ## About this guide
 
