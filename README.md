@@ -2,12 +2,23 @@
 
 This is a documentation site for [monger, an idiomatic Clojure MongoDB client](https://github.com/michaelklishin/monger).
 
+## Install Dependencies
+
+With Bundler:
+
+    bundle install --binstubs
+
+
+## How to run a development server
+
+    ./bin/jekyll --server
+
 
 ## How to regenerate the site
 
-In order to modify contents and launch dev environment, switch to Ruby 1.8.7 (JRuby and Rubinius in 1.8 mode also work fine) and run:
+In order to modify contents and launch dev environment, run:
 
-      jekyll
+      ./bin/jekyll
 
 In order to recompile haml and sass files for publishing, run
 
