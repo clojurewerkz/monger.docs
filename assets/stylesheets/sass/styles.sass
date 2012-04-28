@@ -6,31 +6,11 @@ article
   pre
     font-size: 13px !important
 
-.toc
-  background: #fff
-  :margin-left 20px
-  :max-width 500px
-  :padding 20px
-  :padding-right 30px
-  :padding 2em
-  :border 1px solid #DDD
-  :float right
-  +box-shadow(-2px 2px 6px #bbb)
-
 .container > section
   :margin-top 60px
 
-body.landing
-  background: #fff
-
 strong
   color: #cb4b16
-
-code
-  white-space: pre
-  display: block
-  padding: 10px
-  color: gray
 
 .highlight
   line-height: 25px
@@ -67,10 +47,97 @@ code
 
 footer
   margin-top: 45px
-  padding: 35px 0 36px
+  padding: 35px 0 0 0
   border-top: 1px solid #E5E5E5
 
 .marketing
   h2
     margin: 36px 0 27px
     text-align: center
+
+
+.sidebar-nav
+  padding: 9px 0
+
+.headline
+  padding: 50px
+  img
+    float: left
+  h1
+    float: left
+    font-size: 100px
+    line-height: 250px
+    font-family: 'Signika Negative', 'Helvetica Neue', Helvetica, Arial, sans-serif
+  p
+    padding-top: 20px
+    font-family: 'Signika Negative', 'Helvetica Neue', Helvetica, Arial, sans-serif
+    font-size: 18px
+    font-weight: 200
+    line-height: 27px
+  .logo
+    margin-left: auto
+    margin-right: auto
+    width: 900px
+.clear
+  clear: both
+
+code
+  line-height: 2em
+
+h2
+  line-height: 2em
+
+body
+  background: url('/assets/images/fishie.png') no-repeat
+  background-position: bottom left
+
+.container-fluid
+  footer
+    padding-left: 320px
+    border: none
+
+@media (min-width: 767px) and (max-width: 979px)
+  body
+    background: none
+  .headline
+    h1
+      font-size: 65px
+  .container-fluid
+    footer
+      padding-left: 0px
+      border-top: 1px solid #E5E5E5
+
+@media (max-width: 767px)
+  body
+    background: none
+  .headline
+    img
+      width: 112px
+    h1
+      font-size: 60px
+  .container-fluid
+    footer
+      padding-left: 0px
+      border-top: 1px solid #E5E5E5
+
+@media (max-width: 480px)
+  body
+    background: none
+  .headline
+    padding: 0
+    h1
+      line-height: 60px
+      padding-top: 85px
+      font-size: 30px
+    img
+      width: 100px
+  .container-fluid
+    footer
+      padding-left: 0px
+      border-top: 1px solid #E5E5E5
+
+.container
+  padding: 20px
+  background: rgba(255, 255, 255, .7)
+
+

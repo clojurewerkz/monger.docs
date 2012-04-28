@@ -46,5 +46,5 @@ jQuery.fn.yardLink = function () {
 };
 
 $(document).ready(function() {
-  $(".toc").toc();
+  $(".well.sidebar-nav").toc();
 });
