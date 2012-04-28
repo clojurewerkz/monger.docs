@@ -1,6 +1,6 @@
-# MongoDB Clojure Driver Documentation #
+# MongoDB Clojure Driver Documentation
 
-This is a documentation site for [monger](https://github.com/michaelklishin/monger), an idiomatic well mainteined Clojure MongoDB client.
+This is a documentation site for [monger, an idiomatic Clojure MongoDB client](https://github.com/michaelklishin/monger).
 
 
 ## How to regenerate the site
