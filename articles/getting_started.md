@@ -6,7 +6,7 @@ layout: article
 ## About this guide
 
 This guide combines an overview of Monger with a quick tutorial that helps you to get started with it.
-It should take about 19 minutes to read and study the provided code examples. This guide covers:
+It should take about 10 minutes to read and study the provided code examples. This guide covers:
 
  * Feature of Monger, why Monger was created
  * How to add Monger dependency to your project
@@ -20,33 +20,31 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.0.0-SNAPSHOT, an evolving pre-release version. Monger is a young project but most of the public API
-is fleshed out and will not change before 1.0 release.
+This guide covers Monger 1.0.0-beta2, the most recent pre-release version. Monger is a young project but most of the public API
+is fleshed out and will not change before the 1.0 release.
 
 
-## Monger overview
+## Monger Overview
 
 Monger is an idiomatic Clojure wrapper around MongoDB Java driver. It offers powerful expressive query DSL, strives to support
-every MongoDB 2.0+ feature and is well maintained.
+every MongoDB 2.0+ feature, has next to no performance overhead and is well maintained.
 
 ### Project Goals
 
-Monger authors wanted a MongoDB client that will
+There is one MongoDB client for Clojure that has been around since 2009. So, why create another one? Monger authors
+wanted a client that will
 
- * Support most of MongoDB 2.0+ features but only those that really matter.
- * Target Clojure 1.3.0 and later from the ground up.
+ * Support most of MongoDB 2.0+ features but only those that really matter. Grouping the way it is done today, for example, does not (it is easier to just use Map/Reduce directly).
  * Be well documented.
  * Be well tested.
- * Be maintained, not have technical debt accumulated over several years.
- * Integrate with libraries like clojure.data.json and Joda Time.
- * Integrate usage of JavaScript files and ClojureScript (as soon as the compiler gets artifact it is possible to depend on for easy embedding).
+ * Be maintained, do not carry technical debt from 2009 forever.
+ * Target Clojure 1.3.0 and later from the ground up.
+ * Integrate with libraries like [clojure.data.json](https://github.com/clojure/data.json), [clojure.core.cache](https://github.com/clojure/core.cache) and [clj-time](https://github.com/seancorfield/clj-time).
+ * Provide support for unit testing: factories/fixtures DSL, collection cleaner functions and so on.
+ * Support URI connections to be friendly to Heroku and other PaaS providers.
  * Learn from other clients like the Java and Ruby ones.
+ * Integrate usage of JavaScript files and ClojureScript (as soon as the compiler gets artifact it is possible to depend on for easy embedding).
 
-### Integration with popular libraries
-
-Monger heavily relies on relatively recent Clojure features like protocols to integrate with libraries like
-[clojure.data.json](http://github.com/clojure/data.json) or [Joda Time](http://joda-time.sourceforge.net/). As the result you can focus on your application instead of figuring out how to glue
-two libraries together.
 
 ### What Monger is not
 
@@ -75,7 +73,7 @@ reducing incidental complexity. It also fits MongoDB data model very well.
 Monger supports working with multiple connections and/or databases but is optimized for applications that only use one connection
 and one database.
 
-To connect, you use `monger.core/connect!` and `monger.core/connect` functions.
+To connect, you use `monger.core/connect!` and `monger.core/connect` functions:
 
 {% gist 2af1bcee22e0f14a8741 %}
 
@@ -164,6 +162,11 @@ TBD
 
 
 ## Integration With Other Libraries
+
+Monger heavily relies on relatively recent Clojure features like protocols to integrate with libraries like
+[clojure.data.json](http://github.com/clojure/data.json) or [clj-time](https://github.com/seancorfield/clj-time) ([Joda Time](http://joda-time.sourceforge.net/)). As the result you can focus on your
+application instead of figuring out how to glue two libraries together.
+
 
 TBD
 
