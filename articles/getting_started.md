@@ -29,22 +29,6 @@ is fleshed out and will not change before the 1.0 release.
 Monger is an idiomatic Clojure wrapper around MongoDB Java driver. It offers powerful expressive query DSL, strives to support
 every MongoDB 2.0+ feature, has next to no performance overhead and is well maintained.
 
-### Project Goals
-
-There is one MongoDB client for Clojure that has been around since 2009. So, why create another one? Monger authors
-wanted a client that will
-
- * Support most of MongoDB 2.0+ features but only those that really matter. Grouping the way it is done today, for example, does not (it is easier to just use Map/Reduce directly).
- * Be well documented.
- * Be well tested.
- * Be maintained, do not carry technical debt from 2009 forever.
- * Target Clojure 1.3.0 and later from the ground up.
- * Integrate with libraries like [clojure.data.json](https://github.com/clojure/data.json), [clojure.core.cache](https://github.com/clojure/core.cache) and [clj-time](https://github.com/seancorfield/clj-time).
- * Provide support for unit testing: factories/fixtures DSL, collection cleaner functions and so on.
- * Support URI connections to be friendly to Heroku and other PaaS providers.
- * Learn from other clients like the Java and Ruby ones.
- * Integrate usage of JavaScript files and ClojureScript (as soon as the compiler gets artifact it is possible to depend on for easy embedding).
-
 
 ### What Monger is not
 
@@ -52,6 +36,17 @@ Monger is not a replacement for the MongoDB Java driver, instead, Monger is symb
 object/document mapping functionality. With Monger, you work with native Clojure and Java data structures like maps,
 vectors, strings, dates and so on. This approach has pros and cons but (we believe) closely follows Clojure's philosophy of
 reducing incidental complexity. It also fits MongoDB data model very well.
+
+
+## Supported Clojure versions
+
+Monger is built from the ground up for Clojure 1.3 and later. n
+
+
+## Supported MongoDB versions
+
+Monger currently uses MongoDB Java driver 2.7.x under the hood and thus supports MongoDB 2.0 and later versions. Please note that some
+features may be specific to MongoDB 2.2 and later versions.
 
 
 ## Adding Monger Dependency To Your Project
@@ -122,20 +117,21 @@ Finder functions in Monger return either Clojure maps (commonly used) or Java dr
 
 For example, `monger.collection/find` returns a `DBCursor`:
 
-{% gist 0 %}
+{% gist d9c31fe7108941b3b94a %}
 
 
 `monger.collection/find-map-by-id` finds one document by `ObjectId` and automatically converts it to a Clojure map
 before returning:
 
-{% gist 0 %}
+{% gist 976c79a1ba8eaac491b2 %}
 
 ### Using query DSL
 
 For cases when it is necessary to combine sorting, limiting or offseting results, pagination and even more advanced features
 like cursor snapshotting or manual index hinting, Monger provides a very powerful query DSL. Here is what it looks like:
 
-{% gist 0 %}
+{% gist b52c7ae2312c8c6b64ee %}
+
 
 ## How to Update Documents with Monger
 
@@ -156,11 +152,6 @@ when document id is known.
 {% gist 44e3cdae129deeea7512 %}
 
 
-## Monger Query DSL
-
-TBD
-
-
 ## Integration With Other Libraries
 
 Monger heavily relies on relatively recent Clojure features like protocols to integrate with libraries like
@@ -176,8 +167,6 @@ TBD
 TBD
 
 
-## Clojure and MongoDB Version Requirements
+## What to Read Next
 
-Monger is built from the ground up for Clojure 1.3 and later. It currently uses MongoDB Java driver 2.7.x under
-the hood and thus supports MongoDB 2.0 and later versions. Please note that some features may be specific to MongoDB 2.2 and
-later versions.
+TBD
