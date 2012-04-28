@@ -15,7 +15,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## What is ClojureWerkz?
 
-Neocons is part of the group of libraries known as ClojureWerkz, together with
+Monger is part of the group of libraries known as ClojureWerkz, together with
 [Neocons](https://github.com/michaelklishin/neocons), [Langohr](https://github.com/michaelklishin/langohr), [Welle](https://github.com/michaelklishin/welle), [Elastisch](https://github.com/clojurewerkz/elastisch), [Quartzite](https://github.com/michaelklishin/quartzite) and several others.
 
 
