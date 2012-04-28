@@ -1,21 +1,20 @@
 module Jekyll
 
   #
-  # Render file & gist example
+  # Render gist
   #
   # Usage:
   #
-  # {% example "file_to_expand", gist_id %} =>
+  # {% gist gist_id %} =>
   #
   # Raises: Liquid::SyntaxError
-  class Example < ::Liquid::Tag
+  class Gist < ::Liquid::Tag
 
-    Syntax = /(#{::Liquid::Expression}+), (#{::Liquid::Expression}+)?/
+    Syntax = /(#{::Liquid::Expression}+)?/
 
     def initialize(tag_name, markup, tokens)
       if markup =~ Syntax
-        @name = $1
-        @gist_id = $2
+        @gist_id = $1
         @options = {}
         markup.scan(::Liquid::TagAttributes) { |key, value| @options[key.to_sym] = value.gsub(/"|'/, '') }
       else
@@ -26,11 +25,11 @@ module Jekyll
     end
 
     def render(context)
-      %{<pre>#{File.open("./examples/#{@name}").read}</pre><span class="help-block">(if the example above isn't displayed, see this "gist":https://gist.github.com/#{@gist_id})</span>}
+      %{<script src="http://gist.github.com/#{@gist_id}.js"></script><span class="help-block">(if the example above isn't displayed, see this "gist" <a href='https://gist.github.com/#{@gist_id}'>https://gist.github.com/#{@gist_id}</a>)</span>}
     end
   end
 
 end
 
 
-Liquid::Template.register_tag('example', Jekyll::Example)
+Liquid::Template.register_tag('gist', Jekyll::Gist)

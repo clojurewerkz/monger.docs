@@ -77,11 +77,11 @@ and one database.
 
 To connect, you use `monger.core/connect!` and `monger.core/connect` functions.
 
-{% example 01_connecting.clj, 2af1bcee22e0f14a8741 %}
+{% gist 2af1bcee22e0f14a8741 %}
 
 To set default database Monger will use, use `monger.core/get-db` and `monger.core/set-db!` functions in combination:
 
-{% example 02_setting_db.clj, 86340be2cabe43a4ec18 %}
+{% gist 86340be2cabe43a4ec18 %}
 
 
 
@@ -89,14 +89,14 @@ To set default database Monger will use, use `monger.core/get-db` and `monger.co
 
 To insert documents, use `monger.collection/insert` and `monger.collection/insert-batch` functions.
 
-{% example 04_inserting.clj, 901c3c3c4aee166efc0f %}
+{% gist 901c3c3c4aee166efc0f %}
 
 
 ### Default WriteConcern
 
 To set default write concern, use `monger.core/set-default-write-concern!` function:
 
-{% example 03_setting_default_write_concern.clj, 3b43b7f91341a393eb81 %}
+{% gist 3b43b7f91341a393eb81 %}
 
 
 ### Safe By Default
@@ -124,29 +124,27 @@ Finder functions in Monger return either Clojure maps (commonly used) or Java dr
 
 For example, `monger.collection/find` returns a `DBCursor`:
 
-{% example 05_find_multiple_documents_using_find.clj, 0 %}
+{% gist 0 %}
 
 
 `monger.collection/find-map-by-id` finds one document by `ObjectId` and automatically converts it to a Clojure map
 before returning:
 
-{% example 10_find_one_document_using_find_map_by_id.clj, 0 %}
-
-
+{% gist 0 %}
 
 ### Using query DSL
 
 For cases when it is necessary to combine sorting, limiting or offseting results, pagination and even more advanced features
 like cursor snapshotting or manual index hinting, Monger provides a very powerful query DSL. Here is what it looks like:
 
-{% example 11_query_dsl_example1.clj, 0 %}
+{% gist 0 %}
 
 ## How to Update Documents with Monger
 
 `monger.collection/update` is the most commonly used way of updating documents. `monger.collection/update-by-id` is useful
 when document id is known:
 
-{% example 06_updating.clj, 8313a67bac %}
+{% gist 8313a67bac %}
 
 
 TBD: upsert examples
@@ -157,9 +155,7 @@ TBD: upsert examples
 Documents are removed using `monger.collection/remove` function.  `monger.collection/update-by-id` is useful
 when document id is known.
 
-https://gist.github.com/44e3cdae129deeea7512
-
-{% example 07_removing.clj, 44e3cdae129deeea7512 %}
+{% gist 44e3cdae129deeea7512 %}
 
 
 ## Monger Query DSL
