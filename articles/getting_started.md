@@ -171,7 +171,7 @@ to `monger.collection/update`. For example, to increment number of views for a p
 
 ## How to Remove Documents with Monger
 
-Documents are removed using `monger.collection/remove` function.  `monger.collection/update-by-id` is useful
+Documents are removed using `monger.collection/remove` function.  `monger.collection/remove-by-id` is useful
 when document id is known.
 
 {% gist 44e3cdae129deeea7512 %}
