@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.0.0-beta2, the most recent pre-release version. Monger is a young project but most of the public API
+This guide covers Monger 1.0.0-beta4, the most recent pre-release version. Monger is a young project but most of the public API
 is fleshed out and will not change before the 1.0 release.
 
 
@@ -53,14 +53,14 @@ features may be specific to MongoDB 2.2 and later versions.
 
 ### With Leiningen
 
-    [com.novemberain/monger "1.0.0-beta2"]
+    [com.novemberain/monger "1.0.0-beta4"]
 
 ### With Maven
 
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>monger</artifactId>
-      <version>1.0.0-beta2</version>
+      <version>1.0.0-beta4</version>
     </dependency>
 
 ## Connecting to MongoDB
@@ -76,6 +76,22 @@ To set default database Monger will use, use `monger.core/get-db` and `monger.co
 
 {% gist 86340be2cabe43a4ec18 %}
 
+### Using URI (for example, on Heroku)
+
+In certain environments, for example, Heroku or other PaaS providers, the only way to connect to MongoDB is via connection URI.
+
+Monger provides `monger.core/connect-via-uri!` function that combines `monger.core/connect!`, `monger.core/set-db!` and `monger.core/authenticate`
+and works with string URIs like `mongodb://userb71148a:0da0a696f23a4ce1ecf6d11382633eb2049d728e@cluster1.mongohost.com:27034/app81766662`.
+
+It can be used to connect with or without authentication, for example:
+
+{% gist 00e0c1e91d4193d0772c %}
+
+It is also possible to pass connection options as query parameters:
+
+{% gist 78b4b5b71472e5517e3b %}
+
+
 
 
 ## How to Insert Documents with Monger
@@ -83,6 +99,9 @@ To set default database Monger will use, use `monger.core/get-db` and `monger.co
 To insert documents, use `monger.collection/insert` and `monger.collection/insert-batch` functions.
 
 {% gist 901c3c3c4aee166efc0f %}
+
+`monger.collection/insert-batch` is a recommended way of inserting batches of documents (from tens to hundreds of thousands) because it
+is very efficient compared to sequentially or even concurrently inserting documents one by one.
 
 
 ### Default WriteConcern
@@ -119,19 +138,71 @@ For example, `monger.collection/find` returns a `DBCursor`:
 
 {% gist d9c31fe7108941b3b94a %}
 
+`monger.collection/find-maps` is similar to `monger.collection/find` but converts `DBObject` instances to Clojure maps:
 
-`monger.collection/find-map-by-id` finds one document by `ObjectId` and automatically converts it to a Clojure map
-before returning:
+{% gist 0b9c3d3a60d13ab43d60 %}
+
+
+`monger.collection/find-one` finds one document and returns it as a `DBObject` instance:
+
+{% gist 21d93baa49e69155419a %}
+
+
+`monger.collection/find-one-as-map` is similar to `monger.collection/find-one` but converts `DBObject` instances to Clojure maps:
+
+{% gist 21d93baa49e69155419a %}
+
+
+A more convenient way of finding a document by id as Clojure map is `monger.collection/find-map-by-id`:
 
 {% gist 976c79a1ba8eaac491b2 %}
 
-### Using query DSL
+
+### Using operators
+
+Monger provides a convenient way to use [MongoDB query operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators). While
+operators can be used in queries with strings, for example:
+
+{% gist 7faf3e03a881f1fb8b76 %}
+
+there is a better way to do it with Clojure. By using `monger.operators` namespace, MongoDB $operators can be written as Clojure symbols. $operators are implemented
+as macros that expand at compile time. Here is what it looks like with operator macros:
+
+{% gist 241b24026977c44bc3a4 %}
+
+
+
+### More examples
+
+These and other examples of Monger finders in one gist:
+
+{% gist cc86a383c09ef1d501e8 %}
+
+
+
+### Counting Documents
+
+Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection/any?`.
+
+
+
+### Query DSL Overview
 
 For cases when it is necessary to combine sorting, limiting or offseting results, pagination and even more advanced features
 like cursor snapshotting or manual index hinting, Monger provides a very powerful query DSL. Here is what it looks like:
 
 {% gist b52c7ae2312c8c6b64ee %}
 
+It is easy to add new DSL elements, for example, adding pagination took literally less than 10 lines of Clojure code. Here is what
+it looks like:
+
+{% gist d2ddbcb27b66bba4a006 %}
+
+Query DSL supports composition, too:
+
+{% gist 906b1929b44deb381137 %}
+
+Learn more in our [Querying](/articles/querying.html) and [Query DSL](/articles/query_dsl.html) guides.
 
 
 
@@ -253,14 +324,14 @@ Documentation is organized as a number of guides, covering all kinds of topics.
 
 We recommend that you read the following guides first, if possible, in this order:
 
- * [Connecting to MongoDB](/guides/connecting.html)
- * [Inserting documents](/guides/inserting.html)
- * [Querying & finders](/guides/querying.html)
- * [Updating documents](/guides/updating.html)
- * [Deleting documents](/guides/deleting.html)
- * [Integration with 3rd party libraries](/guides/integration.html)
- * [Map/Reduce](/guides/mapreduce.html)
- * [GridFS support](/guides/gridfs.html)
+ * [Connecting to MongoDB](/articles/connecting.html)
+ * [Inserting documents](/articles/inserting.html)
+ * [Querying & finders](/articles/querying.html)
+ * [Updating documents](/articles/updating.html)
+ * [Deleting documents](/articles/deleting.html)
+ * [Integration with 3rd party libraries](/articles/integration.html)
+ * [Map/Reduce](/articles/mapreduce.html)
+ * [GridFS support](/articles/gridfs.html)
 
 
 ## Tell Us What You Think!
