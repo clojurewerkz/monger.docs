@@ -80,12 +80,24 @@ false, field names become string keys in the result.
 
 ## Inserting batches of documents
 
-TBD
+Sometimes you need to insert a batch of documents all at once and you need it to be done efficiently. MongoDB supports batch
+inserts feature. To do it with Monger, use `monger.collection/insert-batch` function:
+
+{% gist 77f26ae67cb7bb3a9b57 %}
+
+Please make sure to read [MongoDB documentation on error handling of batch inserts](http://www.mongodb.org/display/DOCS/Inserting#Inserting-Bulkinserts)
 
 
 ## Checking insertion results
 
-TBD
+In real world applications, things often go wrong. Insert operations may fail for one reason or another (from duplicate `_id` key to network outages
+to hardware failures to everything in between). Monger provides `monger.result` namespace with several functions that check MongoDB responses
+for success:
+
+{% gist 49731bdcf2335ac5e1a6 %}
+
+Please note that responses will carry error/success information only with safe write concern ("safe mode") which is Monger's default. To learn more,
+see [MongoDB documentation on error handling](http://www.mongodb.org/display/DOCS/getLastError+Command).
 
 
 ## Validating data with [Validateur, a Clojure data validation library](https://github.com/michaelklishin/validateur)
@@ -95,12 +107,30 @@ TBD
 
 ## Setting default write concern
 
-TBD
+To set default write concern, use `monger.core/set-default-write-concern!` function:
+
+{% gist 3b43b7f91341a393eb81 %}
+
+For the list of available options, see [MongoDB Java driver API reference on WriteConcern](http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html).
+
+
+### Monger puts safety of your data above sky-high benchmarks
+
+By default Monger will use `WriteConcern/SAFE` as write concern. We believe that MongoDB Java driver (as well as other
+official drivers) have **very unsafe defaults** when no exceptions are raised, even for network issues. This does not sound
+like a good default for most applications: many applications use MongoDB because of the flexibility, not extreme write throughput
+requirements. Monger's default is to be on the safe side.
 
 
 ## Changing write concern for individual operations
 
-TBD
+In many applications, most operations are not performance-sensitive but a few are. Some kinds of data can be lost but some is absolutely cruicial to system/company
+operation. For those cases, MongoDB and Monger allow developers to trade
+some write throughput for safety (or vice versa) by specifying a different write concern value for individual operations:
+
+{% gist 78b183038e93113d0b3d %}
+
+When doing so, please keep MongoDB's differences in [error handling](http://www.mongodb.org/display/DOCS/getLastError+Command) in mind.
 
 
 ## Working with multiple databases
