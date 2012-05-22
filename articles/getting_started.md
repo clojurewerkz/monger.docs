@@ -226,7 +226,7 @@ MongoDB supports upserts, "update or insert" operations. To do an upsert with Mo
 
 {% gist 745200324f719b68bb27 %}
 
-Note that upsert only inserts one document. Learn more about upserts in [this MongoDB documentation section](www.mongodb.org/display/DOCS/Updating#Updating-update()).
+Note that upsert only inserts one document. Learn more about upserts in [this MongoDB documentation section](http://www.mongodb.org/display/DOCS/Updating#Updating-update()).
 
 
 ### Atomic Modifiers
