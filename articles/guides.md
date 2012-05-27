@@ -40,7 +40,13 @@ This guide covers:
 
 This guide covers:
 
-TBD
+ * Inserting documents
+ * Inserting batches of documents
+ * Checking database responses
+ * Validating data with Validateur, a [Clojure validation library](https://github.com/michaelklishin/validateur)
+ * Setting default write concern
+ * Changing write concern for individual operations
+ * Working with multiple databases
 
 
 
@@ -48,7 +54,11 @@ TBD
 
 This guide covers:
 
-TBD
+ * Querying documents with Monger
+ * Using query operators with Monger
+ * Working with database cursors
+ * Using Monger Query DSL
+ * Working with multiple databases
 
 
 
@@ -56,7 +66,12 @@ TBD
 
 This guide covers:
 
-TBD
+ * Updating documents with Monger
+ * Using atomic operations with Monger
+ * Upserting documents
+ * Updating a single document vs multiple documents
+ * Overriding default write concern for individual operations
+ * Working with multiple databases
 
 
 
@@ -64,7 +79,9 @@ TBD
 
 This guide covers:
 
-TBD
+ * Deleting documents with Monger
+ * Deleting a single document vs multiple documents
+ * Working with multiple databases
 
 
 
@@ -72,7 +89,10 @@ TBD
 
 This guide covers:
 
-TBD
+ * Monger's philosophy of "having batteries included"
+ * Integration with `clojure.data.json`
+ * Integration with `clj-time` and Joda Time
+ * Integration with `clojure.core.cache`: MongoDB-based Clojure cache protocol implementation
 
 
 
@@ -80,21 +100,32 @@ TBD
 
 This guide covers:
 
-TBD
+ * Using Map/Reduce with Monger
+ * Storing and loading JavaScript functions from classpath
+
 
 
 ### [Using GridFS](/articles/gridfs.html)
 
 This guide covers:
 
-TBD
+ * Using GridFS with Monger
+
 
 
 ### [Using MongoDB Aggregation Framework](/articles/aggregation.html) (MongoDB 2.2+ only)
 
 This guide covers:
 
-TBD
+ * Using MongoDB 2.2 Aggregation Framework with Monger
+
+
+
+### [Using MongoDB commands](/articles/commands.html)
+
+This guide covers:
+
+ * Performing MongoDB commands with Monger
 
 
 
