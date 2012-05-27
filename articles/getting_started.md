@@ -320,7 +320,7 @@ join our [mailing list about Monger, Clojure and MongoDB](https://groups.google.
 
 ## What to Read Next
 
-Documentation is organized as a number of guides, covering all kinds of topics.
+The documentation is organized as a number of guides, covering all kinds of topics.
 
 We recommend that you read the following guides first, if possible, in this order:
 

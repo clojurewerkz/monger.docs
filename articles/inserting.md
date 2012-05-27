@@ -140,7 +140,16 @@ TBD
 
 ## What to read next
 
-TBD
+The documentation is organized as a number of guides, covering all kinds of topics.
+
+We recommend that you read the following guides first, if possible, in this order:
+
+ * [Querying & finders](/articles/querying.html)
+ * [Updating documents](/articles/updating.html)
+ * [Deleting documents](/articles/deleting.html)
+ * [Integration with 3rd party libraries](/articles/integration.html)
+ * [Map/Reduce](/articles/mapreduce.html)
+ * [GridFS support](/articles/gridfs.html)
 
 
 ## Tell Us What You Think!

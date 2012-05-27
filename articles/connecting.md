@@ -140,6 +140,20 @@ To do it, use `monger.core/get-db` and `monger.core/set-db!` functions in combin
 {% gist 86340be2cabe43a4ec18 %}
 
 
+## What to Read Next
+
+The documentation is organized as a number of guides, covering all kinds of topics.
+
+We recommend that you read the following guides first, if possible, in this order:
+
+ * [Inserting documents](/articles/inserting.html)
+ * [Querying & finders](/articles/querying.html)
+ * [Updating documents](/articles/updating.html)
+ * [Deleting documents](/articles/deleting.html)
+ * [Integration with 3rd party libraries](/articles/integration.html)
+ * [Map/Reduce](/articles/mapreduce.html)
+ * [GridFS support](/articles/gridfs.html)
+
 
 ## Tell Us What You Think!
 
