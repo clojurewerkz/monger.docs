@@ -5,7 +5,7 @@ layout: article
 
 ## Mailing List
 
-[Monger has a mailing list](https://groups.google.com/forum/#!forum/clojure-monger). Feel free to join it and ask any questions you may have.
+[Monger has a mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb). Feel free to join it and ask any questions you may have.
 
 
 ## News & Announcements on Twitter
