@@ -202,7 +202,7 @@ Query DSL supports composition, too:
 
 {% gist 906b1929b44deb381137 %}
 
-Learn more in our [Querying](/articles/querying.html) and [Query DSL](/articles/query_dsl.html) guides.
+Learn more in our [Querying](/articles/querying.html) guide.
 
 
 
