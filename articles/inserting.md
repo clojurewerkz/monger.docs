@@ -102,7 +102,31 @@ see [MongoDB documentation on error handling](http://www.mongodb.org/display/DOC
 
 ## Validating data with [Validateur, a Clojure data validation library](https://github.com/michaelklishin/validateur)
 
-TBD
+Monger does not handle data validation but it comes with a small standalone [Clojure validation library](https://github.com/michaelklishin/validateur) called Validateur.
+Validateur is inspired by Ruby's ActiveModel. It has two central concepts: validators and validation sets.
+
+Validateur is functional: validators are functions, validation sets are higher-order functions, validation results are returned as values.
+
+With Validateur you define validation sets that compose one or more validators:
+
+{% gist 3933002b80711cd5796b %}
+
+Any function that returns either a pair of
+
+{% gist e299d06d71d71b295644 %}
+
+to indicate successful validation or
+
+{% gist 6a802e8dec6dfd50c834 %}
+
+to indicate validation failure and return error messages can be used as a validator. Validation sets are then passed to
+`validateur.core/valid?` together with a map to validate:
+
+{% gist 14dbb326b0419121db27 %}
+
+`validateur.core/invalid?` is a complement to `validateur.core/valid?`.
+
+TBD: examples with custom validators
 
 
 ## Setting default write concern
