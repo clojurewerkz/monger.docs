@@ -102,6 +102,8 @@ as macros that expand at compile time. Here is what it looks like with operator 
 
 {% gist 241b24026977c44bc3a4 %}
 
+TBD
+
 
 ## More examples
 
@@ -110,28 +112,66 @@ These and other examples of Monger finders in one gist:
 {% gist cc86a383c09ef1d501e8 %}
 
 
+## Monger Query DSL
 
-## Sorting
+Queries that need sorting (and with it, commonly skip/limit/pagination) use Monger's Query DSL. It is composed of functions and macros in the `monger.query` namespace,
+with additional convenience operator macros from the `monger.operators` namespace. 
+
+Monger's Query DSL is heavily inspired by [SQL Korma](http://sqlkorma.com/), is composable and easy to extend if necessary. Lets take a look at its core features first.
+
+### Sorting, skip and limit
+
+Sorting documents are specified exactly as they are in the MongoDB shell (1 for ascending, -1 for descending ordering):
+
+{% gist ffa7a09975d5a303cac9 %}
+
+This example also demonstrates query conditions and fetching a subset of fields.
+
+
+### Using pagination
+
+Using `skip` and `limit` to do pagination in the query DSL is so common that Monger provides a DSL extension for that:
+
+{% gist 8a214a841d5f76f4f096 %}
+
+
+### Read preference
+
+Read preference lets MongoDB clients specify whether a query should go to the master/primary node (thus guaranteeing consistency but also
+putting extra load on primaries) or it's OK to read from slaves (and thus get eventual consistency, which ocassionally may result
+in slightly out of date data to be returned):
+
+{% gist ffa7a09975d5a303cac9 %}
+
+Possible read preference values are
+
+ * `com.mongodb.ReadPreference/PRIMARY` (read from master)
+ * `com.mongodb.ReadPreference/SECONDARY` (read from slaves)
+
+
+### Snapshotting cursors
+
+A MongoDB query returns data as well as a cursor ID for additional lookups, should more data exist.  Drivers lazily perform a "get more" operation as needed on the
+cursor to get more data. Cursors may have latent getMore accesses that occurs after an intervening write operation on the database collection (i.e., an insert,
+update, or delete).
+
+Conceptually, a cursor has a current position. If you delete the item at the current position, the cursor automatically skips its current position forward to the
+next item. Snapshotting a cursor assures that objects which update during the lifetime of a query are returned once and only once. This is most important when doing a
+find-and-update loop that changes.
+
+Here is how to snapshot a cursor with Monger query DSL:
+
+{% gist 1d5c6c66c8b47c0929bd %}
 
 TBD
 
 
-## Using skip and limit
+## Index hints
 
 TBD
 
 
-## Using pagination
-
-TBD
-
-
-## Read preference
-
-TBD
-
-
-## Snapshotting cursors
+## Setting batch size
 
 TBD
 
