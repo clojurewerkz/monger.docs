@@ -117,11 +117,11 @@ With Monger you can do that using the `monger.core/connect-via-uri!` function. I
 is taken from the `MONGODB_URI` env variable if it is set. If that's not the case, "mongodb://127.0.0.1/monger-test4" is
 used as a fallback (for example, for development):
 
-{% gist a2810dee0a221b95d899 %}
+{% gist 582690dbd81ae3f1d199 %}
 
 
 
-## Connecting to a replicate set
+## Connecting to a replica set
 
 Monger supports connecting to replica sets using one or more seeds when calling `monger.core/connect` with a collection of server
 addresses instead of just a single one:
