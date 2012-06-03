@@ -102,7 +102,53 @@ as macros that expand at compile time. Here is what it looks like with operator 
 
 {% gist 241b24026977c44bc3a4 %}
 
-TBD
+Below are more examples that use various query operators (you can use any operator supported by the MongoDB shell with Monger):
+
+### <, <=, >, >=
+
+{% gist 3343bde11fd0aa553b7e %}
+
+
+### $exists
+
+{% gist a430c745ccde1fbf258b %}
+
+
+### $mod
+
+{% gist 1d3a0c83c5279611f86b %}
+
+
+### $ne
+
+{% gist 857fb1e15124823ebb87 %}
+
+
+### $all, $in, $nin
+
+{% gist a114d7ad3ca97a60d053  %}
+
+
+### $and, $or, $nor
+
+{% gist b4a9aea666cc63176ce2 %}
+
+
+### $regex (regular expression matches)
+
+{% gist 7c72bb2a40b50f1f3a52 %}
+
+
+### $elemMatch
+
+{% gist 2978b3d8f7f04d9c2bb1 %}
+
+
+### $group, $project, etc (MongoDB 2.2 Aggregation Framework support)
+
+Monger supports a new feature in MongoDB 2.2, the Aggregation Framework. It is a vast topic that is out of scope of this guide
+and will be covered in a separate one when MongoDB 2.2 reaches release candidate stages.
+
 
 
 ## More examples
