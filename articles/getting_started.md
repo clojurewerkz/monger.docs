@@ -315,7 +315,7 @@ more to them to explore. Other guides explain these and other features in depth,
 use cases for them.
 
 To stay up to date with Monger development, [follow @ClojureWerkz on Twitter](http://twitter.com/ClojureWerkz) and
-join our [mailing list about Monger, Clojure and MongoDB](https://groups.google.com/forum/#!forum/clojure-monger).
+join our [mailing list about Monger, Clojure and MongoDB](https://groups.google.com/forum/#!forum/clojure-mongodb).
 
 
 ## What to Read Next
