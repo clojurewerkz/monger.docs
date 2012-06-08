@@ -90,6 +90,8 @@ We recommend that you read the following guides first, if possible, in this orde
 
  * [Map/Reduce](/articles/mapreduce.html)
  * [GridFS support](/articles/gridfs.html)
+ * [Using MongoDB Aggregation Framework](/articles/aggregation.html)
+ * [Using MongoDB commands](/articles/commands.html)
 
 
 ## Tell Us What You Think!

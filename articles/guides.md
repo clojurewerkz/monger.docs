@@ -54,8 +54,8 @@ This guide covers:
 
 This guide covers:
 
- * Querying documents with Monger
- * Using query operators with Monger
+ * Querying documents with Clojure
+ * Using query operators with Clojure
  * Working with database cursors
  * Using Monger Query DSL
  * Working with multiple databases
@@ -66,8 +66,8 @@ This guide covers:
 
 This guide covers:
 
- * Updating documents with Monger
- * Using atomic operations with Monger
+ * Updating documents with Clojure
+ * Using atomic operations with Clojure
  * Upserting documents
  * Updating a single document vs multiple documents
  * Overriding default write concern for individual operations
@@ -79,7 +79,7 @@ This guide covers:
 
 This guide covers:
 
- * Deleting documents with Monger
+ * Deleting documents with Clojure
  * Deleting a single document vs multiple documents
  * Working with multiple databases
 
@@ -100,7 +100,7 @@ This guide covers:
 
 This guide covers:
 
- * Using Map/Reduce with Monger
+ * Using Map/Reduce with Clojure
  * Storing and loading JavaScript functions from classpath
 
 
@@ -118,7 +118,7 @@ This guide covers:
 
 This guide covers:
 
- * Using MongoDB 2.2 Aggregation Framework with Monger
+ * Using MongoDB 2.2 Aggregation Framework with Clojure
 
 
 
@@ -126,7 +126,7 @@ This guide covers:
 
 This guide covers:
 
- * Performing MongoDB commands with Monger
+ * Performing MongoDB commands with Clojure
 
 
 
