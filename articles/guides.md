@@ -109,7 +109,8 @@ This guide covers:
 
 This guide covers:
 
- * Using GridFS with Monger
+ * Storing files on GridFS from Clojure
+ * Loading files from GridFS with Clojure
 
 
 
