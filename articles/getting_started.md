@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.0.0-beta8, the most recent pre-release version. Monger is a young project but most of the public API
+This guide covers Monger 1.0.0-rc1, the most recent pre-release version. Monger is a young project but most of the public API
 is fleshed out and will not change before the 1.0 release.
 
 
@@ -51,16 +51,24 @@ features may be specific to MongoDB 2.2 and later versions.
 
 ## Adding Monger Dependency To Your Project
 
+Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/monger).
+
 ### With Leiningen
 
-    [com.novemberain/monger "1.0.0-beta8"]
+    [com.novemberain/monger "1.0.0-rc1"]
 
 ### With Maven
+
+Add Clojars repository definition to your `pom.xml`:
+
+{% gist 65642c4b53d26539e5f6 %}
+
+And then the dependency:
 
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>monger</artifactId>
-      <version>1.0.0-beta8</version>
+      <version>1.0.0-rc1</version>
     </dependency>
 
 ## Connecting to MongoDB
