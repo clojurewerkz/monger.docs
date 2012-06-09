@@ -5,7 +5,7 @@ layout: article
 
 ## Guide list
 
-[Quartzite documentation](https://github.com/clojurewerkz/monger.docs) is organized as a number of guides, covering all kinds of topics.
+[Monger documentation](https://github.com/clojurewerkz/monger.docs) is organized as a number of guides, covering all kinds of topics.
 
 We recommend that you read these guides, if possible, in this order:
 
