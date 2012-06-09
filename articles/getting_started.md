@@ -332,6 +332,8 @@ We recommend that you read the following guides first, if possible, in this orde
  * [Integration with 3rd party libraries](/articles/integration.html)
  * [Map/Reduce](/articles/mapreduce.html)
  * [GridFS support](/articles/gridfs.html)
+ * [Using MongoDB Aggregation Framework](/articles/aggregation.html)
+ * [Using MongoDB commands](/articles/commands.html)
 
 
 ## Tell Us What You Think!
