@@ -57,7 +57,7 @@ Unlike Map/Reduce operators, aggregation queries are always returned "inline" (a
 
 For an in-depth overview of the MongoDB 2.2 Aggregation Framework, please refer to this [MongoDB Aggregation Framework guide](http://docs.mongodb.org/manual/applications/aggregation/). There is also a [pipeline operator reference](http://docs.mongodb.org/manual/reference/aggregation/).
 
-The documentation is organized as a number of guides, covering all kinds of topics.
+The documentation is organized as [a number of guides](/articles/guides.html), covering all kinds of topics.
 
 We recommend that you read the following guides first, if possible, in this order:
 

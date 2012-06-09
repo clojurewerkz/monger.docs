@@ -73,7 +73,7 @@ Deleting files on GridFS is very similar to deleting documents from a collection
 
 ## What to read next
 
-The documentation is organized as a number of guides, covering all kinds of topics.
+The documentation is organized as [a number of guides](/articles/guides.html), covering all kinds of topics.
 
 We recommend that you read the following guides first, if possible, in this order:
 

@@ -20,7 +20,7 @@ features may be specific to MongoDB 2.2 and later versions.
 
 
 
-## Why Not Contribute to CongoMongo?
+## Why Not Contribute to [insert an existing Clojure MongoDB driver name]?
 
 There is one MongoDB client for Clojure that has been around since 2009. So, why create another one? Monger authors
 wanted a client that will
@@ -41,6 +41,7 @@ Monger was started, it wasn't yet time to make CongoMongo move all the way to Cl
 at the time).
 
 
+
 ## Is it fast?
 
 ### Write Performance
@@ -59,3 +60,15 @@ Inserting  100000  documents...
 </pre>
 
 With the `SAFE` write concern, it takes roughly 0.5 second to insert 100,000 documents after JVM warm-up with Clojure 1.3.0.
+While these are certainly not scientific numbers (and latency distribution is not provided), they can serve as a decent
+ball part figure: Monger has extremely low overhead over the MongoDB Java driver and you can expect it to process hundreds to tens of
+thousands of documents per second, depending on the workload.
+
+
+
+
+## Tell Us What You Think!
+
+Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+
+Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
