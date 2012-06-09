@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: Map/Reduce"
+title: "Monger, a Clojure MongoDB client: Using MongoDB Map/Reduce with Clojure"
 layout: article
 ---
 
