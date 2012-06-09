@@ -34,7 +34,7 @@ makes raw map/reduce a relatively low-level facility.
 ## Performing MongoDB aggregation queries with Clojure
 
 Conceptually, documents from a collection pass through an aggregation pipeline, which transforms these objects they pass through. For those familiar with UNIX-like shells
-(e.g. bash,) the concept is analogous to the pipe (i.e. |) used to string text filters together.
+(e.g. bash,) the concept is analogous to the pipe (i.e. `|`) used to string text filters together.
 
 In a shell environment the pipe redirects a stream of characters from the output of one process to the input of the next. The MongoDB aggregation pipeline streams MongoDB
 documents from one pipeline operator to the next to process the documents.
@@ -43,12 +43,14 @@ All pipeline operators process a stream of documents and the pipeline behaves as
 the pipeline. Each operator in the pipleine transforms each document as it passes through the pipeline.
 
 `monger.collection/aggregate` is the function used to perform aggregation queries with Monger. It takes a collection name and a list of aggregation
-*pipeline stages* or *pipeline operators*, such as `$project` or `$multiplyBy`:
+*pipeline stages* or *pipeline operators*, such as `$project` or `$multiplyBy`.
+
+Pipeline operators are specified as documents (Clojure maps) and contain `$operators` similar to those used by perform queries and updates. They can be specified
+as strings, e.g. "$project", or using predefined operators from the `monger.operators` namespace, e.g. `$project`:
 
 {% gist ca36b5c9c99592540ea4 %}
 
-Pipeline operators are specified as documents (Clojure maps) and contain `$operators` similar to those used by perform queries and updates. They can be specified
-as strings, e.g. "$project", or using predefined operators from the `monger.operators` namespace, e.g. `$project`.
+Unlike Map/Reduce operators, aggregation queries are always returned "inline" (as a value by `monger.collection/aggregate`).
 
 
 ## What to read next
