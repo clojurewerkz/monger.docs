@@ -212,14 +212,27 @@ Here is how to snapshot a cursor with Monger query DSL:
 TBD
 
 
-## Index hints
+### Index hints
 
-TBD
+While not necessary in most cases, it is possible to force query to use the given index:
+
+{% gist 4adba414618dfb45c73f %}
+
+Hinting only makes sense in the presence of multiple compound indexes that may be used by the optimizer and sorting
+by one or both indexed fields.
 
 
-## Setting batch size
+### Setting batch size
 
-TBD
+Cursors fetch documents from the server in batches. It is possible to specify the size of the batch to improve performance
+or limit the number of documents returned by the server:
+
+{% gist bab0ab8a3c9b56634fec %}
+
+If batch size is negative, it will limit of number objects returned, that fit within the max batch size limit (usually 4MB), and cursor will be closed.
+For example if batch-size is -10, then the server will return a maximum of 10 documents and as many as can fit in 4MB, then close the cursor.
+Note that this feature is different from limit in that documents must fit within a maximum size, and it removes the need to send a request
+to close the cursor server-side.
 
 
 ## Counting documents
