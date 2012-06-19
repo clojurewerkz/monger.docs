@@ -60,8 +60,14 @@ returns a lazy sequence of maps, `monger.collection/find-maps`:
 
 {% gist 0b9c3d3a60d13ab43d60 %}
 
+Normally you should prefer `monger.collection/find-maps` to `monger.collection/find`, which is considered to be part of the lower-level API.
 
-## Loading a single document
+### Sorting, limits, offsets
+
+To use sorting, limit, offset, pagination and so on, please use Monger's Query DSL (covered later in this guide).
+
+
+## Finding a single document
 
 `monger.collection/find-one` finds one document and returns it as a `DBObject` instance:
 
@@ -76,6 +82,8 @@ returns a lazy sequence of maps, `monger.collection/find-maps`:
 A more convenient way of finding a document by id as Clojure map is `monger.collection/find-map-by-id`:
 
 {% gist 976c79a1ba8eaac491b2 %}
+
+Normally you should prefer `monger.collection/find-one-as-map` and `monger.collection/find-map-by-id` to `monger.collection/find-one`.
 
 
 ## Loading a subset of fields
@@ -161,9 +169,11 @@ These and other examples of Monger finders in one gist:
 ## Monger Query DSL
 
 Queries that need sorting (and with it, commonly skip/limit/pagination) use Monger's Query DSL. It is composed of functions and macros in the `monger.query` namespace,
-with additional convenience operator macros from the `monger.operators` namespace. 
+with additional convenience operator macros from the `monger.operators` namespace.  Monger's Query DSL is heavily inspired by [SQL Korma](http://sqlkorma.com/), is composable and easy to extend if necessary.
 
-Monger's Query DSL is heavily inspired by [SQL Korma](http://sqlkorma.com/), is composable and easy to extend if necessary. Lets take a look at its core features first.
+Queries performed via Query DSL always return sequences of Clojure maps, like `monger.collection/find-maps` does.
+
+Lets take a look at its core features first.
 
 ### Sorting, skip and limit
 
