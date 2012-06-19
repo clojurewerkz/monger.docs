@@ -92,7 +92,7 @@ Specifically, it returns raw usage of each database, and provides amount of time
 
 ## What to Read Next
 
-Congratulations, this is the last guide. For the definitive list of commands MongoDB supports, [MongoDB command reference](http://docs.mongodb.org/manual/reference/commands/?highlight=commands).
+Congratulations, this is the last guide. For the definitive list of commands MongoDB supports, see [MongoDB command reference](http://docs.mongodb.org/manual/reference/commands/?highlight=commands).
 
 Take a look at [other guides](/articles/guides.html), they cover all kinds of topics.
 
