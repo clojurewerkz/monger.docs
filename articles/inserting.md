@@ -36,6 +36,26 @@ In case your application obtains DBObjects from other libraries (for example), y
 
 {% gist 37931a5093b8890550f9 %}
 
+
+### Document ids (ObjectId)
+
+If you insert a document without the `:_id` key, MongoDB Java driver that Monger uses under the hood will generate one for you. Unfortunately,
+it does so by mutating the document you pass it. With Clojure's immutable data structures, that won't work the way MongoDB Java driver authors
+expected.
+
+So it is highly recommended to always store documents with the `:_id` key set. If you need a generated object id. You do so by instantiating
+`org.bson.types.ObjectId` without arguments:
+
+{% gist dd4dc600f50b8c6ba093 %}
+
+To convert a string in the object id form (for example, coming from a Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
+
+{% gist 4ba11d5ae126c6b9e2b4 %}
+
+Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
+knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
+
+
 ### Collection (Array) Fields
 
 Document fields that you need to be stored as arrays are typically passed as vectors, although they can also be lists, lazy sequences or your own data types
@@ -75,6 +95,7 @@ In case you need to manually convert a DBObject to Clojure map or vice versa, Mo
 
 the latter takes an optional argument that controls whether document fields are converted to Clojure keywords. When
 false, field names become string keys in the result.
+
 
 
 ## Inserting batches of documents

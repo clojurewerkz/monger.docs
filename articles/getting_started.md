@@ -111,6 +111,25 @@ To insert documents, use `monger.collection/insert` and `monger.collection/inser
 is very efficient compared to sequentially or even concurrently inserting documents one by one.
 
 
+### Document ids (ObjectId)
+
+If you insert a document without the `:_id` key, MongoDB Java driver that Monger uses under the hood will generate one for you. Unfortunately,
+it does so by mutating the document you pass it. With Clojure's immutable data structures, that won't work the way MongoDB Java driver authors
+expected.
+
+So it is highly recommended to always store documents with the `:_id` key set. If you need a generated object id. You do so by instantiating
+`org.bson.types.ObjectId` without arguments:
+
+{% gist dd4dc600f50b8c6ba093 %}
+
+To convert a string in the object id form (for example, coming from a Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
+
+{% gist 4ba11d5ae126c6b9e2b4 %}
+
+Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
+knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
+
+
 ### Default WriteConcern
 
 To set default write concern, use `monger.core/set-default-write-concern!` function:

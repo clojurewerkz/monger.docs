@@ -84,6 +84,15 @@ A more convenient way of finding a document by id as Clojure map is `monger.coll
 
 Normally you should prefer `monger.collection/find-one-as-map` and `monger.collection/find-map-by-id` to `monger.collection/find-one`.
 
+### Convert a string to ObjectId
+
+To convert a string in the object id form (for example, coming from a Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
+
+{% gist 4ba11d5ae126c6b9e2b4 %}
+
+Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
+knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
+
 
 ## Loading a subset of fields
 
