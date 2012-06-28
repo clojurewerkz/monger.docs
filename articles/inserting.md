@@ -179,7 +179,13 @@ When doing so, please keep MongoDB's differences in [error handling](http://www.
 
 ## Working with multiple databases
 
-TBD
+Monger is optimized for applications that use only one database but it is possible to work with multiple ones. For that, use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding) to rebind
+`monger.core/*mongodb-database*`, `monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*` vars to different values or use convenience functions
+that do that: `monger.core/with-connection`, `monger.core/with-db`, `monger.core/with-gridfs`. This is a common practice for Clojure libraries. Remember that
+var bindings are thread-local.
+
+
+TBD: examples
 
 
 ## What to read next
