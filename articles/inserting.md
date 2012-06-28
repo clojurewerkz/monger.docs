@@ -39,11 +39,11 @@ In case your application obtains DBObjects from other libraries (for example), y
 
 ### Document ids (ObjectId)
 
-If you insert a document without the `:_id` key, MongoDB Java driver that Monger uses under the hood will generate one for you. Unfortunately,
-it does so by mutating the document you pass it. With Clojure's immutable data structures, that won't work the way MongoDB Java driver authors
+If you insert a document without the `:_id` key, MongoDB Java driver that Monger uses under the hood will generate one for you. It does so by mutating the document
+you pass it. With Clojure's immutable data structures, that won't work the way MongoDB Java driver authors
 expected.
 
-So it is highly recommended to always store documents with the `:_id` key set. If you need a generated object id. You do so by instantiating
+It is highly recommended to always store documents with the `:_id` key set. If you need a generated object id. You do so by instantiating
 `org.bson.types.ObjectId` without arguments:
 
 {% gist dd4dc600f50b8c6ba093 %}
