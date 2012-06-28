@@ -124,6 +124,8 @@ Below are more examples that use various query operators (you can use any operat
 
 {% gist 3343bde11fd0aa553b7e %}
 
+The `$gt`, `$lt`, `$gte`, `$lte` operators work on dates and are very commonly used for time range queries. Date values can be `java.util.Date` instances or
+(highly recommended) [Joda Time](http://joda-time.sourceforge.net) dates. If you want to use Joda Time in Clojure, [clj-time](https://github.com/seancorfield/clj-time) is a good option.
 
 ### $exists
 
