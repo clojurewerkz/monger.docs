@@ -157,6 +157,7 @@ The documentation is organized as [a number of guides](/articles/guides.html), c
 We recommend that you read the following guides first, if possible, in this order:
 
  * [Deleting documents](/articles/deleting.html)
+ * [Indexing and other collection operations](/articles/collections.html)
  * [Integration with 3rd party libraries](/articles/integration.html)
  * [Map/Reduce](/articles/mapreduce.html)
  * [GridFS support](/articles/gridfs.html)

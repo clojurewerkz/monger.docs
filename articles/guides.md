@@ -85,6 +85,16 @@ This guide covers:
 
 
 
+### [Indexing and other collection operations](/articles/collections.html)
+
+This guide covers:
+
+ * Creating indexes on MongoDB collections
+ * Dropping indexes
+ * Reindexing a collection
+ * Dropping a collection
+
+
 ### [Integration with other Clojure libraries](/articles/integration.html)
 
 This guide covers:

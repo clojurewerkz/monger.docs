@@ -275,6 +275,7 @@ We recommend that you read the following guides first, if possible, in this orde
 
  * [Updating documents](/articles/updating.html)
  * [Deleting documents](/articles/deleting.html)
+ * [Indexing and other collection operations](/articles/collections.html)
  * [Integration with 3rd party libraries](/articles/integration.html)
  * [Map/Reduce](/articles/mapreduce.html)
  * [GridFS support](/articles/gridfs.html)
