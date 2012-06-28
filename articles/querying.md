@@ -187,7 +187,7 @@ Lets take a look at its core features first.
 
 Sorting documents are specified exactly as they are in the MongoDB shell (1 for ascending, -1 for descending ordering):
 
-{% gist ffa7a09975d5a303cac9 %}
+{% gist 94f0aac2fc8686691965 %}
 
 This example also demonstrates query conditions and fetching a subset of fields.
 
