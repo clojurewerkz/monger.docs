@@ -69,6 +69,17 @@ Deleting files on GridFS is very similar to deleting documents from a collection
 {% gist ac162f3d9b6289b63021 %}
 
 
+## Working with multiple databases
+
+Monger is optimized for applications that use only one database but it is possible to work with multiple ones. For that, use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding) to rebind
+`monger.core/*mongodb-database*`, `monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*` vars to different values or use convenience functions
+that do that: `monger.core/with-connection`, `monger.core/with-db`, `monger.core/with-gridfs`. This is a common practice for Clojure libraries. Remember that
+var bindings are thread-local.
+
+
+TBD: examples
+
+
 
 ## What to read next
 
