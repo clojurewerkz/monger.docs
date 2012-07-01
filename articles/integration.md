@@ -77,7 +77,15 @@ Monger provides a MongoDB-backed cache implementation that conforms to the `cloj
 It uses capped collections for caches. You can use any many cache data structure instances as your application
 may need.
 
-TBD
+To use Monger's cache implementation, use functions in both `clojure.core.cache` and `monger.cache` namespaces, then create
+a cache store using `monger.cache/basic-monger-cache-factory` that can be passed a collection name you want the cache to use:
+
+{% gist ca954b7edc7b10e91c73 %}
+
+Then use the store like you would any other `core.cache` store, database backed or not.
+
+To learn more about the [clojure.core.cache](https://github.com/clojure/core.cache) protocol and functions it provides,
+see [clojure.core.cache documentation](https://github.com/clojure/core.cache/wiki).
 
 
 
