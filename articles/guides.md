@@ -91,6 +91,7 @@ This guide covers:
 
  * Creating indexes on MongoDB collections
  * Dropping indexes
+ * Creating a capped collection
  * Reindexing a collection
  * Dropping a collection
 

@@ -9,6 +9,7 @@ This guide covers:
 
  * Creating indexes with Monger
  * Dropping indexes with Monger
+ * Creating a capped collection
  * Using Monger to reindex a collection
  * Dropping a collection
 
@@ -55,6 +56,27 @@ To drop an index or all indexes on a collection, use `monger.collection/drop-ind
 
 {% gist 7b40369dc26909f0d165 %}
 
+
+## Creating a collection
+
+To create a collection with Monger, use the `monger.collection/create` function like so:
+
+{% gist 490ecde5d1a0d6b8ce92 %}
+
+However, because MongoDB will create a collection automatically the first time you attempt to use it, it is usually not necessary to
+create collections except when you want them to be capped. This is what the next section covers.
+
+
+## Creating a capped collection
+
+[Capped collections in MongoDB](http://www.mongodb.org/display/DOCS/Capped+Collections) are fixed sized collections that have a very high performance auto-FIFO age-out feature (age out is based on insertion order).
+
+In addition, capped collections automatically, with high performance, maintain insertion order for the documents in the collection;
+this is very powerful for certain use cases such as logging or keeping "hot" data around for caching purposes.
+
+To create a collection as capped, use the same `monger.collection/create` function with options:
+
+{% gist f1f9e2d0f3cd9a7767b7 %}
 
 
 ## Dropping a collection
