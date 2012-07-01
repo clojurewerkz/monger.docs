@@ -89,6 +89,36 @@ see [clojure.core.cache documentation](https://github.com/clojure/core.cache/wik
 
 
 
+### Using MongoDB-backed Ring session store with Monger 1.0
+
+Monger 1.0 provides a MongoDB-backed session store for [Ring, Clojure's ubiquitous HTTP middleware library](https://github.com/ring-clojure/ring). It can be found in the
+`monger.ring.session-store` namespace. To create a new store, use the `monger.ring.session-store/monger-store` that takes name of the collections
+sessions will be stored in:
+
+{% gist cfcecfa0b7ec191693ac %}
+
+Below is an example take from [RefHeap](https://github.com/Raynes/refheap), an open source paste app build with Clojure, Noir, MongoDB and Monger and hosted on Heroku.
+**Please note that this example uses Clojure 1.4 features**:
+
+{% gist 329e32c41c5c55e9ba5e %}
+
+
+### Using MongoDB-backed Ring session store with Monger 1.1
+
+Monger `1.1.0-beta1` and later versions provide the same MongoDB-backed session store for Ring as 1.0 but also has an alternative store that uses Clojure reader serialization.
+This means this store stores data in a way that non-Clojure applications won't be able to read easily but also supports edge cases in Clojure
+data type serialization that Monger itself does not, for example, namespaced keywords (like `::identity`).
+
+This is the Ring session store you should use if you want to use Monger with [Friend, a popular authentication and authorization library for Clojure](https://github.com/cemerick/friend/).
+
+
+It works exactly the same way but the name of the function that creates a store is different:
+
+{% gist 0039b3cdcdb21d54e911 %}
+
+
+
+
 ## What to read next
 
 The documentation is organized as [a number of guides](/articles/guides.html), covering all kinds of topics.
