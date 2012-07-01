@@ -104,7 +104,8 @@ This guide covers:
  * Integration with `clojure.data.json`
  * Integration with `clj-time` and Joda Time
  * Integration with `clojure.core.cache`: MongoDB-based Clojure cache protocol implementation
-
+ * Using MongoDB-backed Ring session stores
+ * Basic [Noir](http://webnoir.org) integration example
 
 
 ### [Using MongoDB Map/Reduce](/articles/mapreduce.html)
