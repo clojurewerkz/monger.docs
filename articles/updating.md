@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.0.0, the most recent release.
+This guide covers Monger 1.0.
 
 
 ## Overview
