@@ -31,6 +31,12 @@ It takes two arguments: collection name and document to insert:
 
 {% gist 94a8d55fe2de8479f127 %}
 
+`monger.collection/insert` returns write result that `monger.result/ok?` and similar functions can operate on.
+
+`monger.collection/insert-and-return` is an alternative insertion function that returns the exact documented inserted, including the generated document id:
+
+{% gist b0096af8387ad31fb30c %}
+
 Document can be either a Clojure map (in the majority of cases, it is) or an instance of `com.mongodb.DBObject` (referred to later as `DBObject`).
 In case your application obtains DBObjects from other libraries (for example), you can insert those:
 

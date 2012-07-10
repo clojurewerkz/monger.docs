@@ -107,6 +107,12 @@ To insert documents, use `monger.collection/insert` and `monger.collection/inser
 
 {% gist 901c3c3c4aee166efc0f %}
 
+`monger.collection/insert` returns write result that `monger.result/ok?` and similar functions can operate on.
+
+`monger.collection/insert-and-return` is an alternative insertion function that returns the exact documented inserted, including the generated document id:
+
+{% gist b0096af8387ad31fb30c %}
+
 `monger.collection/insert-batch` is a recommended way of inserting batches of documents (from tens to hundreds of thousands) because it
 is very efficient compared to sequentially or even concurrently inserting documents one by one.
 
