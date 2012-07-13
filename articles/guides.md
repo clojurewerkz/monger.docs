@@ -92,6 +92,7 @@ This guide covers:
  * Creating indexes on MongoDB collections
  * Dropping indexes
  * Creating a capped collection
+ * Using MongoDB [TTL collections](http://docs.mongodb.org/manual/tutorial/expire-data/) (MongoDB 2.2+)
  * Reindexing a collection
  * Dropping a collection
 

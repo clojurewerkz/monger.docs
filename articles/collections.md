@@ -10,6 +10,7 @@ This guide covers:
  * Creating indexes with Monger
  * Dropping indexes with Monger
  * Creating a capped collection
+ * Using MongoDB TTL collections (MongoDB 2.2+)
  * Using Monger to reindex a collection
  * Dropping a collection
 
@@ -20,6 +21,13 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 ## What version of Monger does this guide cover?
 
 This guide covers Monger 1.1.
+
+## What version of MongoDB does this guide cover?
+
+This guide covers one feature (TTL collections) that is going to be introduced with the release of MongoDB 2.2. Support for it was developed using
+2.1.x releases (developer previews).
+
+All other features are available in MongoDB 2.0.
 
 
 ## Overview
@@ -77,6 +85,18 @@ this is very powerful for certain use cases such as logging or keeping "hot" dat
 To create a collection as capped, use the same `monger.collection/create` function with options:
 
 {% gist f1f9e2d0f3cd9a7767b7 %}
+
+
+## Using MongoDB TTL collections (MongoDB 2.2+)
+
+MongoDB 2.2 and later versions support [TTL (time-to-live, aka expiring) collections](http://docs.mongodb.org/manual/tutorial/expire-data/).
+
+To enable document expiration, you need to create an index on a date field with the `:expireAfterSeconds` option:
+
+{% gist 81ee570edaffafbd9929 %}
+
+Note that MongoDB runs the expiring thread (sometimes referred to as called `TTLMonitor`), about once per minute, so with TTL values less than 60
+seconds this feature may be of little use.
 
 
 ## Dropping a collection
