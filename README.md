@@ -18,11 +18,8 @@ With Bundler:
 
 In order to modify contents and launch dev environment, run:
 
-      ./bin/jekyll
+      ./bin/jekyll --no-auto
 
-In order to recompile haml and sass files for publishing, run
-
-      ./recompile_haml.sh
 
 ## License & Copyright
 
