@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: storing large files in MongoDB using GridFS"
+title: "Monger, a Clojure MongoDB client: storing large files in MongoDB using GridFS | MongoDB library for Clojure"
 layout: article
 ---
 

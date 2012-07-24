@@ -1,5 +1,5 @@
 ---
-title: "Getting Started with Clojure & MongoDB using Monger"
+title: "Getting Started with Clojure & MongoDB using Monger | MongoDB Clojure client | MongoDB library for Clojure"
 layout: article
 ---
 

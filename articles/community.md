@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: Community"
+title: "Monger, a Clojure MongoDB client: Community | MongoDB library for Clojure"
 layout: article
 ---
 
@@ -16,7 +16,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 ## What is ClojureWerkz?
 
 Monger is part of the group of libraries known as ClojureWerkz, together with
-[Welle](http://clojureriak.info), [Quartzite](http://clojurequartz.info), [Neocons](https://github.com/michaelklishin/neocons), [Langohr](https://github.com/michaelklishin/langohr), [Elastisch](https://github.com/clojurewerkz/elastisch) and several others.
+[Welle](http://clojureriak.info), [Quartzite](http://clojurequartz.info), [Neocons](http://clojureneo4j.info), [Langohr](https://github.com/michaelklishin/langohr), [Elastisch](http://clojureelasticsearch.info) and several others.
 
 
 ## Reporting Issues

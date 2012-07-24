@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: integration with other libraries"
+title: "Monger, a Clojure MongoDB client: integration with other libraries | MongoDB library for Clojure"
 layout: article
 ---
 

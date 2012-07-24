@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: Using MongoDB commands"
+title: "Monger, a Clojure MongoDB client: Using MongoDB commands | MongoDB library for Clojure"
 layout: article
 ---
 

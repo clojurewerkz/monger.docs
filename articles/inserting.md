@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: Inserting documents"
+title: "Monger, a Clojure MongoDB client: Inserting documents | MongoDB library for Clojure"
 layout: article
 ---
 

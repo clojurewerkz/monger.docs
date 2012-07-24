@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: deleting documents"
+title: "Monger, a Clojure MongoDB client: deleting documents | MongoDB library for Clojure"
 layout: article
 ---
 

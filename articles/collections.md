@@ -1,5 +1,5 @@
 ---
-title: "Monger, a Clojure MongoDB client: Indexing and other operations on collections"
+title: "Monger, a Clojure MongoDB client: Indexing and other operations on collections | MongoDB library for Clojure"
 layout: article
 ---
 
