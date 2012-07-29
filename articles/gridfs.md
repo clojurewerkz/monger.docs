@@ -77,9 +77,6 @@ that do that: `monger.core/with-connection`, `monger.core/with-db`, `monger.core
 var bindings are thread-local.
 
 
-TBD: examples
-
-
 
 ## What to read next
 

@@ -241,7 +241,7 @@ Learn more in our [Querying](/articles/querying.html) guide.
 ## How to Update Documents with Monger
 
 Monger's update API follows the following simple rule: the "syntax" for condition and update document structure is
-the same or as close as possible to MongoDB shell and official drivers. In addition, Monger provides several
+the same or as close as possible to MongoDB shell and the official drivers. In addition, Monger provides several
 convenience functions for common cases, for example, finding documents by id.
 
 
@@ -336,7 +336,7 @@ Monger provides a MongoDB-backed cache implementation that conforms to the `cloj
 It uses capped collections for caches. You can use any many cache data structure instances as your application
 may need.
 
-TBD
+This topic is covered in the [Integration with 3rd party libraries](/articles/integration.html) guide.
 
 
 

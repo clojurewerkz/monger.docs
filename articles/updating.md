@@ -25,7 +25,7 @@ This guide covers Monger 1.1.
 ## Overview
 
 Monger's update API follows the following simple rule: the "syntax" for condition and update document structure is
-the same or as close as possible to MongoDB shell and official drivers. In addition, Monger provides several
+the same or as close as possible to MongoDB shell and the official drivers. In addition, Monger provides several
 convenience functions for common cases, for example, finding documents by id.
 
 
@@ -146,7 +146,18 @@ that do not have duplicates):
 `monger.collection/save` function performs insert or update (replace) based on whether or not provided document already has an id (whether the `:_id` field
 is set).
 
-TBD
+With a new document, it works very much like `monger.collection/insert`:
+
+{% gist 001e9997d8171c1f8a76 %}
+
+`monger.collection/save-and-return` with new documents works the same way as `monger.collection/insert-and-return`:
+
+{% gist ae2878424c43fc80cbed %}
+
+With documents that are not new (already have the `:_id` field), `monger.collection/save` and `monger.collection/save-and-return`
+will first look up the existing document by id and replace it with the one provided:
+
+{% gist b4efe9396071feac5d6c %}
 
 
 

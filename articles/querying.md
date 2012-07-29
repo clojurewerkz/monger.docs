@@ -98,12 +98,25 @@ knows how to compare order (sort). However, using `ObjectId`s is usually a good 
 
 Both `monger.collection/find` and `monger.collection/find-maps` take 3rd argument that specifies what fields need to be retrieved:
 
-{% gist %}
+{% gist a19e3a9caea159af9623 %}
 
 This is useful to excluding very large fields from loading when you won't operate on them.
 
 Fields can be specified as a document (just like in the MongoDB shell) but it is more common to pass them as a vector of keywords. Monger
 will transform them into a document for you.
+
+
+## Reaching Into Nested Documents in Conditions
+
+To "reach into" nested documents and use them in conditions, MongoDB uses the "dot syntax" for fields. For example, with a document
+that looks like this:
+
+{% gist 816af9b1ca34a638e88c %}
+
+it is possible to address the zip field in a condition as `"address.zip"`. This is exactly how you do it in Monger in conditions and arguments for
+operators like `$set`:
+
+{% gist b4f30dc76cec7f987155 %}
 
 
 ## Using MongoDB query operators
@@ -229,8 +242,6 @@ Here is how to snapshot a cursor with Monger query DSL:
 
 {% gist 1d5c6c66c8b47c0929bd %}
 
-TBD
-
 
 ### Index hints
 
@@ -269,8 +280,6 @@ Monger is optimized for applications that use only one database but it is possib
 that do that: `monger.core/with-connection`, `monger.core/with-db`, `monger.core/with-gridfs`. This is a common practice for Clojure libraries. Remember that
 var bindings are thread-local.
 
-
-TBD: examples
 
 
 ## What to read next
