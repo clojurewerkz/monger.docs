@@ -181,12 +181,20 @@ Monger supports a new feature in MongoDB 2.2, the Aggregation Framework. It is a
 and will be covered in a separate one when MongoDB 2.2 reaches release candidate stages.
 
 
-
 ## More examples
 
 These and other examples of Monger finders in one gist:
 
 {% gist cc86a383c09ef1d501e8 %}
+
+
+## Getting Distinct Documents
+
+To get a collection of distinct documents by field or query, use the `monger.collection/distinct` function that returns a lazy sequence
+of documents. There is currently no `monger.collection/distinct-maps` or similar function so to produce a sequence of Clojure maps,
+it is necessary to map (`clojure.core/map`) with `monger.conversion/from-db-object` over the results.
+
+TBD: examples
 
 
 ## Monger Query DSL
