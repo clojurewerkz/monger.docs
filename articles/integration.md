@@ -71,6 +71,8 @@ To be able to insert documents with Joda Time date values in them, you need to r
 Just like with `clojure.data.json` integration, there is nothing else you have to do. This feature is optional:
 Monger does not depend on `clj-time` or `Joda Time` and won't add unused dependencies to your project.
 
+This means that you need to add dependencies on `clj-time` and `clojure.data.json` to your project before requiring `monger.joda-time`.
+
 
 
 ### clojure.core.cache
