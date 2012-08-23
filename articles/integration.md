@@ -73,6 +73,17 @@ Monger does not depend on `clj-time` or `Joda Time` and won't add unused depende
 
 This means that you need to add dependencies on `clj-time` and `clojure.data.json` to your project before requiring `monger.joda-time`.
 
+#### Setting Default Time Zone Used By Joda Time
+
+When Joda Time integration is loaded, Monger extends its own Clojure-to-DBObject conversion protocol to support Joda Time date/time/instant types
+and convert loaded dates to Joda Time dates. When a new Joda Time `org.joda.time.DateTime` instance is created, it will use an environment-specific
+time zone by default (configured via the `user.timezone` JVM property). Because altering `user.timezone` may also affect other libraries,
+it is recommended to set default time zone using Joda Time API like so:
+
+{% gist e925a257436a631ed8d5 %}
+
+This will only have effect on Joda Time (and, in turn, Monger date/time/instant deserialization).
+
 
 
 ### clojure.core.cache
