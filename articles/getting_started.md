@@ -190,6 +190,23 @@ A more convenient way of finding a document by id as Clojure map is `monger.coll
 {% gist 976c79a1ba8eaac491b2 %}
 
 
+### Keyword and String Field Names
+
+Clojure maps commonly use keywords, however, BSON and many other programming languages do not have a data type like that. Intead, strings are used as
+keys. Several Monger finder functions are "low level", such as [monger.collection/find](http://reference.clojuremongodb.info/monger.collection.html#var-find),
+and return `com.mongodb.DBObject` instances. They can be thought of as regular Java maps with a little bit of MongoDB-specific metadata.
+
+Other finders combine `monger.collection/find` with [monger.conversion/from-db-object](http://reference.clojuremongodb.info/monger.conversion.html#var-from-db-object) to
+return Clojure maps. Some of those functions take the extra `keywordize` argument that control if resulting map keys will be turned into keywords.
+An example of such finder is [monger.collection/find-one-as-map](http://reference.clojuremongodb.info/monger.collection.html#var-find-one-as-map). By default
+Monger will keywordize keys.
+
+You can use [monger.conversion/from-db-object](http://reference.clojuremongodb.info/monger.conversion.html#var-from-db-object) and [monger.conversion/to-db-object](http://reference.clojuremongodb.info/monger.conversion.html#var-to-db-object) to convert maps to `DBObject` instances and back using a custom
+field name conversion strategy if you need to. Keep in mind that it likely will affect interoperability with other technologies (that may or may not use
+the same naming/encoding conversion), query capabilities for cases when exact field names are not known and performance for write-heavy workloads.
+
+
+
 ### Using operators
 
 Monger provides a convenient way to use [MongoDB query operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators). While

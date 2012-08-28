@@ -84,7 +84,7 @@ A more convenient way of finding a document by id as Clojure map is `monger.coll
 
 Normally you should prefer `monger.collection/find-one-as-map` and `monger.collection/find-map-by-id` to `monger.collection/find-one`.
 
-### Convert a string to ObjectId
+### Convert a string to a MongoDB (BSON) ObjectId
 
 To convert a string in the object id form (for example, coming from a Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
 
@@ -92,6 +92,11 @@ To convert a string in the object id form (for example, coming from a Web form) 
 
 Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
 knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
+
+### Convert a MongoDB (BSON) ObjectId to a string
+
+To convert a BSON ObjectId (`org.bson.types.ObjectId` instance) to a string, just use [clojure.core/str](http://clojuredocs.org/clojure_core/clojure.core/str) to
+it or call `org.bson.types.ObjectId#toString` on it.
 
 
 ## Loading a subset of fields
@@ -117,6 +122,22 @@ it is possible to address the zip field in a condition as `"address.zip"`. This 
 operators like `$set`:
 
 {% gist b4f30dc76cec7f987155 %}
+
+
+## Keyword and String Field Names
+
+Clojure maps commonly use keywords, however, BSON and many other programming languages do not have a data type like that. Intead, strings are used as
+keys. Several Monger finder functions are "low level", such as [monger.collection/find](http://reference.clojuremongodb.info/monger.collection.html#var-find),
+and return `com.mongodb.DBObject` instances. They can be thought of as regular Java maps with a little bit of MongoDB-specific metadata.
+
+Other finders combine `monger.collection/find` with [monger.conversion/from-db-object](http://reference.clojuremongodb.info/monger.conversion.html#var-from-db-object) to
+return Clojure maps. Some of those functions take the extra `keywordize` argument that control if resulting map keys will be turned into keywords.
+An example of such finder is [monger.collection/find-one-as-map](http://reference.clojuremongodb.info/monger.collection.html#var-find-one-as-map). By default
+Monger will keywordize keys.
+
+You can use [monger.conversion/from-db-object](http://reference.clojuremongodb.info/monger.conversion.html#var-from-db-object) and [monger.conversion/to-db-object](http://reference.clojuremongodb.info/monger.conversion.html#var-to-db-object) to convert maps to `DBObject` instances and back using a custom
+field name conversion strategy if you need to. Keep in mind that it likely will affect interoperability with other technologies (that may or may not use
+the same naming/encoding conversion), query capabilities for cases when exact field names are not known and performance for write-heavy workloads.
 
 
 ## Using MongoDB query operators
