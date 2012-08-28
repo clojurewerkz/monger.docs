@@ -93,6 +93,9 @@ To convert a string in the object id form (for example, coming from a Web form) 
 Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
 knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
 
+To coerce an input to `ObjectId` (instantiate one from a string of the input is a string, or just return the input if it is an `ObjectId`), there
+is [monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id).
+
 ### Convert a MongoDB (BSON) ObjectId to a string
 
 To convert a BSON ObjectId (`org.bson.types.ObjectId` instance) to a string, just use [clojure.core/str](http://clojuredocs.org/clojure_core/clojure.core/str) to
