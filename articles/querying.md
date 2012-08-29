@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.1.
+This guide covers Monger 1.2.
 
 
 ## Overview
@@ -94,7 +94,7 @@ Document ids in MongoDB do not have to be of the object id type, they also can b
 knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
 
 To coerce an input to `ObjectId` (instantiate one from a string of the input is a string, or just return the input if it is an `ObjectId`), there
-is [monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id).
+is [monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id). 
 
 ### Convert a MongoDB (BSON) ObjectId to a string
 

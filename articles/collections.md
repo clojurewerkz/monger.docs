@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.1.
+This guide covers Monger 1.2.
 
 ## What version of MongoDB does this guide cover?
 
