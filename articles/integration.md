@@ -85,6 +85,13 @@ it is recommended to set default time zone using Joda Time API like so:
 This will only have effect on Joda Time (and, in turn, Monger date/time/instant deserialization).
 
 
+### Use require, Not use
+
+`monger.joda-time` and `monger.json` only extend existing protocols and do not define public functions. Due to [a subtle bug in Clojure 1.5](http://dev.clojure.org/jira/browse/CLJ-1062),
+using the ns macro's `:use` option on such namespace will fail. But worry not: there is no need to use `:use`. Just use `:require`, it will cause
+protocol extensions to be compiled and that's all you need to use Monger's integration points.
+
+
 
 ### clojure.core.cache
 
