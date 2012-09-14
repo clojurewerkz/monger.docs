@@ -61,6 +61,14 @@ To convert a string in the object id form (for example, coming from a Web form) 
 Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
 knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
 
+### Generating random UUIDs
+
+To generate a new psuedo random UUID ([type 4](http://en.wikipedia.org/wiki/Universally_unique_identifier#Variants_and_versions)), combine `java.util.UUID/randomUUID` and `clojure.core/str`:
+
+{% gist 26c0de63fb3c2e663058 %}
+
+or just use `monger.util/random-uuid`.
+
 
 ### Collection (Array) Fields
 
