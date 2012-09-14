@@ -45,7 +45,7 @@ MongoDB features like cursor snapshotting.
 
 ## Finding documents
 
-First lets find several documents by the language. To do this, use `monger.collection/find` function:
+To find multiple documents, use `monger.collection/find`:
 
 {% gist d9c31fe7108941b3b94a %}
 
