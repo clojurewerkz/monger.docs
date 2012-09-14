@@ -254,10 +254,13 @@ in slightly out of date data to be returned):
 
 {% gist ffa7a09975d5a303cac9 %}
 
-Possible read preference values are
+Possible read preference values are returned by the following static methods:
 
- * `com.mongodb.ReadPreference/PRIMARY` (read from master)
- * `com.mongodb.ReadPreference/SECONDARY` (read from slaves)
+ * `com.mongodb.ReadPreference/primary` (read only from master, throw an error if it is not available)
+ * `com.mongodb.ReadPreference/primaryPreferred` (read from master if available, a slave otherwise)
+ * `com.mongodb.ReadPreference/secondary` (read from a slave if available, otherwise throw an error)
+ * `com.mongodb.ReadPreference/secondaryPreferred` (read from a slave if available, from master otherwise)
+ * `com.mongodb.ReadPreference/nearest` (read from the nearest node)
 
 
 ### Snapshotting cursors
