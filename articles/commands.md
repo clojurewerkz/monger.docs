@@ -25,7 +25,7 @@ The MongoDB command interface provides access to all non CRUD database operation
 accomplished by running a command.
 
 You specify a command first by constructing a standard BSON document whose first key is the name of the command. For example, specify the isMaster command using the following
-BSON document (demonstrated here as a Clojure map):
+BSON document (demonstrated here as an ordered Clojure map):
 
 {% gist ada23f7d614b71897b41 %}
 
@@ -44,6 +44,12 @@ use macros in the `monger.operators` namespace, just like with queries.
 Monger command API was designed to for flexibility: it lets developers to use new commands as soon as MongoDB server supports them. However,
 many commands are used more often than others and their API does not change any more. Monger provides convenient functions for some of them
 in the `monger.command` namespace.
+
+
+## MongoDB Commands and Map Ordering
+
+MongoDB command documents may depend on map ordering. So, when using `monger.core/command` to execute commands Monger does not provide helper functions for,
+make sure you use [clojure.core/sorted-map](http://clojure.github.com/clojure/clojure.core-api.html#clojure.core/sorted-map) instead of a map literal. Otherwise you may [start seeing "unknown command" errors](https://groups.google.com/forum/?fromgroups=#!topic/clojure-mongodb/IMEnskx6yXo).
 
 
 ## Common Commands
