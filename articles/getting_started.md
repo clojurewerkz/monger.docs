@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.2.
+This guide covers Monger 1.3.
 
 
 ## Monger Overview
@@ -54,7 +54,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 
 ### With Leiningen
 
-    [com.novemberain/monger "1.2.0"]
+    [com.novemberain/monger "1.3.0"]
 
 ### With Maven
 
@@ -67,7 +67,7 @@ And then the dependency:
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>monger</artifactId>
-      <version>1.2.0</version>
+      <version>1.3.0</version>
     </dependency>
 
 ## Connecting to MongoDB
@@ -82,6 +82,12 @@ To connect, you use `monger.core/connect!` and `monger.core/connect` functions:
 To set default database Monger will use, use `monger.core/get-db` and `monger.core/set-db!` functions in combination:
 
 {% gist 86340be2cabe43a4ec18 %}
+
+
+## Disconnecting
+
+To disconnect, use `monger.core/connect!`.
+
 
 ### Using URI (for example, on Heroku)
 
