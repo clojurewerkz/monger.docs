@@ -8,7 +8,7 @@ layout: article
 This guide covers:
 
  * Monger's philosophy of "having batteries included"
- * Integration with `clojure.data.json`
+ * Integration with `Cheshire` and `clojure.data.json`
  * Integration with `clj-time` and Joda Time
  * Integration with `clojure.core.cache`: MongoDB-based Clojure cache protocol implementation
  * Using MongoDB-backed Ring session stores
@@ -26,11 +26,11 @@ This guide covers Monger 1.3.
 ## Overview
 
 Monger heavily relies on relatively recent Clojure features like protocols to integrate with libraries like
-[clojure.data.json](http://github.com/clojure/data.json) or [clj-time](https://github.com/seancorfield/clj-time) ([Joda Time](http://joda-time.sourceforge.net/)). As the result you can focus on your
+[Cheshire](http://github.com/dakrone/cheshire) or [clj-time](https://github.com/seancorfield/clj-time) ([Joda Time](http://joda-time.sourceforge.net/)). As the result you can focus on your
 application instead of figuring out how to glue two libraries together.
 
 
-### clojure.data.json
+### Cheshire (or clojure.data.json)
 
 Many applications that use MongoDB and Monger have to serialize documents stored in the database to JSON and pass
 them to other applications using HTTP or messaging protocols such as [AMQP 0.9.1](http://bit.ly/amqp-model-explained) or [ZeroMQ](http://zeromq.org).
@@ -39,24 +39,28 @@ This means that MongoDB data types (object ids, documents) need to be serialized
 MongoDB, is semantically very similar to JSON, MongoDB drivers do not typically provide serialization to JSON
 and JSON serialization libraries typically do not support MongoDB data types.
 
-Monger provides a convenient feature for `clojure.data.json`, a pretty popular modern JSON serialization library
-for Clojure. The way it works is Monger will extend [clojure.data.json](https://github.com/clojure/data.json) serialization protocol to MongoDB Java
+Monger provides a convenient feature for Cheshire, a pretty popular modern JSON serialization library
+for Clojure. The way it works is Monger will add custom serializes for MongoDB Java
 driver data types: `org.bson.types.ObjectId` and `com.mongodb.DBObject` if you opt-in for it.
-To use it, you need to add `clojure.data.json` dependency to your project, for example (with Leiningen)
+To use it, you need to add Chshire dependency to your project, for example (with Leiningen)
 
 {% gist 2f465e2e9c71ac9aaaef %}
-
 
 and then require `monger.json` namespace like so:
 
 {% gist 5f03c5acaa0b39cf7a09 %}
 
 when loaded, code in that namespace will extend necessary protocols and that's it. Then you can pass documents
-that contain object ids in them to JSON serialization functions of `clojure.data.json` and everything will
+that contain object ids in them to JSON serialization functions from `cheshire.custom` and everything will
 just work.
 
-This feature is optional: Monger does not depend on `clojure.data.json` and won't add unused dependencies
+This feature is optional: Monger does not depend on `Cheshire` or `clojure.data.json` and won't add unused dependencies
 to your project.
+
+#### clojure.data.json Version Compatibility
+
+Monger only works with `clojure.data.json` version `0.1.x`, as `0.2.0` completely breaks public API
+and supporting both versions will require more time to investigate.
 
 
 
