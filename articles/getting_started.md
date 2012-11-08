@@ -54,7 +54,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 
 ### With Leiningen
 
-    [com.novemberain/monger "1.3.1"]
+    [com.novemberain/monger "1.3.4"]
 
 ### With Maven
 
@@ -67,7 +67,7 @@ And then the dependency:
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>monger</artifactId>
-      <version>1.3.1</version>
+      <version>1.3.4</version>
     </dependency>
 
 ## Connecting to MongoDB
