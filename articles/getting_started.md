@@ -87,7 +87,7 @@ To set default database Monger will use, use `monger.core/get-db` and `monger.co
 
 ## Disconnecting
 
-To disconnect, use `monger.core/connect!`.
+To disconnect, use `monger.core/disconnect!`.
 
 
 ### Using URI (for example, on Heroku)
