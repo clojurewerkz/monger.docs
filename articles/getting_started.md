@@ -90,7 +90,7 @@ To set default database Monger will use, use `monger.core/get-db` and `monger.co
 To disconnect, use `monger.core/disconnect!`.
 
 
-### Using URI (for example, on Heroku)
+### Using URI (Heroku, CloudFoundry, etc)
 
 In certain environments, for example, Heroku or other PaaS providers, the only way to connect to MongoDB is via connection URI.
 
