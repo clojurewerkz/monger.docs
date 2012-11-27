@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.3.
+This guide covers Monger 1.4.
 
 
 ## Overview
@@ -236,7 +236,9 @@ Sorting documents are specified exactly as they are in the MongoDB shell (1 for 
 
 {% gist 85d764e2e9512ee651a7 %}
 
-This example also demonstrates query conditions and fetching a subset of fields.
+This example also demonstrates query conditions and fetching a subset of fields. Note that because the order of keys matters
+for sorting, you should always use sorted maps with `(sort ...)`. Regular Clojure maps do not have ordering guarantees
+and this may lead to incorrect sorting of results.
 
 
 ### Using pagination

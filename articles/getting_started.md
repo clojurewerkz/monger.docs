@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.3.
+This guide covers Monger 1.4.
 
 
 ## Monger Overview
@@ -39,12 +39,13 @@ reducing incidental complexity. It also fits MongoDB data model very well.
 
 ## Supported Clojure versions
 
-Monger is built from the ground up for Clojure 1.3 and later.
+Monger is built from the ground up for Clojure 1.3 and later. The most recent stable release
+is highly recommended.
 
 
 ## Supported MongoDB versions
 
-Monger currently uses MongoDB Java driver 2.7.x under the hood and thus supports MongoDB 2.0 and later versions. Please note that some
+Monger currently uses MongoDB Java driver 2.10.x under the hood and thus supports MongoDB 2.0 and later versions. Please note that some
 features may be specific to MongoDB 2.2 and later versions.
 
 
@@ -54,7 +55,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 
 ### With Leiningen
 
-    [com.novemberain/monger "1.3.4"]
+    [com.novemberain/monger "1.4.0"]
 
 ### With Maven
 
@@ -67,7 +68,7 @@ And then the dependency:
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>monger</artifactId>
-      <version>1.3.4</version>
+      <version>1.4.0</version>
     </dependency>
 
 ## Connecting to MongoDB
