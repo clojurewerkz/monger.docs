@@ -218,7 +218,7 @@ To get a collection of distinct documents by field or query, use the `monger.col
 of documents. There is currently no `monger.collection/distinct-maps` or similar function so to produce a sequence of Clojure maps,
 it is necessary to map (`clojure.core/map`) with `monger.conversion/from-db-object` over the results.
 
-TBD: examples
+{% gist 4231005 %}
 
 
 ## Monger Query DSL
