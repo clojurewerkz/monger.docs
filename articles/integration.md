@@ -33,7 +33,7 @@ application instead of figuring out how to glue two libraries together.
 ### Cheshire (or clojure.data.json)
 
 Many applications that use MongoDB and Monger have to serialize documents stored in the database to JSON and pass
-them to other applications using HTTP or messaging protocols such as [AMQP 0.9.1](http://bit.ly/amqp-model-explained) or [ZeroMQ](http://zeromq.org).
+them to other applications using HTTP or messaging protocols such as [AMQP 0.9.1](www.rabbitmq.com/tutorials/amqp-concepts.html) or [ZeroMQ](http://zeromq.org).
 
 This means that MongoDB data types (object ids, documents) need to be serialized. While BSON, data format used by
 MongoDB, is semantically very similar to JSON, MongoDB drivers do not typically provide serialization to JSON
@@ -72,10 +72,14 @@ To be able to insert documents with Joda Time date values in them, you need to r
 
 {% gist e4447d7a88eacd754d9a %}
 
-Just like with `clojure.data.json` integration, there is nothing else you have to do. This feature is optional:
-Monger does not depend on `clj-time` or `Joda Time` and won't add unused dependencies to your project.
+Just like with `Cheshire` integration, there is nothing else you have to do. Monger will convert
+JodaTime dates to `java.util.Date` instances as needed.
 
-This means that you need to add dependencies on `clj-time` and `clojure.data.json` to your project before requiring `monger.joda-time`.
+This feature is optional: Monger does not depend on `clj-time` or
+`Joda Time` and won't add unused dependencies to your project.  This
+means that you need to manually add dependencies on `clj-time` and
+`Cheshire` (or `clojure.data.json`) to your project before requiring
+`monger.joda-time`.
 
 #### Setting Default Time Zone Used By Joda Time
 
