@@ -130,6 +130,17 @@ addresses instead of just a single one:
 `monger.core/connect!` function works exactly the same way.
 
 
+## Authentication
+
+With Monger, authentication is performed on database instance.
+`monger.core/authenticate` is the function used for that. It takes a database instance, a username
+and a password (as char array):
+
+{% gist 919429cb698a63477513 %}
+
+To connect to a replicate set that requires authentication with Monger, use example in the section above
+to connect, then authenticate the same way.
+
 
 ## Choosing default database
 
