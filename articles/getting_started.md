@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.4.
+This guide covers Monger 1.5.
 
 
 ## Monger Overview
@@ -55,7 +55,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 
 ### With Leiningen
 
-    [com.novemberain/monger "1.4.2"]
+    [com.novemberain/monger "1.5.0-rc1"]
 
 ### With Maven
 
@@ -68,7 +68,7 @@ And then the dependency:
     <dependency>
       <groupId>com.novemberain</groupId>
       <artifactId>monger</artifactId>
-      <version>1.4.2</version>
+      <version>1.5.0-rc1</version>
     </dependency>
 
 ## Connecting to MongoDB
