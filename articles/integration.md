@@ -104,7 +104,7 @@ protocol extensions to be compiled and that's all you need to use Monger's integ
 ### clojure.core.cache
 
 Monger provides a MongoDB-backed cache implementation that conforms to the `clojure.core.cache` protocol.
-It uses capped collections for caches. You can use any many cache data structure instances as your application
+It uses the `cache_entries` for caches by default. You can use any number of cache data structure instances as your application
 may need.
 
 To use Monger's cache implementation, use functions in both `clojure.core.cache` and `monger.cache` namespaces, then create
@@ -113,6 +113,11 @@ a cache store using `monger.cache/basic-monger-cache-factory` that can be passed
 {% gist ca954b7edc7b10e91c73 %}
 
 Then use the store like you would any other `core.cache` store, database backed or not.
+
+It is common to use capped or TTL collections for caches. Pass `` a collection name and the cache instance
+will use it:
+
+{% gist 4bca9834ce61080389a6 %}
 
 To learn more about the [clojure.core.cache](https://github.com/clojure/core.cache) protocol and functions it provides,
 see [clojure.core.cache documentation](https://github.com/clojure/core.cache/wiki).
