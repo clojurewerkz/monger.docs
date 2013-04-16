@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.5.
+This guide covers Monger 1.6 (including beta releases).
 
 
 ## Overview
@@ -114,10 +114,14 @@ a cache store using `monger.cache/basic-monger-cache-factory` that can be passed
 
 Then use the store like you would any other `core.cache` store, database backed or not.
 
-It is common to use capped or TTL collections for caches. Pass `` a collection name and the cache instance
+It is common to use capped or TTL collections for caches. Pass `monger.cache/basic-monger-cache-factory` a collection name and the cache instance
 will use it:
 
 {% gist 4bca9834ce61080389a6 %}
+
+Monger 1.6 introduces another cache store: `monger.cache/db-aware-monger-cache-factory`, which takes a database and a collection name to use:
+
+{% gist 9cd1b97bdf0e78a53501 %}
 
 To learn more about the [clojure.core.cache](https://github.com/clojure/core.cache) protocol and functions it provides,
 see [clojure.core.cache documentation](https://github.com/clojure/core.cache/wiki).
