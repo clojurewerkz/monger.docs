@@ -3,5 +3,7 @@ destination: ./_site
 plugins:     ./_plugins
 auto: true
 exclude: [bin, CNAME, Gemfile, Gemfile.lock, README.md]
-markdown: rdiscount
+markdown: redcarpet2
 permalink: /:title
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
