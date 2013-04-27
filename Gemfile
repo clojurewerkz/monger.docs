@@ -7,3 +7,4 @@ gem "redcarpet"
 #
 # gem install iconv -- --with-iconv-dir=~/.rvm/usr
 gem "iconv"
+gem "pygments.rb"
