@@ -27,7 +27,9 @@ accomplished by running a command.
 You specify a command first by constructing a standard BSON document whose first key is the name of the command. For example, specify the isMaster command using the following
 BSON document (demonstrated here as an ordered Clojure map):
 
-{% gist ada23f7d614b71897b41 %}
+``` clojure
+(sorted-map "isMaster" 1)
+```
 
 Some MongoDB commands are version-specific. Some implement sophisticated features, for example, the Aggregation Framework support, and some are administrative
 in nature, like reindexing a collection.
@@ -35,7 +37,19 @@ in nature, like reindexing a collection.
 With Monger, you use `monger.core/command` function to run commands. `monger.result/ok?` can be used to determine if a command succeeded or not, `monger.conversion/from-db-object`
 is used to convert a command results to a Clojure map. Here is an example that demonstrates all three:
 
-{% gist 4ed73db500d479ea83a3 %}
+``` clojure
+(ns monger.docs.examples
+  (:use [monger.core :only [command]]
+        [monger.result :only [ok?]]
+        [monger.conversion :only [from-db-object]]))
+
+(let [raw-result (command (sorted-map :isMaster 1))
+      result     (from-db-object raw-result true)]
+  ;= true
+  (ok? raw-result)
+  ;; {:serverUsed 127.0.0.1:27017, :ismaster true, :maxBsonObjectSize 16777216, :ok 1.0}
+  (println result))
+```
 
 [MongoDB command reference](http://docs.mongodb.org/manual/reference/commands/?highlight=commands) lists available DB commands. Command document structure with Monger
 is exactly the same as in the MongoDB shell and MongoDB manual guides. If your command happens to include operators (`$gt`, `$lt`, `$regex`, etc), you can
@@ -58,19 +72,47 @@ make sure you use [clojure.core/sorted-map](http://clojure.github.com/clojure/cl
 
 `monger.command/collection-stats` takes a collection names and returns collection stats:
 
-{% gist 7f6932dd334fd2601ba4 %}
+``` clojure
+(ns monger.docs.examples
+  (:use [monger.core :only [command]]
+        [monger.result :only [ok?]]
+        [monger.conversion :only [from-db-object]])
+  (:require [monger.command :as cmd]))
+
+;; #<CommandResult { "count" : 107281 , "size" : 52210704 , "avgObjSize" : 486.67242102515826 , "storageSize" : 65224704 , "numExtents" : 9 , "nindexes" : 6 , "lastExtentSize" : 17399808 , "paddingFactor" : 1.0 , "flags" : 1 , "totalIndexSize" : 26187728, …, "ok" : 1.0}>
+(cmd/collection-stats "documents")
+
+;; {:paddingFactor 1.0, :ok 1.0, …, :totalIndexSize 26187728, :count 107281, :avgObjSize 486.67242102515826, :lastExtentSize 17399808, :size 52210704, :storageSize 65224704, :flags 1, :nindexes 6, :numExtents 9}
+(from-db-object (cmd/collection-stats "documents") true)
+```
 
 
 ### Get database stats
 
 `monger.command/db-stats` is similar to `monger.command/collection-stats` but returns database stats:
 
-{% gist fc94dc0f086f58daa0e6 %}
+``` clojure
+(ns monger.docs.examples
+  (:use [monger.conversion :only [from-db-object]])
+  (:require [monger.command :as cmd]))
+
+;= #<CommandResult { "serverUsed" : "127.0.0.1:27017" , "db" : "…" , "collections" : 25 , "objects" : 312807 , "avgObjSize" : 297.94926584123755 , "dataSize" : 93200616 , "storageSize" : 116150272 , "numExtents" : 53 , "indexes" : 37 , "indexSize" : 33088272 , "fileSize" : 469762048 , "nsSizeMB" : 16 , "ok" : 1.0}>
+(cmd/db-stats "documents")
+
+;= {:objects 312807, :collections 25, :nsSizeMB 16, :ok 1.0, :avgObjSize 297.94926584123755, :indexes 37, :storageSize 116150272, :fileSize 469762048, :dataSize 93200616, :serverUsed "127.0.0.1:27017", :numExtents 53, :db "…", :indexSize 33088272}
+(from-db-object (cmd/db-stats "documents") true)
+```
 
 
 ### Reindex a collection
 
-{% gist 20ec74181ee5dc0cd017 %}
+``` clojure
+(ns monger.docs.examples
+  (:use [monger.conversion :only [from-db-object]])
+  (:require [monger.command :as cmd]))
+
+(cmd/reindex-collection "pages")
+```
 
 
 ### Get server status
@@ -80,9 +122,12 @@ make sure you use [clojure.core/sorted-map](http://clojure.github.com/clojure/cl
 
 ### Run "top" command
 
-`monger.command/top` provides programmatic access to the same information `mongotop` command line tool outputs.
+`monger.command/top` provides programmatic access to the same
+information `mongotop` command line tool outputs.
 
-Specifically, it returns raw usage of each database, and provides amount of time, in microseconds, used and a count of operations for the following event types:
+Specifically, it returns raw usage of each database, and provides
+amount of time, in microseconds, used and a count of operations for
+the following event types:
 
 * total
 * readLock
@@ -97,13 +142,19 @@ Specifically, it returns raw usage of each database, and provides amount of time
 
 ## What to Read Next
 
-Congratulations, this is the last guide. For the definitive list of commands MongoDB supports, see [MongoDB command reference](http://docs.mongodb.org/manual/reference/commands/?highlight=commands).
+Congratulations, this is the last guide. For the definitive list of
+commands MongoDB supports, see [MongoDB command
+reference](http://docs.mongodb.org/manual/reference/commands/?highlight=commands).
 
 Take a look at [other guides](/articles/guides.html), they cover all kinds of topics.
 
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Monger mailing
+list](https://groups.google.com/forum/#!forum/clojure-mongodb)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
