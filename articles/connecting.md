@@ -30,21 +30,49 @@ and one database.
 
 To connect, you use `monger.core/connect!` and `monger.core/connect` functions. A basic example:
 
-{% gist 2af1bcee22e0f14a8741 %}
+``` clojure
+(ns my.service.server
+  (:require [monger.core :as mg])
+  (:import [com.mongodb MongoOptions ServerAddress]))
+
+;; localhost, default port
+(mg/connect!)
+
+;; given host, given port
+(mg/connect! { :host "db.megacorp.internal" :port 7878 })
 
 
-## Connecting to MongoDB using connection options
+;; given host, given port
+(mg/connect! { :host "db.megacorp.internal" :port 7878 })
 
-Passing no arguments to `monger.core/connect` is very common for development but production environments typically require
-connection options tweaks.
+;; using MongoOptions allows fine-tuning connection parameters,
+;; like automatic reconnection (highly recommended for production environment)
+(let [^MongoOptions opts (mg/mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
+      ^ServerAddress sa  (mg/server-address "127.0.0.1" 27017)]
+  (mg/connect! sa opts))
 
-This is done by using 2-arity form of `monger.core/connect!` that takes a server address and connection options. Because MongoDB connections have
-a good dozen of tunable parameters, Monger provides a function that takes a map of them and produces an object that
-can be used as connection options:
+```
 
-{% gist c7ff27a49252772a92dd %}
 
-### Supported connection options
+## Connecting To Mongodb Using Connection Options
+
+Passing no arguments to `monger.core/connect` is very common for
+development but production environments typically require connection
+options tweaks.
+
+This is done by using 2-arity form of `monger.core/connect!` that
+takes a server address and connection options. Because MongoDB
+connections have a good dozen of tunable parameters, Monger provides a
+function that takes a map of them and produces an object that can be
+used as connection options:
+
+``` clojure
+(let [^MongoOptions opts (mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
+        ^ServerAddress sa (server-address "127.0.0.1" 27017)]
+    (monger.core/connect! sa opts))
+```
+
+### Supported Connection Options
 
 #### :connections-per-host (default: 10)
 
@@ -55,9 +83,12 @@ Once the pool is exhausted, any operation requiring a connection will block wait
 
 #### :threads-allowed-to-block-for-connection-multiplier (default: 5)
 
-This multiplier, multiplied with the connectionsPerHost setting, gives the maximum number of threads that
-may be waiting for a connection to become available from the pool. All further threads will get an exception right away.
-For example if connectionsPerHost is 10 and threadsAllowedToBlockForConnectionMultiplier is 5, then up to 50 threads can wait for a connection.
+This multiplier, multiplied with the connectionsPerHost setting, gives
+the maximum number of threads that may be waiting for a connection to
+become available from the pool. All further threads will get an
+exception right away.  For example if connectionsPerHost is 10 and
+threadsAllowedToBlockForConnectionMultiplier is 5, then up to 50
+threads can wait for a connection.
 
 
 #### :max-wait-time (default: 120,000)
@@ -116,16 +147,34 @@ With Monger you can do that using the `monger.core/connect-via-uri!` function. I
 is taken from the `MONGODB_URI` env variable if it is set. If that's not the case, "mongodb://127.0.0.1/monger-test4" is
 used as a fallback (for example, for development):
 
-{% gist 582690dbd81ae3f1d199 %}
+``` clojure
+(ns my.service
+  (:require [monger.core :as mg]))
+
+(defn -main
+  [& args]
+  (let [uri (get (System/getenv) "MONGODB_URI" "mongodb://127.0.0.1/monger-test4")]
+    (monger.core/connect-via-uri! uri)))
+ ```
 
 
 
-## Connecting to a replica set
+## Connecting To A Replica Set
 
 Monger supports connecting to replica sets using one or more seeds when calling `monger.core/connect` with a collection of server
 addresses instead of just a single one:
 
-{% gist f365286bf17cb5ebbc33 %}
+``` clojure
+(ns my.service
+  (:use monger.core :only [connect connect! server-address mongo-options]))
+
+;; Connect to a single MongoDB instance
+(connect (server-address "127.0.0.1" 27017) (mongo-options))
+
+;; Connect to a replica set
+(connect [(server-address "127.0.0.1" 27017) (server-address "127.0.0.1" 27018)]
+         (mongo-options))
+```
 
 `monger.core/connect!` function works exactly the same way.
 
@@ -136,18 +185,34 @@ With Monger, authentication is performed on database instance.
 `monger.core/authenticate` is the function used for that. It takes a database instance, a username
 and a password (as char array):
 
-{% gist 919429cb698a63477513 %}
+``` clojure
+(require '[monger.core :as mc])
+
+(let [username "a-user"
+      password "14)'dbRYAzI(37liCfgc"
+      db       "a-db"]
+  (mc/connect!)
+  (mc/use-db! db)
+  (mc/authenticate (mc/get-db db) username (.toCharArray password)))
+```
 
 To connect to a replicate set that requires authentication with Monger, use example in the section above
 to connect, then authenticate the same way.
 
 
-## Choosing default database
+## Choosing Default Database
 
 Before your application begins to perform queries, updates and so on, it is necessary to tell Monger what database it should use by default.
 To do it, use `monger.core/get-db` and `monger.core/set-db!` functions in combination:
 
-{% gist 86340be2cabe43a4ec18 %}
+``` clojure
+(ns my.service.server
+  (:require [monger.core :as mg]))
+
+;; localhost, default port
+(mg/connect!)
+(mg/set-db! (mg/get-db "monger-test"))
+```
 
 
 ## What to Read Next
@@ -170,6 +235,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Monger mailing
+list](https://groups.google.com/forum/#!forum/clojure-mongodb)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
