@@ -27,38 +27,82 @@ edge Map/Reduce support documentation, please refer to the [MongoDB guide on Map
 
 ## Overview
 
-Map/Reduce is a programming model for processing large data sets [popularized by Google](http://research.google.com/archive/mapreduce.html) (see also [Map/Reduce revisited](http://userpages.uni-koblenz.de/~laemmel/MapReduce/paper.pdf)).
+Map/Reduce is a programming model for processing large data sets
+[popularized by
+Google](http://research.google.com/archive/mapreduce.html) (see also
+[Map/Reduce
+revisited](http://userpages.uni-koblenz.de/~laemmel/MapReduce/paper.pdf)).
 
-Map/reduce in MongoDB is useful for batch processing of data and aggregation operations. It is similar in spirit to using something like Hadoop with all
-input coming from a collection and output going to a collection. Often, in a situation where you would have used GROUP BY in SQL, map/reduce is often the
-right tool in MongoDB.
+Map/reduce in MongoDB is useful for batch processing of data and
+aggregation operations. It is similar in spirit to using something
+like Hadoop with all input coming from a collection and output going
+to a collection. Often, in a situation where you would have used GROUP
+BY in SQL, map/reduce is often the right tool in MongoDB.
 
-In MongoDB, a Map/Reduce query consists of an input collection, a *mapper function*, a *reducer function*, a name of the output collection (where results will
-be inserted) and an *output type* that controls how Map/Reduce calculation results should be combined with the existing documents in the
-output collection. The mapper and reducer functions are in JavaScript and can be written inline (passed as strings) or read from classpath using
-a helper function.
+In MongoDB, a Map/Reduce query consists of an input collection, a
+*mapper function*, a *reducer function*, a name of the output
+collection (where results will be inserted) and an *output type* that
+controls how Map/Reduce calculation results should be combined with
+the existing documents in the output collection. The mapper and
+reducer functions are in JavaScript and can be written inline (passed
+as strings) or read from classpath using a helper function.
 
 
 ### Map/Reduce vs the Aggregation Framework
 
-MongoDB 2.2 also supports a more focused, less generic and easier to use data processing feature called the [Aggregation Framework](/articles/aggregation.html) which
-makes raw map/reduce a relatively low-level facility.
+MongoDB 2.2 also supports a more focused, less generic and easier to
+use data processing feature called the [Aggregation
+Framework](/articles/aggregation.html) which makes raw map/reduce a
+relatively low-level facility.
 
 
 ## Performing MongoDB Map/Reduce queries with Clojure
 
-`monger.collection/map-reduce` is the function used to run Map/Reduce queries with Monger. It takes a collection name, two JavaScript functions as strings
-(typically loaded from JVM classpath), a destination collection and one of the output type values (a `com.mongodb.MapReduceCommand$OutputType` instance):
+`monger.collection/map-reduce` is the function used to run Map/Reduce
+queries with Monger. It takes a collection name, two JavaScript
+functions as strings (typically loaded from JVM classpath), a
+destination collection and one of the output type values (a
+`com.mongodb.MapReduceCommand$OutputType` instance):
 
-{% gist 0a9f7b2a9815fedde429 %}
+``` clojure
+(ns monger.docs.examples
+  (:use [monger.core :only [command]]
+        [monger.collection :only [map-reduce]]
+        [monger.result :only [ok?]]
+        [monger.conversion :only [from-db-object]])
+  (:require [clojurewerkz.support.js :as js])
+  (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
+
+;; performs a map/reduce query using functions stored in mapper.js and reducer.js
+;; on the classpath. The result will be returned "inline" (as a collection of documents back to the client).
+(let [output  (mc/map-reduce "events" (js/load-resource "mr/mapper.js") (js/load-resource "mr/reducer.js") "map_reduce_results" MapReduceCommand$OutputType/MERGE {})
+      result  (from-db-object ^DBObject (.results ^MapReduceOutput output) true))]
+  (println (ok? output))
+  (println result))
+```
 
 It is also possible to return results to the client (as "inline output"):
 
-{% gist b3f83bfe2dc63c6713ac %}
+``` clojure
+(ns monger.docs.examples
+  (:use [monger.core :only [command]]
+        [monger.collection :only [map-reduce]]
+        [monger.result :only [ok?]]
+        [monger.conversion :only [from-db-object]])
+  (:require [clojurewerkz.support.js :as js])
+  (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
+;; performs a map/reduce query using functions stored in mapper.js and reducer.js
+;; on the classpath. The result will be returned "inline" (as a collection of documents back to the client).
+(let [output  (mc/map-reduce "events" (js/load-resource "mr/mapper.js") (js/load-resource "mr/reducer.js") nil MapReduceCommand$OutputType/INLINE {})
+      result  (from-db-object ^DBObject (.results ^MapReduceOutput output) true))]
+  (println (ok? output))
+  (println result))
+```
 
+Learn more about [different MongoDB map/reduce output types](http://docs.mongodb.org/manual/core/map-reduce/).
 
-## What to read next
+## What To Read Next
 
 The documentation is organized as [a number of guides](/articles/guides.html), covering all kinds of topics.
 
