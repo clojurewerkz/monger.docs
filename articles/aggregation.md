@@ -47,16 +47,53 @@ the pipeline. Each operator in the pipleine transforms each document as it passe
 Pipeline operators are specified as documents (Clojure maps) and contain `$operators` similar to those used by perform queries and updates. They can be specified
 as strings, e.g. "$project", or using predefined operators from the `monger.operators` namespace, e.g. `$project`:
 
-{% gist ca36b5c9c99592540ea4 %}
+``` clojure
+(ns monger.docs.examples
+  (:require [monger.collection :as mc])
+  (:use monger.operators))
+
+;; performs an aggregation query.
+;;
+;; The following data set
+;;
+;; [{ :state "CA" :quantity 1 :price 199.00 }
+;;  { :state "NY" :quantity 2 :price 199.00 }
+;;  { :state "NY" :quantity 1 :price 299.00 }
+;;  { :state "IL" :quantity 2 :price 11.50  }
+;;  { :state "CA" :quantity 2 :price 2.95   }
+;;  { :state "IL" :quantity 3 :price 5.50   }]
+;;
+;; will be reduced to
+;;
+;; [{:_id "NY" :subtotal 398.0}
+;;  {:_id "NY" :subtotal 299.0}
+;;  {:_id "IL" :subtotal 23.0}
+;;  {:_id "CA" :subtotal 5.9}
+;;  {:_id "IL" :subtotal 16.5}
+;;  {:_id "CA" :subtotal 199.0}]
+;;
+
+(mc/aggregate "docs" [{$project {:subtotal {$multiply ["$quantity", "$price"]}
+                                                       :_id     "$state"}}])
+
+;; alternative version, does not use predefined monger.operators/$project and monger.operators/$multiply operators
+(mc/aggregate "docs" [{"$project" {:subtotal {"$multiply" ["$quantity", "$price"]}
+                                                          :_id     "$state"}}])
+```
 
 Unlike Map/Reduce operators, aggregation queries are always returned "inline" (as a value by `monger.collection/aggregate`).
 
 
 ## What to read next
 
-For an in-depth overview of the MongoDB 2.2 Aggregation Framework, please refer to this [MongoDB Aggregation Framework guide](http://docs.mongodb.org/manual/applications/aggregation/). There is also a [pipeline operator reference](http://docs.mongodb.org/manual/reference/aggregation/).
+For an in-depth overview of the MongoDB 2.2 Aggregation Framework,
+please refer to this [MongoDB Aggregation Framework
+guide](http://docs.mongodb.org/manual/applications/aggregation/). There
+is also a [pipeline operator
+reference](http://docs.mongodb.org/manual/reference/aggregation/).
 
-The documentation is organized as [a number of guides](/articles/guides.html), covering all kinds of topics.
+The documentation is organized as [a number of
+guides](/articles/guides.html), covering all kinds of topics.
 
 We recommend that you read the following guides first, if possible, in this order:
 
@@ -65,6 +102,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Monger mailing
+list](https://groups.google.com/forum/#!forum/clojure-mongodb)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
