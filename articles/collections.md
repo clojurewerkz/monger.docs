@@ -48,7 +48,25 @@ you can specify ordering on each field and they can be dropped or re-created.
 
 To create an index on a collection, use `monger.collection/ensure-index`. It will create the index but only if it does not already exist:
 
-{% gist a860835fb578fe9355a9 %}
+``` clojure
+(ns my.app
+  (:require [monger.collection :as mc]))
+
+;; create an index
+;; the index created as { :language 1 } will be named "language_1"
+(mc/ensure-index "documents" "language_1")
+
+;; create an index with a custom name
+;; array-map produces a map that is ordered, which
+;; is important for indexes
+(mc/ensure-index "documents" (array-map :language 1) { :name "by-language" })
+
+;; create a unique index
+(mc/ensure-index "documents" (array-map :language 1) { :unique true })
+
+;; create an index on multiple fields (will be automatically named language_1_created_at_1 by convention)
+(mc/ensure-index "documents" (array-map :language 1 :created_at 1))
+```
 
 `monger.collection/create-index` takes the same arguments but will fail if the index already exists.
 
@@ -62,51 +80,108 @@ To get a set of indexes on a collection, use `monger.collection/indexes-on` func
 
 To drop an index or all indexes on a collection, use `monger.collection/drop-index` and `monger.collection/drop-indexes`:
 
-{% gist 7b40369dc26909f0d165 %}
+``` clojure
+(ns my.app
+  (:require [monger.collection :as mc]))
+
+;; drop all indexes from a collection
+(mc/drop-indexes "events")
+
+;; drop a specific index from a collection
+;; language_1 refers to the index created as { :language 1 }
+(mc/drop-index "documents" "language_1")
+
+;; language_1_created_at_1 refers to the index created as { :language 1, :created_at 1 }
+(mc/drop-index "documents" "language_1_created_at_1")
+```
 
 
 ## Creating a collection
 
 To create a collection with Monger, use the `monger.collection/create` function like so:
 
-{% gist 490ecde5d1a0d6b8ce92 %}
+``` clojure
+(ns monger.docs.examples
+  (:require [monger.collection :as mc]))
 
-However, because MongoDB will create a collection automatically the first time you attempt to use it, it is usually not necessary to
-create collections except when you want them to be capped. This is what the next section covers.
+;; creates a non-capped collection
+(mc/create "recent_events" {})
+
+(defn- megabytes
+  [^long n]
+  (* n 1024 1024))
+
+;; creates a collection capped at 32 megabytes
+(mc/create "recent_events" {:capped true :size (-> 32 megabytes)})
+```
+
+However, because MongoDB will create a collection automatically the
+first time you attempt to use it, it is usually not necessary to
+create collections except when you want them to be capped. This is
+what the next section covers.
 
 
 ## Creating a capped collection
 
-[Capped collections in MongoDB](http://www.mongodb.org/display/DOCS/Capped+Collections) are fixed sized collections that have a very high performance auto-FIFO age-out feature (age out is based on insertion order).
+[Capped collections in
+MongoDB](http://www.mongodb.org/display/DOCS/Capped+Collections) are
+fixed sized collections that have a very high performance auto-FIFO
+age-out feature (age out is based on insertion order).
 
-In addition, capped collections automatically, with high performance, maintain insertion order for the documents in the collection;
-this is very powerful for certain use cases such as logging or keeping "hot" data around for caching purposes.
+In addition, capped collections automatically, with high performance,
+maintain insertion order for the documents in the collection; this is
+very powerful for certain use cases such as logging or keeping "hot"
+data around for caching purposes.
 
 To create a collection as capped, use the same `monger.collection/create` function with options:
 
-{% gist f1f9e2d0f3cd9a7767b7 %}
+``` clojure
+(ns monger.docs.examples
+  (:require [monger.collection :as mc]))
+
+(defn- megabytes
+  [^long n]
+  (* n 1024 1024))
+
+;; creates a collection capped at 16 megabytes
+(mc/create "recent_events" {:capped true :size (-> 16 megabytes)})
+
+;; creates a collection capped at 1000 documents
+(mc/create "recent_events" {:capped true :max 1000})
+```
 
 
 ## Using MongoDB TTL collections (MongoDB 2.2+)
 
 MongoDB 2.2 and later versions support [TTL (time-to-live, aka expiring) collections](http://docs.mongodb.org/manual/tutorial/expire-data/).
 
-To enable document expiration, you need to create an index on a date field with the `:expireAfterSeconds` option:
+To enable document expiration, you need to create an index on a date
+field with the `:expireAfterSeconds` option:
 
-{% gist 81ee570edaffafbd9929 %}
+``` clojure
+(ns monger.docs.examples
+  (:require [monger.collection :as mc]))
 
-Note that MongoDB runs the expiring thread (sometimes referred to as called `TTLMonitor`), about once per minute, so with TTL values less than 60
-seconds this feature may be of little use.
+;; expire documents with the `created-at` field value 120 seconds or more in the past.
+;; expiration operation is performed about once a minute
+(mc/ensure-index "recent_events" {:created-at 1} {:expireAfterSeconds 120})
+```
+
+Note that MongoDB runs the expiring thread (sometimes referred to as
+called `TTLMonitor`), about once per minute, so with TTL values less
+than 60 seconds this feature may be of little use.
 
 
 ## Dropping a collection
 
-To drop a collection, use `monger.collection/drop` function that takes collection name as its only argument.
+To drop a collection, use `monger.collection/drop` function that takes
+collection name as its only argument.
 
 
 ## Renaming a collection
 
-To rename a collection, use `monger.collection/rename` that takes old and new collection names as arguments.
+To rename a collection, use `monger.collection/rename` that takes old
+and new collection names as arguments.
 
 
 ## What to Read Next
