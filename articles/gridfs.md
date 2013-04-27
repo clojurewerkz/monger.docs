@@ -28,12 +28,23 @@ without having to load the entire file in RAM to store it.
 
 To store a file in MongoDB using Monger, you use a DSL from the `monger.gridfs` namespace:
 
-{% gist 27dca14a534048293460 %}
+``` clojure
+(ns my.service
+  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
 
-`monger.gridfs/make-input-file` is a polymorphic function that accepts strings, `java.io.File` and `java.io.InputStream` instances as well as
+;; store a file from a local FS path with the given filename, content type and metadata
+(store-file (make-input-file "/path/to/a/local/file.png")
+  (filename "image.png")
+  (metadata {:format "png"})
+  (content-type "image/png"))
+```
+
+`monger.gridfs/make-input-file` is a polymorphic function that accepts
+strings, `java.io.File` and `java.io.InputStream` instances as well as
 byte arrays. Strings are treated as a local file path.
 
-When a file is stored, md5 chechsum will be calculated for its contents automatically.
+When a file is stored, md5 chechsum will be calculated for its
+contents automatically.
 
 
 ## Querying for files stored on GridFS
@@ -48,33 +59,92 @@ Getting a file out of GridFS is thus a two step operation:
  * Query for a file
  * Store the file to the local filesystem (or stream it, etc). Chunks will be streamed back to the client that will store them.
 
-It is common to query files by object id, md5 checksum or filename, although you can query them just like you would any collection
-of documents. To do so, use `monger.gridfs/find`, `monger.gridfs/find-one`, `monger.gridfs/find-maps`, `monger.gridfs/find-one-as-map`
-functions. If you need to store or stream file, you'd need to use `monger.gridfs/find` or `monger.gridfs/find-one` which will
-return back `com.mongodb.gridfs.GridFSDBFile` instances. They can be stored to disk to treated as input streams:
+It is common to query files by object id, md5 checksum or filename,
+although you can query them just like you would any collection of
+documents. To do so, use `monger.gridfs/find`,
+`monger.gridfs/find-one`, `monger.gridfs/find-maps`,
+`monger.gridfs/find-one-as-map` functions. If you need to store or
+stream file, you'd need to use `monger.gridfs/find` or
+`monger.gridfs/find-one` which will return back
+`com.mongodb.gridfs.GridFSDBFile` instances. They can be stored to
+disk to treated as input streams:
 
-{% gist 6438e601b00e87e6e33a %}
+``` clojure
+(ns my.service
+  (:require [monger.gridfs :as gfs])
+  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
+
+(store-file (make-input-file "/path/to/a/local/file.png")
+  (filename "image.png")
+  (metadata {:format "png"})
+  (content-type "image/png"))
+
+;; returns a list of GridFSDBFile instances. Each of them can be stored to
+;; disk using GridFSDBFile#writeTo method or converted to input stream with GridFSDBFile#getInputStream
+(gfs/find {:filename "image.png"})
+
+(-> (gfs/find-one {:filename "image.png"})
+    (.writeTo "/a/new/location.png"))
+```
 
 If you just need to access file metadata, you can load it directly as Clojure maps using `monger.gridfs/find-maps` and `monger.gridfs/find-one-as-map`:
 
-{% gist 48a2ee78950245099cd3 %}
+``` clojure
+(ns my.service
+  (:require [monger.gridfs :as gfs])
+  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
 
-If you want a list of *all* files, use `monger.gridfs/files-as-maps` or `monger.gridfs/all-files` functions without arguments.
+(store-file (make-input-file "/path/to/a/local/file.png")
+  (filename "image.png")
+  (metadata {:format "png"})
+  (content-type "image/png"))
+
+;; returns a list of file metadata documents as Clojure maps
+(gfs/find-maps {:filename "image.png"})
+
+;; same as (first (gridfs/find-maps …))
+(gfs/find-one-as-map {:filename "image.png"})
+```
+
+If you want a list of *all* files, use `monger.gridfs/files-as-maps`
+or `monger.gridfs/all-files` functions without arguments.
 
 
-## Deleting files stored on GridFS
+## Deleting Files Stored on GridFS
 
-Deleting files on GridFS is very similar to deleting documents from a collection. You use the `monger.gridfs/remove` function that takes a query condition:
+Deleting files on GridFS is very similar to deleting documents from a
+collection. You use the `monger.gridfs/remove` function that takes a
+query condition:
 
-{% gist ac162f3d9b6289b63021 %}
+``` clojure
+(ns my.service
+  (:require [monger.gridfs :as gfs])
+  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
+
+(store-file (make-input-file "/path/to/a/local/file.png")
+  (filename "image.png")
+  (metadata {:format "png"})
+  (content-type "image/png"))
+
+;; deletes a file
+(gfs/remove {:filename "image.png"})
+
+;; deletes a file by md5 checksum
+(gfs/remove {:md5 "1942f1e69c1d7354f93e2cf805894a9c"})
+```
 
 
-## Working with multiple databases
+## Working With Multiple Databases
 
-Monger is optimized for applications that use only one database but it is possible to work with multiple ones. For that, use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding) to rebind
-`monger.core/*mongodb-database*`, `monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*` vars to different values or use convenience functions
-that do that: `monger.core/with-connection`, `monger.core/with-db`, `monger.core/with-gridfs`. This is a common practice for Clojure libraries. Remember that
-var bindings are thread-local.
+Monger is optimized for applications that use only one database but it
+is possible to work with multiple ones. For that, use
+[clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
+to rebind `monger.core/*mongodb-database*`,
+`monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
+vars to different values or use convenience functions that do that:
+`monger.core/with-connection`, `monger.core/with-db`,
+`monger.core/with-gridfs`. This is a common practice for Clojure
+libraries. Remember that var bindings are thread-local.
 
 
 
@@ -91,6 +161,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Monger mailing
+list](https://groups.google.com/forum/#!forum/clojure-mongodb)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
