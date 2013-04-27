@@ -7,6 +7,10 @@ layout: article
 
 [Monger has a mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb). Feel free to join it and ask any questions you may have.
 
+### IRC
+
+Feel free to stop by `#clojurewerkz` on `irc.freenode.net`. There is a [Web IRC client](http://webchat.freenode.net/)
+if you need one.
 
 ## News & Announcements on Twitter
 
