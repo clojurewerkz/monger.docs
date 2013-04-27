@@ -23,14 +23,48 @@ This guide covers Monger 1.6 (including beta releases).
 
 Documents are removed using `monger.collection/remove` function that takes a collection name and conditions:
 
-{% gist 1d5d1c1f59c13193df61 %}
+``` clojure
+(ns my.service.server
+  (:require [monger.collection :as mc])
+  (:use [monger.core :only [connect! connect set-db! get-db]])
+  (:import [org.bson.types ObjectId]))
+
+;; localhost, default port
+(connect!)
+(set-db! (monger.core/get-db "monger-test"))
+
+;; insert a few documents
+(mc/insert "documents" { :language "English" :pages 38 })
+(mc/insert "documents" { :language "Spanish" :pages 78 })
+(mc/insert "documents" { :language "Unknown" :pages 87 })
+
+;; remove multiple documents
+(mc/remove "documents" { :language "English" })
+
+;; remove ALL documents in the collection
+(mc/remove "documents")
+```
 
 
-## Removing a single document by id
+## Removing a Single Document By Id
 
 `monger.collection/remove-by-id` is useful when document id is known:
 
-{% gist 3d74f4d2582c922be7c0 %}
+``` clojure
+(ns my.service.server
+  (:use [monger.core :only [connect! connect set-db! get-db]]
+        [monger.collection :only [insert remove-by-id] :as mc])
+  (:import [org.bson.types ObjectId]))
+
+;; localhost, default port
+(connect!)
+(set-db! (monger.core/get-db "monger-test"))
+
+;; remove document by id
+(let [oid (ObjectId.)]
+  (insert "documents" { :language "English" :pages 38 :_id oid })
+  (remove-by-id "documents" oid))
+```
 
 
 
@@ -50,6 +84,10 @@ We recommend that you read the following guides first, if possible, in this orde
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Monger mailing
+list](https://groups.google.com/forum/#!forum/clojure-mongodb)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
