@@ -3,20 +3,28 @@ title: "Monger, a Clojure MongoDB client: FAQ | MongoDB library for Clojure"
 layout: article
 ---
 
-## How is Monger licensed?
+## How is Monger Licensed?
 
-Monger is released under the [Eclipse Public License 1.0](http://www.eclipse.org/legal/epl-v10.html), the same as Clojure.
+Starting with version 1.6, Monger is double-licesned under the
+[Eclipse Public License
+1.0](http://www.tldrlegal.com/license/eclipse-public-license-1.0-(epl-1.0)
+(the same as Clojure) and [Apache Public
+License](http://www.tldrlegal.com/license/apache-license-2.0-(apache-2.0)).
+
+Earlier versions are licensed under the [Eclipse Public License 1.0](http://www.tldrlegal.com/license/eclipse-public-license-1.0-(epl-1.0).
 
 
-## What Clojure versions are supported?
+## What Clojure Versions Are Supported?
 
 Monger is built from the ground up for Clojure 1.3 and later.
 
 
-## What MongoDB versions are supported?
+## What MongoDB Versions Are Supported?
 
-Monger currently uses MongoDB Java driver 2.7.x under the hood and thus supports MongoDB 2.0 and later versions. Please note that some
-features may be specific to MongoDB 2.2 and later versions.
+Monger tries to use the most recent MongoDB Java driver available
+under the hood and thus supports MongoDB 2.0 and later
+versions. Please note that some features may be specific to MongoDB
+2.2, 2.4 or other releases.
 
 
 
@@ -69,6 +77,10 @@ thousands of documents per second, depending on the workload.
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Monger mailing list](https://groups.google.com/forum/#!forum/clojure-mongodb)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Monger mailing
+list](https://groups.google.com/forum/#!forum/clojure-mongodb)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
