@@ -1,18 +1,3 @@
-GIT
-  remote: git://github.com/mojombo/jekyll.git
-  revision: 1f02150ee9f44913f2d1e69de5eb7bdce91b0019
-  specs:
-    jekyll (1.0.0.rc1)
-      classifier (~> 1.3)
-      colorator (~> 0.1)
-      commander (~> 4.1.3)
-      directory_watcher (~> 1.4.1)
-      kramdown (~> 0.14)
-      liquid (~> 2.3)
-      maruku (~> 0.5)
-      pygments.rb (~> 0.4.2)
-      safe_yaml (~> 0.7.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -27,6 +12,16 @@ GEM
     fast-stemmer (1.0.2)
     highline (1.6.18)
     iconv (1.0.3)
+    jekyll (1.0.0.rc1)
+      classifier (~> 1.3)
+      colorator (~> 0.1)
+      commander (~> 4.1.3)
+      directory_watcher (~> 1.4.1)
+      kramdown (~> 0.14)
+      liquid (~> 2.3)
+      maruku (~> 0.5)
+      pygments.rb (~> 0.4.2)
+      safe_yaml (~> 0.7.0)
     kramdown (0.14.2)
     liquid (2.5.0)
     maruku (0.6.1)
@@ -46,5 +41,5 @@ PLATFORMS
 DEPENDENCIES
   albino
   iconv
-  jekyll!
+  jekyll (>= 1.0.0.rc1)
   redcarpet
