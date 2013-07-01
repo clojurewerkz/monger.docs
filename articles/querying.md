@@ -515,23 +515,23 @@ Sorting documents are specified exactly as they are in the MongoDB shell (1 for 
 (with-collection "scores"
   (find {})
   (fields [:score :name])
-  ;; it is VERY IMPORTANT to use sorted maps with sort
-  (sort (sorted-map :score -1 :name 1))
+  ;; it is VERY IMPORTANT to use array maps with sort
+  (sort (array-map :score -1 :name 1))
   (limit 10))
 
 ;; find scores 10 to 20
 (with-collection "scores"
   (find {})
   (fields [:score :name])
-  ;; it is VERY IMPORTANT to use sorted maps with sort
-  (sort (sorted-map :score -1 :name 1))
+  ;; it is VERY IMPORTANT to use array maps with sort
+  (sort (array-map :score -1 :name 1))
   (limit 10)
   (skip 10))
 ```
 
 This example also demonstrates query conditions and fetching a subset
 of fields. Note that because the order of keys matters for sorting,
-you should always use sorted maps with `(sort ...)`. Regular Clojure
+you should always use array maps with `(sort ...)`. Regular Clojure
 maps do not have ordering guarantees and this may lead to incorrect
 sorting of results.
 
