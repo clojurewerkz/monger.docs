@@ -48,6 +48,12 @@ that match the query.
 ```
 
 
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/update` is a twin sister of `monger.collection/update` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
+
+
 
 ## Updating a single document
 
@@ -71,6 +77,11 @@ that match the query.
 ;; updates score for player "sam" by a known id
 (mc/update-by-id "scores" oid {:score 1088})
 ```
+
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/update-by-id` is a twin sister of `monger.collection/update-by-id` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
 
 
 
@@ -105,6 +116,11 @@ MongoDB supports upserts, "update or insert" operations. To do an upsert with Mo
 Note that upsert only inserts one document. Learn more about upserts
 in [this MongoDB documentation
 section](http://docs.mongodb.org/manual/core/update/#Updating-update).
+
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/upsert` is a twin sister of `monger.collection/upsert` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
 
 
 ## Atomic Modifiers
@@ -279,6 +295,29 @@ will first look up the existing document by id and replace it with the one provi
     ;; finds and updates a document by _id because it is present
     (mc/save-and-return "people" { :_id doc-id :name "Joe" :age 30 :username "happyjoe" }))
 ```
+
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/save` is a twin sister of `monger.collection/save` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
+
+
+## Working With Multiple Databases
+
+Monger is optimized for applications that use only one database but it
+is possible to work with multiple ones.
+
+For that, use functions in the `monger.multi.collection` namespace: they mirror
+`monger.collection` but take a database as the first argument.
+
+
+It is also possible to use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
+to rebind `monger.core/*mongodb-database*`,
+`monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
+vars to different values or use convenience functions that do that:
+`monger.core/with-connection`, `monger.core/with-db`,
+`monger.core/with-gridfs`. This is a common practice for Clojure
+libraries. Remember that var bindings are thread-local.
 
 
 
