@@ -68,6 +68,24 @@ Documents are removed using `monger.collection/remove` function that takes a col
 
 
 
+## Working With Multiple Databases
+
+Monger is optimized for applications that use only one database but it
+is possible to work with multiple ones.
+
+For that, use functions in the `monger.multi.collection` namespace: they mirror
+`monger.collection` but take a database as the first argument.
+
+
+It is also possible to use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
+to rebind `monger.core/*mongodb-database*`,
+`monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
+vars to different values or use convenience functions that do that:
+`monger.core/with-connection`, `monger.core/with-db`,
+`monger.core/with-gridfs`. This is a common practice for Clojure
+libraries. Remember that var bindings are thread-local.
+
+
 
 ## What to read next
 
