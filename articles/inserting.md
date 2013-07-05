@@ -15,7 +15,11 @@ This guide covers:
  * Changing write concern for individual operations
  * Working with multiple databases
 
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
+This work is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+Attribution 3.0 Unported License</a> (including images &
+stylesheets). The source is available [on
+Github](https://github.com/clojurewerkz/monger.docs).
 
 
 ## What version of Monger does this guide cover?
@@ -26,8 +30,10 @@ This guide covers Monger 1.6 (including beta releases).
 
 ## Inserting documents
 
-If we don't count upserts, there are two insert functions in Monger: `monger.collection/insert` and `monger.collection/insert-batch`. Lets first take a look at the former.
-It takes two arguments: collection name and document to insert:
+If we don't count upserts, there are two insert functions in Monger:
+`monger.collection/insert` and `monger.collection/insert-batch`. Lets
+first take a look at the former.  It takes two arguments: collection
+name and document to insert:
 
 ``` clojure
 (ns doc.examples
@@ -70,6 +76,13 @@ libraries (for example), you can insert those:
                (.put "list" (ArrayList. ["red" "green" "blue"])))]
   (mc/insert "documents" db-obj))
 ```
+
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/insert` is a twin sister of `monger.collection/insert` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
+
+`monger.multi.collection/insert-and-return` is also available.
 
 
 ### Document ids (ObjectId)
@@ -217,6 +230,11 @@ inserts feature. To do it with Monger, use `monger.collection/insert-batch` func
 
 Please make sure to read [MongoDB documentation on error handling of batch inserts](http://www.mongodb.org/display/DOCS/Inserting#Inserting-Bulkinserts)
 
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/insert-batch` is a twin sister of `monger.collection/insert-batch` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
+
 
 ## Checking Insertion Results
 
@@ -353,8 +371,13 @@ When doing so, please keep MongoDB's differences in [error handling](http://docs
 ## Working With Multiple Databases
 
 Monger is optimized for applications that use only one database but it
-is possible to work with multiple ones. For that, use
-[clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
+is possible to work with multiple ones.
+
+For that, use functions in the `monger.multi.collection` namespace: they mirror
+`monger.collection` but take a database as the first argument.
+
+
+It is also possible to use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
 to rebind `monger.core/*mongodb-database*`,
 `monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
 vars to different values or use convenience functions that do that:
