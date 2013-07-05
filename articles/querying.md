@@ -139,12 +139,21 @@ Document ids in MongoDB do not have to be of the object id type, they also can b
 knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
 
 To coerce an input to `ObjectId` (instantiate one from a string of the input is a string, or just return the input if it is an `ObjectId`), there
-is [monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id). 
+is [monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id).
 
 ### Convert a MongoDB (BSON) ObjectId to a string
 
 To convert a BSON ObjectId (`org.bson.types.ObjectId` instance) to a string, just use [clojure.core/str](http://clojuredocs.org/clojure_core/clojure.core/str) to
 it or call `org.bson.types.ObjectId#toString` on it.
+
+
+### Alternative API for Working with Multiple Databases
+
+`monger.multi.collection/find-maps` is a twin sister of `monger.collection/find-maps` which takes
+a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
+
+`monger.multi.collection/find-one-as-map`, `monger.multi.collection/find-map-by-id`, and `monger.multi.collection/find-and-modify`
+are also available
 
 
 ## Loading a subset of fields
@@ -474,13 +483,13 @@ it is necessary to map (`clojure.core/map`) with `monger.conversion/from-db-obje
 ``` clojure
 (:require [monger.collection :as mc]
           [monger.conversion :as convert])
- 
+
 ;; get distinct values from the posts collection for the field category.
 (mc/distinct "posts" "category")
- 
+
 ;; get distinct values from the posts collection for the field category with a query.
 (mc/distinct "posts" "category" {:limit 5})
- 
+
 ;; convert values to maps using an anonymous function
 (map
   (fn [cat] (convert/from-db-object cat false))
@@ -706,8 +715,13 @@ Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection
 ## Working With Multiple Databases
 
 Monger is optimized for applications that use only one database but it
-is possible to work with multiple ones. For that, use
-[clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
+is possible to work with multiple ones.
+
+For that, use functions in the `monger.multi.collection` namespace: they mirror
+`monger.collection` but take a database as the first argument.
+
+
+It is also possible to use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
 to rebind `monger.core/*mongodb-database*`,
 `monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
 vars to different values or use convenience functions that do that:
