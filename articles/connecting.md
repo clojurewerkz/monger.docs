@@ -96,6 +96,11 @@ threads can wait for a connection.
 The maximum wait time in milliseconds that a thread may wait for a connection to become available.
 A value of 0 means that it will not wait. A negative value means to wait indefinitely.
 
+**NB!** Mongo-javadriver newer than *2.11*, a negative value is not anymore accepted  and 
+it will raise *IllegalArgumentException*:
+
+`IllegalArgumentException Minimum value is 0  com.mongodb.MongoClientOptions$Builder.maxWaitTime (MongoClientOptions.java:115)`
+
 
 #### :connect-timeout (default: 0)
 
