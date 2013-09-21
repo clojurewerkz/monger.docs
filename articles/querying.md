@@ -714,7 +714,7 @@ Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection
 
 ## Tweaking query options
 
-There're special cases when you need to tweak the settings of query - for example you have a long running query that needs to run more than 10minutes without getting a timeout exception. You can tweak the options two ways: using DSL options specifier or low-level helpers from `monger.cursor` namespace.
+There're special cases when you need to tweak the settings of query - for example you have a long running query that needs to run more than 10minutes without getting a timeout exception. You can tweak the options two ways: using the DSL `options` specifier or low-level helpers from `monger.cursor` namespace.
 
 #### Query DSL
 
@@ -732,11 +732,11 @@ When you are using the query DSL, then it's easy to tweak the options, just add 
     (options com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT))
 ```
 
-#### Low-level tweaking
+#### Fine-tuning cursors
 
-You can use helpers from `monger.cursor` namespace, when you are working with a low-level finder as `monger.collection/find`, which returns the database cursor object. 
+You can use helpers from `monger.cursor` namespace, when you are working with a low-level finder as `monger.collection/find`, returns the database cursor object. 
 
-Here's example usage of cursor helper
+Here's an example usage of cursor helper
 
 ```clojure
 
@@ -749,14 +749,14 @@ Here's example usage of cursor helper
   	(remove-option! db-cur :notimeout)  ;;removes specific option, keep other untouched
   	(add-options db-cur {:notimeout true :slaveok false})
   	(add-options db-cur [:notimeout :slaveok])
-  	(add-options db-cur :notimeout
+  	(add-options db-cur :notimeout)
   	(add-options db-cur com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT)
   	(get-options db-cur)                ;; returns map of settings, where values show current state of option
   	(format-as db-cur :map)             ;; turns lazy-seq of clojure map
   	)
 ```
 
-You can not tweak a query settings for `find-map` or `find-seq`, but you can simulate their functionality by using helpers from cursor namespace. Here's little usage example, that simulates find-map functionality:
+You cannot tweak the query settings for `find-map` or `find-seq`, but you can simulate their functionality by using helpers from the cursor namespace. Here's a little usage example, that simulates the `find-map` functionality:
 
 ```clojure
 
