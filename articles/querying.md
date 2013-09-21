@@ -712,6 +712,75 @@ Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection
 ```
 
 
+## Tweaking query options
+
+There're special cases when you need to tweak the settings of query - for example you have a long running query that needs to run more than 10minutes without getting a timeout exception. You can tweak the options two ways: using the DSL `options` specifier or low-level helpers from `monger.cursor` namespace.
+
+#### Query DSL
+
+When you are using the query DSL, then it's easy to tweak the options, just add the  option specifier to your query. The option specifier accepts Clojure map, list, keyword or constant value from class `com.mongodb.Bytes` as argument.
+
+```clojure
+
+  (require '[monger.query :refer [with-collection, find, options]])
+  
+  (with-collection "products"
+    (find {:language "Clojure"})
+    (options {:notimeout true, :slaveok false}) ;;`false` turns option off
+    (options [:notimeout :slaveok])             ;; activate these 2 options
+    (options :notimeout)                        ;; only timeout
+    (options com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT))
+```
+
+#### Fine-tuning cursors
+
+You can use helpers from `monger.cursor` namespace, when you are working with a low-level finder as `monger.collection/find`, returns the database cursor object. 
+
+Here's an example usage of cursor helper
+
+```clojure
+
+  (require '[monger.collection :as coll]
+           '[monger.cursor :as cur])
+  
+  (let [db-cur (coll/find :languages {:language "Clojure"})]
+  	(reset-options db-cur)              ;; cleans previous settings
+  	(add-option! db-cur :notimeout)     ;; adds only one options
+  	(remove-option! db-cur :notimeout)  ;;removes specific option, keep other untouched
+  	(add-options db-cur {:notimeout true :slaveok false})
+  	(add-options db-cur [:notimeout :slaveok])
+  	(add-options db-cur :notimeout)
+  	(add-options db-cur com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT)
+  	(get-options db-cur)                ;; returns map of settings, where values show current state of option
+  	(format-as db-cur :map)             ;; turns lazy-seq of clojure map
+  	)
+```
+
+You cannot tweak the query settings for `find-map` or `find-seq`, but you can simulate their functionality by using helpers from the cursor namespace. Here's a little usage example, that simulates the `find-map` functionality:
+
+```clojure
+
+  (require '[monger.cursor :refer [make-db-cursor add-options format-as]])
+  
+  (let [db-cur (make-db-cursor :languages {:language "Clojure"})]
+   (-> db-cur
+   	 (add-options :notimeout)
+     (format-as :map)))
+```
+
+#### Table of Options
+
+
+keyword      | Bytes class value       |description
+-------------|-------------------------|-----------------------------
+:awaitdata   | QUERYOPTION_AWAITDATA   | Use with TailableCursor.
+:notimeout   | QUERYOPTION_NOTIMEOUT   |The server normally times out idle cursors after an inactivity period (10 minutes) to prevent excess memory use.
+:oplogreplay | QUERYOPTION_OPLOGREPLAY | Internal replication use only - driver should not set
+:partial     | QUERYOPTION_PARTIAL     | Use with sharding (mongos).
+:slaveok     | QUERYOPTION_SLAVEOK     | When turned on, read queries will be directed to slave servers instead of the primary server.
+:tailable    | QUERYOPTION_TAILABLE    | Tailable means cursor is not closed when the last data is retrieved.
+
+
 ## Working With Multiple Databases
 
 Monger is optimized for applications that use only one database but it
