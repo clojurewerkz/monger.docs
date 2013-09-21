@@ -714,11 +714,11 @@ Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection
 
 ## Tweaking query options
 
-There're special cases when you need to tweak settings of query - for example you have long running query that needs to run more than 10minutes without getting timeout exception. For monger you can tweak options two ways: using DSL options specifier or low-level helpers from monger.cursor namespace.
+There're special cases when you need to tweak the settings of query - for example you have a long running query that needs to run more than 10minutes without getting a timeout exception. You can tweak the options two ways: using DSL options specifier or low-level helpers from monger.cursor namespace.
 
 #### Query DSL
 
-When you are using query DSL, then it's easy to tweak options, just add option specifier to your query.Option specifier accepts Clojure map, list, keyword or constant value from class com.mongodb.Bytes as argument.
+When you are using the query DSL, then it's easy to tweak the options, just add the  option specifier to your query. The option specifier accepts Clojure map, list, keyword or constant value from class com.mongodb.Bytes as argument.
 
 ```clojure
 
@@ -734,7 +734,7 @@ When you are using query DSL, then it's easy to tweak options, just add option s
 
 #### Low-level tweaking
 
-You can use helpers from monger.cursor namespace, when you are working with low-level finder as monger.collection/find, which returns dbCursor object. 
+You can use helpers from monger.cursor namespace, when you are working with a low-level finder as monger.collection/find, which returns the database cursor object. 
 
 Here's example usage of cursor helper
 
