@@ -727,8 +727,8 @@ When you are using the query DSL, then it's easy to tweak the options, just add 
   (with-collection "products"
     (find {:language "Clojure"})
     (options {:notimeout true, :slaveok false}) ;;`false` turns option off
-    (options [:notimeout :slaveok]) ;; activate these 2 options
-    (options :notimeout) ;; only timeout
+    (options [:notimeout :slaveok])             ;; activate these 2 options
+    (options :notimeout)                        ;; only timeout
     (options com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT))
 ```
 
@@ -744,19 +744,19 @@ Here's example usage of cursor helper
            '[monger.cursor :as cur])
   
   (let [db-cur (coll/find :languages {:language "Clojure"})]
-  	(reset-options db-cur) ;; cleans previous settings
-  	(add-option! db-cur :notimeout) ;; adds only one options
-  	(remove-option! db-cur :notimeout) ;;removes specific option, keep other untouched
+  	(reset-options db-cur)              ;; cleans previous settings
+  	(add-option! db-cur :notimeout)     ;; adds only one options
+  	(remove-option! db-cur :notimeout)  ;;removes specific option, keep other untouched
   	(add-options db-cur {:notimeout true :slaveok false})
   	(add-options db-cur [:notimeout :slaveok])
   	(add-options db-cur :notimeout
   	(add-options db-cur com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT)
-  	(get-options db-cur) ;; returns map of settings, where values show current state of option
-  	(format-as db-cur :map) ;; turns lazy-seq of clojure map
+  	(get-options db-cur)                ;; returns map of settings, where values show current state of option
+  	(format-as db-cur :map)             ;; turns lazy-seq of clojure map
   	)
 ```
 
-You can not tweak query settings for find-map or find-seq, but you can simulate their functionality by using helpers from cursor namespace. Here's little usage example, that simulates find-map functionality:
+You can not tweak a query settings for find-map or find-seq, but you can simulate their functionality by using helpers from cursor namespace. Here's little usage example, that simulates find-map functionality:
 
 ```clojure
 
