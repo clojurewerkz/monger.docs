@@ -39,8 +39,8 @@ reducing incidental complexity. It also fits MongoDB data model very well.
 
 ## Supported Clojure versions
 
-Monger is built from the ground up for Clojure 1.3 and later. The most recent stable release
-is highly recommended.
+Monger requires Clojure 1.4+. The most recent stable release is highly
+recommended.
 
 
 ## Supported MongoDB versions
