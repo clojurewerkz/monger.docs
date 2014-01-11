@@ -56,7 +56,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 ### With Leiningen
 
 ``` clojure
-[com.novemberain/monger "1.5.0"]
+[com.novemberain/monger "1.7.0"]
 ```
 
 ### With Maven
@@ -76,7 +76,7 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>monger</artifactId>
-  <version>1.5.0</version>
+  <version>1.7.0</version>
 </dependency>
 ```
 
