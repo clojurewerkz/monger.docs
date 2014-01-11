@@ -45,7 +45,8 @@ is highly recommended.
 
 ## Supported MongoDB versions
 
-Monger currently uses MongoDB Java driver 2.10.x under the hood and thus supports MongoDB 2.0 and later versions. Please note that some
+Monger currently uses MongoDB Java driver 2.11.x under the hood and
+thus supports MongoDB 2.0 and later versions. Please note that some
 features may be specific to MongoDB 2.2 and later versions.
 
 
