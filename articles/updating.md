@@ -247,7 +247,7 @@ that do not have duplicates):
   (:use monger.operators))
 
 ;; removes a single value from an array field
-(mgcol/update coll {:_id oid} {$pull {:permissions ["write"]}})
+(mgcol/update coll {:_id oid} {$pull {:permissions "write"}})
 ```
 
 
