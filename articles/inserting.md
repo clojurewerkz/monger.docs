@@ -57,6 +57,10 @@ generated document id:
 (mc/insert-and-return "documents" {:name "John" :age 30})
 ```
 
+Because `monger.collection/insert-and-return` returns the document inserted
+and not a write result, it's necessary to use `monger.core/get-last-error` to check
+for errors.
+
 Document can be either a Clojure map (in the majority of cases, it is)
 or an instance of `com.mongodb.DBObject` (referred to later as
 `DBObject`).  In case your application obtains DBObjects from other
