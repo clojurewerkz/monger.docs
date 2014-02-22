@@ -327,8 +327,8 @@ A more convenient way of finding a document by id as Clojure map is `monger.coll
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
 (let [oid (ObjectId.)]
   (mc/insert "documents" {:_id oid :first_name "John" :last_name "Lennon"})
