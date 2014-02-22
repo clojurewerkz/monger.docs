@@ -166,7 +166,7 @@ addresses instead of just a single one:
 
 ``` clojure
 (ns my.service
-  (:use monger.core :only [connect connect! server-address mongo-options]))
+  (:require monger.core :refer [connect connect! server-address mongo-options]))
 
 ;; Connect to a single MongoDB instance
 (connect (server-address "127.0.0.1" 27017) (mongo-options))

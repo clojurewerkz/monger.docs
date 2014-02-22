@@ -30,7 +30,7 @@ To store a file in MongoDB using Monger, you use a DSL from the `monger.gridfs` 
 
 ``` clojure
 (ns my.service
-  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
+  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]))
 
 ;; store a file from a local FS path with the given filename, content type and metadata
 (store-file (make-input-file "/path/to/a/local/file.png")
@@ -71,8 +71,8 @@ disk to treated as input streams:
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :as gfs])
-  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
+  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]
+            [monger.gridfs :as gfs]))
 
 (store-file (make-input-file "/path/to/a/local/file.png")
   (filename "image.png")
@@ -91,8 +91,8 @@ If you just need to access file metadata, you can load it directly as Clojure ma
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :as gfs])
-  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
+  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]
+            [monger.gridfs :as gfs]))
 
 (store-file (make-input-file "/path/to/a/local/file.png")
   (filename "image.png")
@@ -118,8 +118,8 @@ query condition:
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :as gfs])
-  (:use [monger.gridfs :only [store-file make-input-file filename content-type metadata]]))
+  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]
+            [monger.gridfs :as gfs]))
 
 (store-file (make-input-file "/path/to/a/local/file.png")
   (filename "image.png")

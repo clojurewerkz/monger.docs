@@ -198,7 +198,7 @@ sessions will be stored in:
 
 ``` clojure
 (ns monger.docs.examples
-  (:use monger.ring.session-store :only [monger-store]))
+  (:require [monger.ring.session-store :refer [monger-store]]))
 
 ;; create a new store, typically passed to server handlers
 ;; with libraries like Noir or Compojure
@@ -257,7 +257,7 @@ It works exactly the same way but the name of the function that creates a store 
 
 ``` clojure
 (ns monger.docs.examples
-  (:use monger.ring.session-store :only [session-store]))
+  (:require [monger.ring.session-store :refer [session-store]]))
 
 ;; create a new store, typically passed to server handlers
 ;; with libraries like Noir or Compojure

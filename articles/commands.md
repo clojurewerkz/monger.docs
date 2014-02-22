@@ -93,8 +93,8 @@ make sure you use [clojure.core/sorted-map](http://clojure.github.com/clojure/cl
 
 ``` clojure
 (ns monger.docs.examples
-  (:use [monger.conversion :only [from-db-object]])
-  (:require [monger.command :as cmd]))
+  (:require [monger.command :as cmd]
+            [monger.conversion :refer [from-db-object]]))
 
 ;= #<CommandResult { "serverUsed" : "127.0.0.1:27017" , "db" : "…" , "collections" : 25 , "objects" : 312807 , "avgObjSize" : 297.94926584123755 , "dataSize" : 93200616 , "storageSize" : 116150272 , "numExtents" : 53 , "indexes" : 37 , "indexSize" : 33088272 , "fileSize" : 469762048 , "nsSizeMB" : 16 , "ok" : 1.0}>
 (cmd/db-stats "documents")
@@ -108,8 +108,8 @@ make sure you use [clojure.core/sorted-map](http://clojure.github.com/clojure/cl
 
 ``` clojure
 (ns monger.docs.examples
-  (:use [monger.conversion :only [from-db-object]])
-  (:require [monger.command :as cmd]))
+  (:require [monger.command :as cmd]
+            [monger.conversion :refer [from-db-object]]))
 
 (cmd/reindex-collection "pages")
 ```

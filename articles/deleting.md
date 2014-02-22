@@ -25,8 +25,8 @@ Documents are removed using `monger.collection/remove` function that takes a col
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.collection :as mc])
-  (:use [monger.core :only [connect! connect set-db! get-db]])
+  (:require [monger.collection :as mc]
+            [monger.core :refer [connect! connect set-db! get-db]])
   (:import [org.bson.types ObjectId]))
 
 ;; localhost, default port
@@ -52,8 +52,8 @@ Documents are removed using `monger.collection/remove` function that takes a col
 
 ``` clojure
 (ns my.service.server
-  (:use [monger.core :only [connect! connect set-db! get-db]]
-        [monger.collection :only [insert remove-by-id] :as mc])
+  (:require [monger.core :refer [connect! connect set-db! get-db]]
+            [monger.collection :refer [insert remove-by-id] :as mc])
   (:import [org.bson.types ObjectId]))
 
 ;; localhost, default port

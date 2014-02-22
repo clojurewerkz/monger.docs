@@ -66,11 +66,11 @@ destination collection and one of the output type values (a
 
 ``` clojure
 (ns monger.docs.examples
-  (:use [monger.core :only [command]]
-        [monger.collection :only [map-reduce]]
-        [monger.result :only [ok?]]
-        [monger.conversion :only [from-db-object]])
-  (:require [clojurewerkz.support.js :as js])
+  (:require [clojurewerkz.support.js :as js]
+            [monger.core :refer [command]]
+            [monger.collection :refer [map-reduce]]
+            [monger.result :refer [ok?]]
+            [monger.conversion :refer [from-db-object]])
   (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
 ;; performs a map/reduce query using functions stored in mapper.js and reducer.js
@@ -85,11 +85,11 @@ It is also possible to return results to the client (as "inline output"):
 
 ``` clojure
 (ns monger.docs.examples
-  (:use [monger.core :only [command]]
-        [monger.collection :only [map-reduce]]
-        [monger.result :only [ok?]]
-        [monger.conversion :only [from-db-object]])
-  (:require [clojurewerkz.support.js :as js])
+  (:require [clojurewerkz.support.js :as js]
+            [monger.core :refer [command]]
+            [monger.collection :refer [map-reduce]]
+            [monger.result :refer [ok?]]
+            [monger.conversion :refer [from-db-object]])
   (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
 ;; performs a map/reduce query using functions stored in mapper.js and reducer.js

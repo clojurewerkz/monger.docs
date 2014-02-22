@@ -558,8 +558,8 @@ Documents are removed using `monger.collection/remove` function.
 
 ``` clojure
 (ns my.service.server
-  (:use [monger.core :only [connect! connect set-db! get-db]]
-        [monger.collection :only [insert update update-by-id remove-by-id] :as mc])
+  (:require [monger.core :refer [connect! connect set-db! get-db]]
+            [monger.collection :refer [insert update update-by-id remove-by-id] :as mc])
   (:import [org.bson.types ObjectId]
            [com.mongodb DB WriteConcern]))
 

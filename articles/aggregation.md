@@ -49,8 +49,8 @@ as strings, e.g. "$project", or using predefined operators from the `monger.oper
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
 ;; performs an aggregation query.
 ;;

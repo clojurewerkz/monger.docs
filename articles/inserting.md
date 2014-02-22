@@ -103,8 +103,8 @@ set. If you need a generated object id. You do so by instantiating
 
 ``` clojure
 (ns my.service.server
-  (:use [monger.core :only [connect! connect set-db! get-db]]
-        [monger.collection :only [insert]])
+  (:require [monger.core :refer [connect! connect set-db! get-db]]
+            [monger.collection :refer [insert]])
   (:import [org.bson.types ObjectId]))
 
 ;; localhost, default port
@@ -197,8 +197,8 @@ versa, Monger has two functions that do that,
 
 ``` clojure
 (ns doc.examples
-  (:require [monger.collection :as mc])
-  (:use monger.conversion))
+  (:require [monger.collection :as mc]
+            [monger.conversion :refer :all]))
 
 (to-db-object {:int 1 :string "Mongo" :float 22.23 :map {:int 10 :string "Clojure" :float 11.9 :list '(1 "a" :b) :map {:key "value"}}})
 
@@ -224,8 +224,8 @@ inserts feature. To do it with Monger, use `monger.collection/insert-batch` func
 
 ``` clojure
 (ns doc.examples
-  (:require [monger.collection :as mc])
-  (:use monger.conversion))
+  (:require [monger.collection :as mc]
+            [monger.conversion :refer :all]))
 
 (mc/insert-batch "documents" [{:name "Alan" :age 27 :score 17772}
                               {:name "Joe" :age 32 :score 8277}
@@ -250,8 +250,8 @@ MongoDB responses for success:
 
 ``` clojure
 (ns doc.examples
-  (:require [monger.collection :as mc])
-  (:use monger.result :only [ok? has-error?]))
+  (:require [monger.collection :as mc]
+            [monger.result :refer [ok? has-error?]]))
 
 (let [response (mc/insert-batch "documents" [{:name "Alan" :age 27 :score 17772}
                               {:name "Joe" :age 32 :score 8277}
@@ -280,7 +280,7 @@ With Validateur you define validation sets that compose one or more validators:
 
 ``` clojure
 (ns my.app
-  (:use validateur.validation))
+  (:require [validateur.validation :refer :all]))
 
 (validation-set
   (presence-of :email)
