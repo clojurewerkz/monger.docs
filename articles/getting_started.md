@@ -218,8 +218,8 @@ So it is highly recommended to always store documents with the `:_id` key set. I
 
 ``` clojure
 (ns my.service.server
-  (:use [monger.core :only [connect! connect set-db! get-db]]
-        [monger.collection :only [insert]])
+  (:require [monger.core :refer [connect! connect set-db! get-db]]
+            [monger.collection :refer [insert]])
   (:import [org.bson.types ObjectId]))
 
 ;; localhost, default port
