@@ -158,7 +158,8 @@ It is also possible to pass connection options as query parameters:
 
 ## How to Insert Documents with Monger
 
-To insert documents, use `monger.collection/insert` and `monger.collection/insert-batch` functions.
+To insert documents, `insert`, `insert-and-return` and `insert-batch` functions
+in the `monger.collection` namespace are used.
 
 ``` clojure
 (ns my.service.server
@@ -196,17 +197,9 @@ To insert documents, use `monger.collection/insert` and `monger.collection/inser
 `monger.collection/insert` returns write result that
 `monger.result/ok?` and similar functions can operate on.
 
-`monger.collection/insert-and-return` is an alternative insertion
-function that returns the exact documented inserted, including the
-generated document id:
-
-``` clojure
-(ns doc.examples
-  (:require [monger.collection :as mc]))
-
-;; returns the inserted document that includes generated _id
-(mc/insert-and-return "documents" {:name "John" :age 30})
-```
+`monger.collection/insert-and-return` returns the exact documented
+inserted, including the generated document id. It is convenient
+but requires manual checking for errors with `monger.core/get-last-error`.
 
 `monger.collection/insert-batch` is a recommended way of inserting
 batches of documents (from tens to hundreds of thousands) because it
