@@ -162,14 +162,18 @@ To insert documents, use `monger.collection/insert` and `monger.collection/inser
 
 ``` clojure
 (ns my.service.server
-  (:use [monger.core :only [connect! connect set-db! get-db]]
-        [monger.collection :only [insert insert-batch]])
+  (:require [monger.core :refer [connect! connect set-db! get-db]]
+            [monger.collection :refer [insert insert-batch]])
   (:import [org.bson.types ObjectId]
            [com.mongodb DB WriteConcern]))
 
 ;; localhost, default port
 (connect!)
 (set-db! (monger.core/get-db "monger-test"))
+
+;; with a generated document id, returns the complete
+;; inserted document
+(mc/insert-and-return "documents" {:name "John" :age 30})
 
 ;; with explicit document id (recommended)
 (insert "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
