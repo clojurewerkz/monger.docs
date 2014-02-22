@@ -39,9 +39,9 @@ is used to convert a command results to a Clojure map. Here is an example that d
 
 ``` clojure
 (ns monger.docs.examples
-  (:use [monger.core :only [command]]
-        [monger.result :only [ok?]]
-        [monger.conversion :only [from-db-object]]))
+  (:require [monger.core :refer [command]]
+            [monger.result :refer [ok?]]
+            [monger.conversion :refer [from-db-object]]))
 
 (let [raw-result (command (sorted-map :isMaster 1))
       result     (from-db-object raw-result true)]
@@ -74,10 +74,10 @@ make sure you use [clojure.core/sorted-map](http://clojure.github.com/clojure/cl
 
 ``` clojure
 (ns monger.docs.examples
-  (:use [monger.core :only [command]]
-        [monger.result :only [ok?]]
-        [monger.conversion :only [from-db-object]])
-  (:require [monger.command :as cmd]))
+  (:require [monger.command :as cmd])
+            [monger.core :refer [command]]
+            [monger.result :refer [ok?]]
+            [monger.conversion :refer [from-db-object]])
 
 ;; #<CommandResult { "count" : 107281 , "size" : 52210704 , "avgObjSize" : 486.67242102515826 , "storageSize" : 65224704 , "numExtents" : 9 , "nindexes" : 6 , "lastExtentSize" : 17399808 , "paddingFactor" : 1.0 , "flags" : 1 , "totalIndexSize" : 26187728, …, "ok" : 1.0}>
 (cmd/collection-stats "documents")
