@@ -62,8 +62,8 @@ Each element of the sequence is a `com.mongodb.DBObject` instance. They can be t
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.collection :as mc])
-  (:use [monger.conversion :only [from-db-object]]))
+  (:require [monger.collection :as mc]
+            [monger.conversion :refer [from-db-object]]))
 
 (mc/insert "documents" {:first_name "John"  :last_name "Lennon"})
 (mc/insert "documents" {:first_name "Ringo" :last_name "Starr"})
@@ -113,8 +113,9 @@ A more convenient way of finding a document by id as Clojure map is `monger.coll
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all])
+)
 
 (let [oid (ObjectId.)]
   (mc/insert "documents" {:_id oid :first_name "John" :last_name "Lennon"})
@@ -235,7 +236,7 @@ compile time. Here is what it looks like with operator macros:
 
 ``` clojure
 (ns my.app
-  (:use monger.operators))
+  (:require [monger.operators :refer :all]))
 
 ;; using MongoDB operators as symbols
 (mc/find "products" { :price_in_subunits { $gt 1200 $lte 4000 } })
@@ -247,8 +248,8 @@ Below are more examples that use various query operators (you can use any operat
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all]))
 
 (let [collection "libraries"]
     (mc/insert-batch collection [{:language "Clojure", :name "monger"   :users 1}
@@ -273,9 +274,10 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators)
-  (import org.bson.types.ObjectId))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all])
+
+  (:import org.bson.types.ObjectId))
 
 (let [coll "docs"
       doc1 {:_id (ObjectId.) :published-by "Jill The Blogger" :draft false :title "X announces another Y"}
@@ -294,9 +296,10 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators)
-  (import org.bson.types.ObjectId))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all])
+
+  (:import org.bson.types.ObjectId))
 
 (let [coll "docs"
       doc1 {:_id (ObjectId.) :counter 25}
@@ -319,8 +322,8 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all]))
 
 (let [collection "libraries"]
     (mc/insert-batch collection [{:language "Ruby",    :name "mongoid"  :users 1}
@@ -336,8 +339,9 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all])
+)
 
 (let [collection "libraries"]
     (mgcol/insert-batch collection [{:language "Clojure" :tags ["functional"]}
@@ -360,8 +364,8 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all]))
 
 (let [collection "libraries"]
     (mgcol/insert-batch collection [{ :language "Ruby",    :name "mongoid"  :users 1}
@@ -384,8 +388,8 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all]))
 
 (let [collection "libraries"]
     (mc/insert-batch collection [{:language "Ruby"    :name "Mongoid"  :users 1}
@@ -409,8 +413,9 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all])
+)
 
 (let [collection "people"]
     (mc/insert-batch collection [{:name "Bob" :comments [{:text "Nice!" :rating 1}
@@ -438,8 +443,8 @@ These and other examples of Monger finders in one gist:
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+    [monger.operators :refer :all]))
 
 ;; find one document by id, as Clojure map
 (mc/find-map-by-id "documents" (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
@@ -518,7 +523,7 @@ Sorting documents are specified exactly as they are in the MongoDB shell (1 for 
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:use monger.query))
+  (:require [monger.query :refer :all]))
 
 ;; find top 10 scores that will be returned as Clojure maps
 (with-collection "scores"
@@ -552,7 +557,7 @@ Using `skip` and `limit` to do pagination in the query DSL is so common that Mon
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:use monger.query))
+  (:require [monger.query :refer :all]))
 
 ;; find top 10 scores
 (with-collection "scores"
@@ -579,7 +584,7 @@ in slightly out of date data to be returned):
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:use monger.query)
+  (:require [monger.query :refer :all])
   (:import com.mongodb.ReadPreference))
 
 ;; reads from primary (master) to guarantee consistency
@@ -619,7 +624,8 @@ Here is how to snapshot a cursor with Monger query DSL:
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:use monger.query monger.operators))
+  (:require [monger.query :refer :all]
+            [monger.operators :refer :all]))
 
 ;; performs a snapshotted query
 (with-collection "documents"
@@ -635,7 +641,8 @@ While not necessary in most cases, it is possible to force query to use the give
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:use monger.query [monger.operators :only [$gt $lt]])
+  (:require [monger.query :refer :all]
+            [monger.operators :refer [$gt $lt]])
   (:import com.mongodb.ReadPreference))
 
 (with-collection coll
@@ -658,7 +665,8 @@ number of documents returned by the server:
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:use monger.query [monger.operators :only [$gt $lt]]))
+  (:require [monger.query :refer :all]
+            [monger.operators :refer [$gt $lt]]))
 
 (with-collection coll
                   (find {:age_in_days {$gt 365}})

@@ -134,8 +134,9 @@ to `monger.collection/update`. For example, to increment number of views for a p
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all])
+)
 
 (mc/update "visits" {:url "http://megacorp.com"} {$inc {:visits 1}})
 ```
@@ -159,8 +160,8 @@ MongoDB shell.
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 (mc/update "visits" {:url "http://megacorp.com"} {$inc {:visits 1}})
 ```
@@ -172,8 +173,8 @@ MongoDB shell.
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 ;; sets "weight" field in the document to 20.5
 (mgcol/update coll {:_id oid} {$set {:weight 20.5}})
@@ -189,8 +190,8 @@ MongoDB shell.
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 (mc/update "visits" {:url "http://megacorp.com"} {$unset "unverified"})
 ```
@@ -202,8 +203,8 @@ MongoDB shell.
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 ;; adds "überachievement" to the list of badges (which an array field)
 (mgcol/update "people" {:_id oid} {$push {:badges "überachievement"}})
@@ -216,8 +217,8 @@ MongoDB shell.
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 ;; adds multiple items to an array field
 (mgcol/update coll {:_id oid} {$pushAll {:items ["Glass Star" "See No Evil"]}})
@@ -231,8 +232,8 @@ that do not have duplicates):
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 ;; adds a single value to an array field, ensuring there are no duplicates
 (mgcol/update coll {:_id oid} {$addToSet {:permissions ["write"]}})
@@ -243,8 +244,8 @@ that do not have duplicates):
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 ;; removes a single value from an array field
 (mgcol/update coll {:_id oid} {$pull {:permissions "write"}})
@@ -255,8 +256,8 @@ that do not have duplicates):
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.collection :as mc]
+      [monger.operators :refer :all]))
 
 ;; removes multiple items from an array field
 (mgcol/update coll {:_id oid} {$pullAll {:items ["Glass Star" "See No Evil"]}})
