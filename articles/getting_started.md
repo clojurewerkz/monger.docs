@@ -385,7 +385,7 @@ compile time. Here is what it looks like with operator macros:
 
 ``` clojure
 (ns my.app
-  (:use monger.operators))
+  (:require [monger.operators :refer :all]))
 
 ;; using MongoDB operators as symbols
 (mc/find "products" { :price_in_subunits { $gt 1200 $lte 4000 } })
@@ -400,7 +400,7 @@ These and other examples of Monger finders in one gist:
 ``` clojure
 (ns my.service.finders
   (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.operators :refer :all]))
 
 ;; find one document by id, as Clojure map
 (mc/find-map-by-id "documents" (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
@@ -544,7 +544,7 @@ for a particular page:
 ``` clojure
 (ns my.service
   (:require [monger.collection :as mc])
-  (:use monger.operators))
+  (:require [monger.operators :refer :all]))
 
 (mc/update "visits" {:url "http://megacorp.com"} {$inc {:visits 1}})
 ```
