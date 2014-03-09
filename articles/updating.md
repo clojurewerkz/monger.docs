@@ -107,10 +107,11 @@ MongoDB supports upserts, "update or insert" operations. To do an upsert with Mo
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc]))
+  (:require [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
 ;; updates score for player "sam" if it exists; creates a new document otherwise
-(mc/update "scores" {:player "sam"} {:score 1088} :upsert true)
+(mc/update "scores" {:player "sam"} {$set {:score 1088}} :upsert true)
 ```
 
 Note that upsert only inserts one document. Learn more about upserts
