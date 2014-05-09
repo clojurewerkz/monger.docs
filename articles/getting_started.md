@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.7 (including beta releases).
+This guide covers Monger 1.8 (including beta releases).
 
 
 ## Monger Overview
@@ -57,7 +57,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 ### With Leiningen
 
 ``` clojure
-[com.novemberain/monger "1.7.0"]
+[com.novemberain/monger "1.8.0"]
 ```
 
 ### With Maven
@@ -77,7 +77,7 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>monger</artifactId>
-  <version>1.7.0</version>
+  <version>1.8.0</version>
 </dependency>
 ```
 

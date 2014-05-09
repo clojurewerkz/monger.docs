@@ -24,7 +24,7 @@ Github](https://github.com/clojurewerkz/monger.docs).
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.7 (including beta releases).
+This guide covers Monger 1.8 (including beta releases).
 
 
 
