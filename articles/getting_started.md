@@ -175,6 +175,9 @@ To authenticate, use `monger.core/authenticate` which takes a database, username
 and password as char array:
 
 ``` clojure
+(ns monger.docs.examples
+  (:require [monger.core :as mg]))
+
 (let [conn (mg/connect)
       db   (mg/get-db "monger-test")
       u    "username"
