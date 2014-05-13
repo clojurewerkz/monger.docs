@@ -381,7 +381,9 @@ individual operations:
   (mc/insert "accounts" {:email "joe@example.com" :password_hash "..." :password_salt "..."} WriteConcern/REPLICAS_SAFE))
 ```
 
-When doing so, please keep MongoDB's differences in [error handling](http://docs.mongodb.org/manual/core/write-operations/#write-concern) in mind.
+When doing so, please keep MongoDB's differences in [error
+handling](http://docs.mongodb.org/manual/core/write-operations/#write-concern)
+in mind.
 
 
 ## What To Read Next
