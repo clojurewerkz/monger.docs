@@ -52,7 +52,7 @@ Monger requires Clojure 1.4+. The most recent stable release is highly
 recommended.
 
 
-## Supported MongoDB versions
+## Supported MongoDB Versions
 
 Monger uses MongoDB Java driver 2.x under the hood and
 thus supports MongoDB 2.0 and later versions. Please note that some
