@@ -33,7 +33,7 @@ versions. Please note that some features may be specific to MongoDB
 There is one MongoDB client for Clojure that has been around since 2009. So, why create another one? Monger authors
 wanted a client that will
 
- * Support most of MongoDB 2.0+ features but only those that really matter. Grouping the way it is done today, for example, does not (it is easier to just use Map/Reduce directly).
+ * Support most of MongoDB 2.0+ features but only those that really matter.
  * Be well documented.
  * Be well tested.
  * Be maintained, do not carry technical debt from 2009 forever.
