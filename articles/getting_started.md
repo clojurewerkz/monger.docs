@@ -358,7 +358,8 @@ For example, `monger.collection/find` returns a `DBCursor`:
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
 (let [conn (mg/connect)
       db   (mg/get-db conn "monger-test")
@@ -379,7 +380,6 @@ but converts `DBObject` instances to Clojure maps:
 ;; returns documents with year field value of 1998, as Clojure maps
 (mc/find-maps db "documents" { :year 1998 })
 ```
-
 
 `monger.collection/find-one` finds one document and returns it as a
 `DBObject` instance:
