@@ -182,7 +182,6 @@ field with the `:expireAfterSeconds` option:
 
 (let [conn (mg/connect)
       db   (mg/get-db "monger-test")]
-
   ;; expire documents with the `created-at` field value 120 seconds or more in the past.
   ;; expiration operation is performed about once a minute
   (mc/ensure-index db "recent_events" {:created-at 1} {:expireAfterSeconds 120})
