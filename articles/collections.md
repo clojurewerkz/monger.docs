@@ -32,87 +32,97 @@ All other features are available in MongoDB 2.0.
 
 ## Overview
 
-MongoDB provides operations on collections that are not related to inserting, updating or querying data. Two examples of such operations are
-operations on indexes and dropping of a collection.
+MongoDB provides operations on collections that are not related to
+inserting, updating or querying data. Two examples of such operations
+are operations on indexes and dropping of a collection.
 
 ### Indexes
 
-Indexes in databases are data structures that allow for significant read query performance improvements on large data sets at the cost of
-a slight performance hit on write queries (because indexes need to be updated on writes).
+Indexes in databases are data structures that allow for significant
+read query performance improvements on large data sets at the cost of
+a slight performance hit on write queries (because indexes need to be
+updated on writes).
 
-[MongoDB indexes](http://www.mongodb.org/display/DOCS/Indexes) are much like their relational data store counterparts: they are created for a particular collection and a set of fields,
-you can specify ordering on each field and they can be dropped or re-created.
+[MongoDB indexes](http://www.mongodb.org/display/DOCS/Indexes) are
+much like their relational data store counterparts: they are created
+for a particular collection and a set of fields, you can specify
+ordering on each field and they can be dropped or re-created.
 
 
-## Creating indexes
+## Creating Indexes
 
 To create an index on a collection, use `monger.collection/ensure-index`. It will create the index but only if it does not already exist:
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-;; create an index
-;; the index created as { :language 1 } will be named "language_1"
-(mc/ensure-index "documents" "language_1")
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "documents"]
+  ;; create an index
+  ;; the index created as { :language 1 } will be named "language_1"
+  (mc/ensure-index db coll "language_1")
 
-;; create an index with a custom name
-;; array-map produces a map that is ordered, which
-;; is important for indexes
-(mc/ensure-index "documents" (array-map :language 1) { :name "by-language" })
+  ;; create an index with a custom name
+  ;; array-map produces a map that is ordered, which
+  ;; is important for indexes
+  (mc/ensure-index db coll (array-map :language 1) { :name "by-language" })
 
-;; create a unique index
-(mc/ensure-index "documents" (array-map :language 1) { :unique true })
+  ;; create a unique index
+  (mc/ensure-index db coll (array-map :language 1) { :unique true })
 
-;; create an index on multiple fields (will be automatically named language_1_created_at_1 by convention)
-(mc/ensure-index "documents" (array-map :language 1 :created_at 1))
+  ;; create an index on multiple fields (will be automatically named language_1_created_at_1 by convention)
+  (mc/ensure-index db coll (array-map :language 1 :created_at 1)))
 ```
 
 `monger.collection/create-index` takes the same arguments but will fail if the index already exists.
 
 
-## Listing indexes on a collection
+## Listing Indexes On a Collection
 
-To get a set of indexes on a collection, use `monger.collection/indexes-on` function that takes collection name as its only argument.
+To get a set of indexes on a collection, use
+`monger.collection/indexes-on` function that takes a database collection name.
 
 
-## Dropping indexes
+## Dropping Indexes
 
-To drop an index or all indexes on a collection, use `monger.collection/drop-index` and `monger.collection/drop-indexes`:
+To drop an index or all indexes on a collection, use
+`monger.collection/drop-index` and `monger.collection/drop-indexes`:
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-;; drop all indexes from a collection
-(mc/drop-indexes "events")
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+  ;; drop all indexes from a collection
+  (mc/drop-indexes db "events")
 
-;; drop a specific index from a collection
-;; language_1 refers to the index created as { :language 1 }
-(mc/drop-index "documents" "language_1")
+  ;; drop a specific index from a collection
+  ;; language_1 refers to the index created as { :language 1 }
+  (mc/drop-index db "documents" "language_1")
 
-;; language_1_created_at_1 refers to the index created as { :language 1, :created_at 1 }
-(mc/drop-index "documents" "language_1_created_at_1")
+  ;; language_1_created_at_1 refers to the index created as { :language 1, :created_at 1 }
+  (mc/drop-index db "documents" "language_1_created_at_1"))
 ```
 
 
-## Creating a collection
+## Creating a Collection
 
-To create a collection with Monger, use the `monger.collection/create` function like so:
+To create a collection with Monger, use the `monger.collection/create`
+function like so:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-;; creates a non-capped collection
-(mc/create "recent_events" {})
-
-(defn- megabytes
-  [^long n]
-  (* n 1024 1024))
-
-;; creates a collection capped at 32 megabytes
-(mc/create "recent_events" {:capped true :size (-> 32 megabytes)})
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+  (mc/create db "recent_events" {}))
 ```
 
 However, because MongoDB will create a collection automatically the
@@ -121,7 +131,7 @@ create collections except when you want them to be capped. This is
 what the next section covers.
 
 
-## Creating a capped collection
+## Creating a Capped Collection
 
 [Capped collections in
 MongoDB](http://www.mongodb.org/display/DOCS/Capped+Collections) are
@@ -133,38 +143,49 @@ maintain insertion order for the documents in the collection; this is
 very powerful for certain use cases such as logging or keeping "hot"
 data around for caching purposes.
 
-To create a collection as capped, use the same `monger.collection/create` function with options:
+To create a collection as capped, use the same
+`monger.collection/create` function with options:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
 (defn- megabytes
   [^long n]
   (* n 1024 1024))
 
-;; creates a collection capped at 16 megabytes
-(mc/create "recent_events" {:capped true :size (-> 16 megabytes)})
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
 
-;; creates a collection capped at 1000 documents
-(mc/create "recent_events" {:capped true :max 1000})
+  ;; creates a collection capped at 16 megabytes
+  (mc/create db "recent_events" {:capped true :size (-> 16 megabytes)})
+  
+  ;; creates a collection capped at 1000 documents
+  (mc/create db "recent_events" {:capped true :max 1000})
 ```
 
 
 ## Using MongoDB TTL collections (MongoDB 2.2+)
 
-MongoDB 2.2 and later versions support [TTL (time-to-live, aka expiring) collections](http://docs.mongodb.org/manual/tutorial/expire-data/).
+MongoDB 2.2 and later versions support [TTL (time-to-live, aka
+expiring)
+collections](http://docs.mongodb.org/manual/tutorial/expire-data/).
 
 To enable document expiration, you need to create an index on a date
 field with the `:expireAfterSeconds` option:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-;; expire documents with the `created-at` field value 120 seconds or more in the past.
-;; expiration operation is performed about once a minute
-(mc/ensure-index "recent_events" {:created-at 1} {:expireAfterSeconds 120})
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+
+  ;; expire documents with the `created-at` field value 120 seconds or more in the past.
+  ;; expiration operation is performed about once a minute
+  (mc/ensure-index db "recent_events" {:created-at 1} {:expireAfterSeconds 120})
 ```
 
 Note that MongoDB runs the expiring thread (sometimes referred to as
@@ -172,16 +193,16 @@ called `TTLMonitor`), about once per minute, so with TTL values less
 than 60 seconds this feature may be of little use.
 
 
-## Dropping a collection
+## Dropping a Collection
 
 To drop a collection, use `monger.collection/drop` function that takes
-collection name as its only argument.
+a database and collection name.
 
 
-## Renaming a collection
+## Renaming a Collection
 
-To rename a collection, use `monger.collection/rename` that takes old
-and new collection names as arguments.
+To rename a collection, use `monger.collection/rename` that takes a database,
+old and new collection names.
 
 
 ## What to Read Next
