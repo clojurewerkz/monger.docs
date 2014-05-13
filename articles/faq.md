@@ -30,8 +30,9 @@ versions. Please note that some features may be specific to MongoDB
 
 ## Why Not Contribute to [insert an existing Clojure MongoDB driver name]?
 
-There is one MongoDB client for Clojure that has been around since 2009. So, why create another one? Monger authors
-wanted a client that will
+There is one MongoDB client for Clojure that has been around since
+2009. So, why create another one? Monger authors wanted a client that
+will
 
  * Support most of MongoDB 2.0+ features but only those that really matter.
  * Be well documented.
