@@ -447,7 +447,7 @@ write-heavy workloads.
 
 
 
-### Using operators
+### Using MongoDB Query Operators
 
 Monger provides a convenient way to use [MongoDB query
 operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators). While
