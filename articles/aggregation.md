@@ -13,43 +13,57 @@ This guide covers:
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
 
 
-## What version of Monger does this guide cover?
+## What Version of Monger Does This Guide Cover?
 
 This guide covers Monger 2.0 (including preview releases).
 
 
-## What version of MongoDB does this guide cover?
+## What Version of MongoDB Does This Guide Cover?
 
-This guide covers a feature that is going to be introduced with the release of MongoDB 2.2. Support for it was developed using
-2.1.x releases (developer previews).
+This guide covers a feature that was introduced with the release of
+MongoDB 2.2.
 
 
 ## Overview
 
-MongoDB 2.2 also supports a more focused, less generic and easier to use data processing feature called the [Aggregation Framework](/articles/aggregation.html) which
-makes raw map/reduce a relatively low-level facility.
+MongoDB 2.2 also supports a more focused, less generic and easier to
+use data processing feature called the [Aggregation
+Framework](/articles/aggregation.html) which makes raw map/reduce a
+relatively low-level facility.
 
 
 ## Performing MongoDB aggregation queries with Clojure
 
-Conceptually, documents from a collection pass through an aggregation pipeline, which transforms these objects they pass through. For those familiar with UNIX-like shells
-(e.g. bash,) the concept is analogous to the pipe (i.e. `|`) used to string text filters together.
+Conceptually, documents from a collection pass through an aggregation
+pipeline, which transforms these objects they pass through. For those
+familiar with UNIX-like shells (e.g. bash,) the concept is analogous
+to the pipe (i.e. `|`) used to string text filters together.
 
-In a shell environment the pipe redirects a stream of characters from the output of one process to the input of the next. The MongoDB aggregation pipeline streams MongoDB
-documents from one pipeline operator to the next to process the documents.
+In a shell environment the pipe redirects a stream of characters from
+the output of one process to the input of the next. The MongoDB
+aggregation pipeline streams MongoDB documents from one pipeline
+operator to the next to process the documents.
 
-All pipeline operators process a stream of documents and the pipeline behaves as if the operation scans a collection and passes all matching documents into the “top” of
-the pipeline. Each operator in the pipleine transforms each document as it passes through the pipeline.
+All pipeline operators process a stream of documents and the pipeline
+behaves as if the operation scans a collection and passes all matching
+documents into the “top” of the pipeline. Each operator in the
+pipleine transforms each document as it passes through the pipeline.
 
-`monger.collection/aggregate` is the function used to perform aggregation queries with Monger. It takes a collection name and a list of aggregation
-*pipeline stages* or *pipeline operators*, such as `$project` or `$multiplyBy`.
+`monger.collection/aggregate` is the function used to perform
+aggregation queries with Monger. It takes a collection name and a list
+of aggregation *pipeline stages* or *pipeline operators*, such as
+`$project` or `$multiplyBy`.
 
-Pipeline operators are specified as documents (Clojure maps) and contain `$operators` similar to those used by perform queries and updates. They can be specified
-as strings, e.g. "$project", or using predefined operators from the `monger.operators` namespace, e.g. `$project`:
+Pipeline operators are specified as documents (Clojure maps) and
+contain `$operators` similar to those used by perform queries and
+updates. They can be specified as strings, e.g. "$project", or using
+predefined operators from the `monger.operators` namespace,
+e.g. `$project`:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.collection :as mc]
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
             [monger.operators :refer :all]))
 
 ;; performs an aggregation query.
@@ -73,15 +87,19 @@ as strings, e.g. "$project", or using predefined operators from the `monger.oper
 ;;  {:_id "CA" :subtotal 199.0}]
 ;;
 
-(mc/aggregate "docs" [{$project {:subtotal {$multiply ["$quantity", "$price"]}
-                                                       :_id     "$state"}}])
-
-;; alternative version, does not use predefined monger.operators/$project and monger.operators/$multiply operators
-(mc/aggregate "docs" [{"$project" {:subtotal {"$multiply" ["$quantity", "$price"]}
-                                                          :_id     "$state"}}])
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "docs"]
+  (mc/aggregate db coll [{$project {:subtotal {$multiply ["$quantity", "$price"]}
+                                                         :_id     "$state"}}])
+  
+  ;; alternative version, does not use predefined monger.operators/$project and monger.operators/$multiply operators
+  (mc/aggregate db coll [{"$project" {:subtotal {"$multiply" ["$quantity", "$price"]}
+                                                            :_id     "$state"}}]))
 ```
 
-Unlike Map/Reduce operators, aggregation queries are always returned "inline" (as a value by `monger.collection/aggregate`).
+Unlike Map/Reduce operators, aggregation queries are always returned
+"inline" (as a value by `monger.collection/aggregate`).
 
 
 ## What to read next
