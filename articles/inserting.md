@@ -13,7 +13,6 @@ This guide covers:
  * Validating data with Validateur, a [Clojure validation library](http://clojurevalidations.info)
  * Setting default write concern
  * Changing write concern for individual operations
- * Working with multiple databases
 
 This work is licensed under a <a rel="license"
 href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
