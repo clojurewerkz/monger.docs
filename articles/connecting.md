@@ -12,8 +12,6 @@ This guide covers:
  * Connecting to MongoDB using connection URI
  * Connecting to replica sets
  * Connecting in PaaS environments, for example, MongoHQ add-on on Heroku
- * Choosing default database
- * Working with multiple databases
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
 
@@ -25,10 +23,10 @@ This guide covers Monger 2.0 (including preview releases).
 
 ## Overview
 
-Monger supports working with multiple connections and/or databases but is optimized for applications that only use one connection
-and one database.
+Before using Monger, you need to connect to MongoDB and choose a database to
+work with. Monger supports working with multiple connections and databases.
 
-To connect, you use `monger.core/connect!` and `monger.core/connect` functions. A basic example:
+To connect, use `monger.core/connect` function which returns a connection:
 
 ``` clojure
 (ns my.service.server
@@ -36,23 +34,25 @@ To connect, you use `monger.core/connect!` and `monger.core/connect` functions. 
   (:import [com.mongodb MongoOptions ServerAddress]))
 
 ;; localhost, default port
-(mg/connect!)
+(let [conn (mg/connect)])
+
+;; given host, default port
+(let [conn (mg/connect {:host "db.megacorp.internal"})])
+
 
 ;; given host, given port
-(mg/connect! { :host "db.megacorp.internal" :port 7878 })
-
-
-;; given host, given port
-(mg/connect! { :host "db.megacorp.internal" :port 7878 })
-
-;; using MongoOptions allows fine-tuning connection parameters,
-;; like automatic reconnection (highly recommended for production environment)
-(let [^MongoOptions opts (mg/mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
-      ^ServerAddress sa  (mg/server-address "127.0.0.1" 27017)]
-  (mg/connect! sa opts))
-
+(let [conn (mg/connect {:host "db.megacorp.internal" :port 7878})])
 ```
 
+To choose a database, use `monger.core/get-db`:
+
+``` clojure
+(ns my.service.server
+  (:require [monger.core :as mg]))
+
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")])
+```
 
 ## Connecting To Mongodb Using Connection Options
 
@@ -67,10 +67,18 @@ function that takes a map of them and produces an object that can be
 used as connection options:
 
 ``` clojure
-(let [^MongoOptions opts (mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
-        ^ServerAddress sa (server-address "127.0.0.1" 27017)]
-    (monger.core/connect! sa opts))
+(ns my.service.server
+  (:require [monger.core :as mg])
+  (:import [com.mongodb MongoOptions ServerAddress]))
+
+;; using MongoOptions allows fine-tuning connection parameters,
+;; like automatic reconnection (highly recommended for production environment)
+(let [^MongoOptions opts (mg/mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
+      ^ServerAddress sa  (mg/server-address "127.0.0.1" 27017)
+      conn               (mg/connect sa opts)]
+  )
 ```
+
 
 ### Supported Connection Options
 
@@ -140,40 +148,61 @@ he maximum amount of time in milliseconds to spend retrying to open connection t
 With Monger, setting default write concern using `monger.core/set-default-write-concern!` largely eliminates the need for this option.
 
 
-## Connecting via URI (e.g. MongoHQ or MongoLab on Heroku)
+### Connecting Using URI (Heroku, CloudFoundry, etc)
 
-In PaaS environments like Heroku, it is very common that the only way to connect to external databases is via connection URL.
-With Monger you can do that using the `monger.core/connect-via-uri!` function. In the following example, connection URI
-is taken from the `MONGODB_URI` env variable if it is set. If that's not the case, "mongodb://127.0.0.1/monger-test4" is
-used as a fallback (for example, for development):
+In certain environments, for example, Heroku or other PaaS providers,
+the only way to connect to MongoDB is via connection URI.
+
+Monger provides `monger.core/connect-via-uri` function that combines
+`monger.core/connect`, `monger.core/get-db`, and
+`monger.core/authenticate` and works with string URIs like
+`mongodb://userb71148a:0da0a696f23a4ce1ecf6d11382633eb2049d728e@cluster1.mongohost.com:27034/app81766662`.
+
+`monger.core/connect-via-uri` returns a map with two keys:
+
+ * `:conn`
+ * `:db`
+
+It can be used to connect with or without authentication, for example:
 
 ``` clojure
-(ns my.service
-  (:require [monger.core :as mg]))
+;; connect without authentication
+(let [uri               "mongodb://127.0.0.1/monger-test4"
+      {:keys [conn db]} (mg/connect-via-uri uri)])
 
-(defn -main
-  [& args]
-  (let [uri (get (System/getenv) "MONGODB_URI" "mongodb://127.0.0.1/monger-test4")]
-    (monger.core/connect-via-uri! uri)))
- ```
+;; connect with authentication
+(let [uri               "mongodb://clojurewerkz/monger!:monger!@127.0.0.1/monger-test4"
+      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
 
+;; connect using connection URI stored in an env variable, in this case, MONGOHQ_URL
+(let [uri               (System/genenv "MONGOHQ_URL")
+      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
+```
 
+It is also possible to pass connection options as query parameters:
+
+``` clojure
+(let [uri               "mongodb://localhost/test?maxPoolSize=128&waitQueueMultiple=5;waitQueueTimeoutMS=150;socketTimeoutMS=5500&autoConnectRetry=true;safe=false&w=1;wtimeout=2500;fsync=true"
+      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
+```
 
 ## Connecting To A Replica Set
 
-Monger supports connecting to replica sets using one or more seeds when calling `monger.core/connect` with a collection of server
+Monger supports connecting to replica sets using one or more seeds
+when calling `monger.core/connect` with a collection of server
 addresses instead of just a single one:
 
 ``` clojure
 (ns my.service
-  (:require monger.core :refer [connect connect! server-address mongo-options]))
+  (:require monger.core :as mg))
 
 ;; Connect to a single MongoDB instance
-(connect (server-address "127.0.0.1" 27017) (mongo-options))
+(mg/connect (mg/server-address "127.0.0.1" 27017) (mg/mongo-options))
 
 ;; Connect to a replica set
-(connect [(server-address "127.0.0.1" 27017) (server-address "127.0.0.1" 27018)]
-         (mongo-options))
+(mg/connect [(mg/server-address "127.0.0.1" 27017)
+             (mg/server-address "127.0.0.1" 27018)]
+         (mg/mongo-options))
 ```
 
 `monger.core/connect!` function works exactly the same way.
@@ -182,36 +211,38 @@ addresses instead of just a single one:
 ## Authentication
 
 With Monger, authentication is performed on database instance.
-`monger.core/authenticate` is the function used for that. It takes a database instance, a username
-and a password (as char array):
+`monger.core/authenticate` is the function used for that. It takes a
+database instance, a username and a password (as char array):
 
 ``` clojure
-(require '[monger.core :as mc])
+(ns monger.docs.examples
+  (:require [monger.core :as mg]))
 
-(let [username "a-user"
-      password "14)'dbRYAzI(37liCfgc"
-      db       "a-db"]
-  (mc/connect!)
-  (mc/use-db! db)
-  (mc/authenticate (mc/get-db db) username (.toCharArray password)))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      u    "username"
+      p    (.toCharArray "password")]
+  (mg/authenticate db u p))
 ```
 
-To connect to a replicate set that requires authentication with Monger, use example in the section above
-to connect, then authenticate the same way.
+The function will return `true` if authentication succeeds and `false`
+otherwise.
+
+To connect to a replicate set that requires authentication with
+Monger, use example in the section above to connect, then authenticate
+the same way.
 
 
-## Choosing Default Database
+## Disconnecting
 
-Before your application begins to perform queries, updates and so on, it is necessary to tell Monger what database it should use by default.
-To do it, use `monger.core/get-db` and `monger.core/set-db!` functions in combination:
+To disconnect, use `monger.core/disconnect`:
 
 ``` clojure
 (ns my.service.server
   (:require [monger.core :as mg]))
 
-;; localhost, default port
-(mg/connect!)
-(mg/set-db! (mg/get-db "monger-test"))
+(let [conn (mg/connect)]
+  (mg/disconnect conn))
 ```
 
 
