@@ -15,29 +15,38 @@ It should take about 10 minutes to read and study the provided code examples. Th
  * Overview of Monger Query DSL
  * Overview of how Monger integrates with libraries like clojure.data.json and JodaTime.
 
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
+This work is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+Attribution 3.0 Unported License</a> (including images &
+stylesheets). The source is available [on
+Github](https://github.com/clojurewerkz/monger.docs).
 
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.8 (including beta releases).
+This guide covers Monger 2.0 (including preview releases).
 
 
 ## Monger Overview
 
-Monger is an idiomatic Clojure wrapper around MongoDB Java driver. It offers powerful expressive query DSL, strives to support
-every MongoDB 2.0+ feature, has next to no performance overhead and is well maintained.
+Monger is an idiomatic Clojure wrapper around MongoDB Java driver. It
+offers powerful expressive query DSL, strives to support every MongoDB
+2.0+ feature, has minimal performance overhead and is well
+maintained.
 
 
 ### What Monger is not
 
-Monger is not a replacement for the MongoDB Java driver, instead, Monger is symbiotic with it. Monger does not try to offer
-object/document mapping functionality. With Monger, you work with native Clojure and Java data structures like maps,
-vectors, strings, dates and so on. This approach has pros and cons but (we believe) closely follows Clojure's philosophy of
-reducing incidental complexity. It also fits MongoDB data model very well.
+Monger is not a replacement for the MongoDB Java driver, instead,
+Monger is symbiotic with it. Monger does not try to offer
+object/document mapping functionality. With Monger, you work with
+native Clojure and Java data structures like maps, vectors, strings,
+dates and so on. This approach has pros and cons but (we believe)
+closely follows Clojure's philosophy of reducing incidental
+complexity. It also fits MongoDB data model very well.
 
 
-## Supported Clojure versions
+## Supported Clojure Versions
 
 Monger requires Clojure 1.4+. The most recent stable release is highly
 recommended.
@@ -45,9 +54,9 @@ recommended.
 
 ## Supported MongoDB versions
 
-Monger currently uses MongoDB Java driver 2.11.x under the hood and
+Monger uses MongoDB Java driver 2.x under the hood and
 thus supports MongoDB 2.0 and later versions. Please note that some
-features may be specific to MongoDB 2.2 and later versions.
+features may be specific to recent MongoDB releases.
 
 
 ## Adding Monger Dependency To Your Project
@@ -57,7 +66,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 ### With Leiningen
 
 ``` clojure
-[com.novemberain/monger "1.8.0"]
+[com.novemberain/monger "2.0.0-rc1"]
 ```
 
 ### With Maven
@@ -77,16 +86,16 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>monger</artifactId>
-  <version>1.8.0</version>
+  <version>2.0.0-rc1</version>
 </dependency>
 ```
 
 ## Connecting to MongoDB
 
-Monger supports working with multiple connections and/or databases but is optimized for applications that only use one connection
-and one database.
+Before using Monger, you need to connect to MongoDB and choose a database to
+work with. Monger supports working with multiple connections and databases.
 
-To connect, you use `monger.core/connect!` and `monger.core/connect` functions:
+To connect, use `monger.core/connect` function which returns a connection:
 
 ``` clojure
 (ns my.service.server
@@ -94,66 +103,121 @@ To connect, you use `monger.core/connect!` and `monger.core/connect` functions:
   (:import [com.mongodb MongoOptions ServerAddress]))
 
 ;; localhost, default port
-(mg/connect!)
+(let [conn (mg/connect)])
+
+;; given host, default port
+(let [conn (mg/connect {:host "db.megacorp.internal"})])
+
 
 ;; given host, given port
-(mg/connect! { :host "db.megacorp.internal" :port 7878 })
-
-
-;; given host, given port
-(mg/connect! { :host "db.megacorp.internal" :port 7878 })
+(let [conn (mg/connect {:host "db.megacorp.internal" :port 7878})])
 
 ;; using MongoOptions allows fine-tuning connection parameters,
 ;; like automatic reconnection (highly recommended for production environment)
 (let [^MongoOptions opts (mg/mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
-      ^ServerAddress sa  (mg/server-address "127.0.0.1" 27017)]
-  (mg/connect! sa opts))
+      ^ServerAddress sa  (mg/server-address "127.0.0.1" 27017)
+      conn               (mg/connect sa opts)]
+  )
 ```
 
-To set default database Monger will use, use `monger.core/get-db` and `monger.core/set-db!` functions in combination:
+To choose a database, use `monger.core/get-db`:
 
 ``` clojure
 (ns my.service.server
   (:require [monger.core :as mg]))
 
-;; localhost, default port
-(mg/connect!)
-(mg/set-db! (mg/get-db "monger-test"))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")])
 ```
 
 
-## Disconnecting
-
-To disconnect, use `monger.core/disconnect!`.
-
-
-### Using URI (Heroku, CloudFoundry, etc)
+### Connecting Using URI (Heroku, CloudFoundry, etc)
 
 In certain environments, for example, Heroku or other PaaS providers,
 the only way to connect to MongoDB is via connection URI.
 
-Monger provides `monger.core/connect-via-uri!` function that combines `monger.core/connect!`, `monger.core/set-db!` and `monger.core/authenticate`
-and works with string URIs like `mongodb://userb71148a:0da0a696f23a4ce1ecf6d11382633eb2049d728e@cluster1.mongohost.com:27034/app81766662`.
+Monger provides `monger.core/connect-via-uri` function that combines
+`monger.core/connect`, `monger.core/get-db`, and
+`monger.core/authenticate` and works with string URIs like
+`mongodb://userb71148a:0da0a696f23a4ce1ecf6d11382633eb2049d728e@cluster1.mongohost.com:27034/app81766662`.
+
+`monger.core/connect-via-uri` returns a map with two keys:
+
+ * `:conn`
+ * `:db`
 
 It can be used to connect with or without authentication, for example:
 
 ``` clojure
 ;; connect without authentication
-(mg/connect-via-uri! "mongodb://127.0.0.1/monger-test4")
+(let [uri               "mongodb://127.0.0.1/monger-test4"
+      {:keys [conn db]} (mg/connect-via-uri uri)])
 
 ;; connect with authentication
-(mg/connect-via-uri! "mongodb://clojurewerkz/monger!:monger!@127.0.0.1/monger-test4")
+(let [uri               "mongodb://clojurewerkz/monger!:monger!@127.0.0.1/monger-test4"
+      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
 
 ;; connect using connection URI stored in an env variable, in this case, MONGOHQ_URL
-(mg/connect-via-uri! (System/genenv "MONGOHQ_URL"))
+(let [uri               (System/genenv "MONGOHQ_URL")
+      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
 ```
 
 It is also possible to pass connection options as query parameters:
 
 ``` clojure
-(monger.core/connect-via-uri! "mongodb://localhost/test?maxPoolSize=128&waitQueueMultiple=5;waitQueueTimeoutMS=150;socketTimeoutMS=5500&autoConnectRetry=true;safe=false&w=1;wtimeout=2500;fsync=true")
+(let [uri               "mongodb://localhost/test?maxPoolSize=128&waitQueueMultiple=5;waitQueueTimeoutMS=150;socketTimeoutMS=5500&autoConnectRetry=true;safe=false&w=1;wtimeout=2500;fsync=true"
+      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
 ```
 
+## Authentication
+
+To authenticate, use `monger.core/authenticate` which takes a database, username,
+and password as char array:
+
+``` clojure
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      u    "username"
+      p    (.toCharArray "password")]
+  (mg/authenticate db u p))
+```
+
+The function will return `true` if authentication succeeds and `false` otherwise.
+
+## Disconnecting
+
+To disconnect, use `monger.core/disconnect`:
+
+``` clojure
+(ns my.service.server
+  (:require [monger.core :as mg]))
+
+(let [conn (mg/connect)]
+  (mg/disconnect conn))
+```
+
+
+## Monger 2.0+ Public API Convention
+
+Monger versions prior to 2.0 used dynamic vars (shared state) to store
+connection, database, and GridFS references. Monger 2.0 is different: it
+accepts them as an explicit argument. For example, functions that operate
+on documents require a database reference as their 1st argument:
+
+``` clojure
+(ns my.service.server
+  (:require [monger.core :as mg]
+            [monger.collection :as mc])
+  (:import org.bson.types.ObjectId))
+
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+  (mc/insert "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
+  (mc/insert-and-return "documents" {:name "John" :age 30}))
+```
+
+The same is true for functions operate on databases (they require an explicit connection
+argument), GridFS operations (a GridFS instance needs to be passed in), and so on.
 
 
 ## How to Insert Documents with Monger
@@ -163,35 +227,30 @@ in the `monger.collection` namespace are used.
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.core :refer [connect! connect set-db! get-db]]
-            [monger.collection :refer [insert insert-batch]])
+  (:require [monger.core :as mg]
+            [monger.collection :as mc])
   (:import [org.bson.types ObjectId]
            [com.mongodb DB WriteConcern]))
 
 ;; localhost, default port
-(connect!)
-(set-db! (monger.core/get-db "monger-test"))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+  ;; with a generated document id, returns the complete
+  ;; inserted document
+  (mc/insert-and-return "documents" {:name "John" :age 30})
 
-;; with a generated document id, returns the complete
-;; inserted document
-(mc/insert-and-return "documents" {:name "John" :age 30})
+  ;; with explicit document id (recommended)
+  (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
 
-;; with explicit document id (recommended)
-(insert "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
+  ;; multiple documents at once
+  (mc/insert-batch db "documents" [{ :first_name "John" :last_name "Lennon" }
+                                   { :first_name "Paul" :last_name "McCartney" }])
 
-;; multiple documents at once
-(insert-batch "document" [{ :first_name "John" :last_name "Lennon" }
-                          { :first_name "Paul" :last_name "McCartney" }])
+  ;; without document id (when you don't need to use it after storing the document)
+  (mc/insert db "documents" { :first_name "John" :last_name "Lennon" })
 
-;; without document id (when you don't need to use it after storing the document)
-(insert "document" { :first_name "John" :last_name "Lennon" })
-
-;; with a different write concern
-(insert "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" } WriteConcern/JOURNAL_SAFE)
-
-;; with a different database
-(let [archive-db (get-db "monger-test.archive")]
-  (insert archive-db "documents" { :first_name "John" :last_name "Lennon" } WriteConcern/NORMAL))
+  ;; with a different write concern
+  (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" } WriteConcern/JOURNAL_SAFE))
 ```
 
 `monger.collection/insert` returns write result that
@@ -209,26 +268,27 @@ inserting documents one by one.
 
 ### Document ids (ObjectId)
 
-If you insert a document without the `:_id` key, MongoDB Java driver that Monger uses under the hood will generate one for you. Unfortunately,
-it does so by mutating the document you pass it. With Clojure's immutable data structures, that won't work the way MongoDB Java driver authors
-expected.
+If you insert a document without the `:_id` key, MongoDB Java driver
+that Monger uses under the hood will generate one for
+you. Unfortunately, it does so by mutating the document you pass
+it. With Clojure's immutable data structures, that won't work the way
+MongoDB Java driver authors expected.
 
-So it is highly recommended to always store documents with the `:_id` key set. If you need a generated object id. You do so by instantiating
+So it is highly recommended to always store documents with the `:_id`
+key set. If you need a generated object id. You do so by instantiating
 `org.bson.types.ObjectId` without arguments:
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.core :refer [connect! connect set-db! get-db]]
-            [monger.collection :refer [insert]])
-  (:import [org.bson.types ObjectId]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc])
+  (:import org.bson.types.ObjectId))
 
-;; localhost, default port
-(connect!)
-(set-db! (monger.core/get-db "monger-test"))
-
-(let [oid (ObjectId.)
-      doc { :first_name "John" :last_name "Lennon" }]
-  (insert "documents" (merge doc {:_id oid})))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      oid  (ObjectId.)
+      doc  {:first_name "John" :last_name "Lennon"}]
+  (mc/insert db "documents" (merge doc {:_id oid})))
 ```
 
 To convert a string in the object id form (for example, coming from a
@@ -242,31 +302,39 @@ Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
 (ObjectId. "4fea999c0364d8e880c05157") ;; => #<ObjectId 4fea999c0364d8e880c05157>
 ```
 
-Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
-knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
+Document ids in MongoDB do not have to be of the object id type, they
+also can be strings, integers and any value you can store that MongoDB
+knows how to compare order (sort). However, using `ObjectId`s is
+usually a good idea.
 
 
 ### Default WriteConcern
 
-To set default write concern, use `monger.core/set-default-write-concern!` function:
+To set default write concern Monger use, use `monger.core/set-default-write-concern!`:
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.core :as mg]))
-
-(mg/connect!)
-(mg/set-db! (mg/get-db "monger-test"))
+  (:require [monger.core :as mg])
+  (:import com.mongodb.WriteConcern))
 
 (mg/set-default-write-concern! WriteConcern/FSYNC_SAFE)
 ```
 
+Most functions in the Monger API that can work with different write
+concerns accept it as a positional argument or an option.
+
 
 ### Safe By Default
 
-By default Monger will use `WriteConcern/SAFE` as write concern. We believe that MongoDB Java driver (as well as other
-official drivers) have **very unsafe defaults** when no exceptions are raised, even for network issues. This does not sound
-like a good default for most applications: many applications use MongoDB because of the flexibility, not extreme write throughput
-requirements. Monger's default is to be on the safe side.
+By default Monger will use `WriteConcern/ACKNOWLEDGED` as write
+concern. Historically, MongoDB Java driver (as well as other official
+drivers) have **very unsafe defaults** when no exceptions are raised,
+even for network issues. This does not sound like a good default for
+most applications: many applications use MongoDB because of the
+flexibility, not extreme write throughput requirements.
+
+Monger's default is and always will be on the safe side,
+regardless of what the Java driver is.
 
 
 
@@ -277,12 +345,14 @@ Monger provides two ways of finding documents:
 * Using finder functions in the `monger.collection` namespace
 * Using query DSL in the `monger.query` namespace
 
-The former is designed to cover simple cases better while the latter gives you access to full power of MongoDB querying
-capabilities and extra features like pagination.
+The former is designed to cover simple cases better while the latter
+gives you access to full power of MongoDB querying capabilities and
+extra features like pagination.
 
-### Using finder functions
+### Using Finder Functions
 
-Finder functions in Monger return either Clojure maps (commonly used) or Java driver's objects like `DBObject` and `DBCursor`.
+Finder functions in Monger return either Clojure maps (commonly used)
+or Java driver's objects like `DBObject` and `DBCursor`.
 
 For example, `monger.collection/find` returns a `DBCursor`:
 
@@ -290,49 +360,59 @@ For example, `monger.collection/find` returns a `DBCursor`:
 (ns my.service.server
   (:require [monger.collection :as mc]))
 
-(mc/insert "documents" {:first_name "John"  :last_name "Lennon"})
-(mc/insert "documents" {:first_name "Ringo" :last_name "Starr"})
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  (mc/insert db coll {:first_name "John"  :last_name "Lennon"})
+  (mc/insert db coll {:first_name "Ringo" :last_name "Starr"})
 
-(mc/find "documents" {:first_name "Ringo"})
+  (mc/find db coll {:first_name "Ringo"}))
 ```
 
-`monger.collection/find-maps` is similar to `monger.collection/find` but converts `DBObject` instances to Clojure maps:
+`monger.collection/find-maps` is similar to `monger.collection/find`
+but converts `DBObject` instances to Clojure maps:
 
 ``` clojure
 ;; returns all documents as Clojure maps
-(mc/find-maps "documents")
+(mc/find-maps db "documents")
 
 ;; returns documents with year field value of 1998, as Clojure maps
-(mc/find-maps "documents" { :year 1998 })
+(mc/find-maps db "documents" { :year 1998 })
 ```
 
 
-`monger.collection/find-one` finds one document and returns it as a `DBObject` instance:
+`monger.collection/find-one` finds one document and returns it as a
+`DBObject` instance:
 
 ``` clojure
 ;; find one document by id, as `com.mongodb.DBObject` instance
-(mc/find-one "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+(mc/find-one db "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 ```
 
-
-`monger.collection/find-one-as-map` is similar to `monger.collection/find-one` but converts `DBObject` instances to Clojure maps:
+`monger.collection/find-one-as-map` is similar to
+`monger.collection/find-one` but converts `DBObject` instances to
+Clojure maps:
 
 ``` clojure
 ;; find one document by id, as a Clojure map
-(mc/find-one-as-map "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+(mc/find-one-as-map db "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 ```
 
 
-A more convenient way of finding a document by id as Clojure map is `monger.collection/find-map-by-id`:
+A more convenient way of finding a document by id as Clojure map is
+`monger.collection/find-map-by-id`:
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc]
-            [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-(let [oid (ObjectId.)]
-  (mc/insert "documents" {:_id oid :first_name "John" :last_name "Lennon"})
-  (mc/find-map-by-id "documents" oid))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"
+      oid  (ObjectId.)]
+  (mc/insert db coll {:_id oid :first_name "John" :last_name "Lennon"})
+  (mc/find-map-by-id db coll oid))
 ```
 
 
@@ -375,7 +455,7 @@ operators can be used in queries with strings, for example:
 
 ``` clojure
 ;; with a query that uses operators as strings
-(mc/find "products" { :price_in_subunits { "$gt" 1200 "$lte" 4000 } })
+(mc/find db "products" { :price_in_subunits { "$gt" 1200 "$lte" 4000 } })
 ```
 
 there is a better way to do it with Clojure. By using
@@ -388,7 +468,7 @@ compile time. Here is what it looks like with operator macros:
   (:require [monger.operators :refer :all]))
 
 ;; using MongoDB operators as symbols
-(mc/find "products" { :price_in_subunits { $gt 1200 $lte 4000 } })
+(mc/find db "products" { :price_in_subunits { $gt 1200 $lte 4000 } })
 ```
 
 
@@ -399,46 +479,69 @@ These and other examples of Monger finders in one gist:
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc])
-  (:require [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all])
+  (:import org.bson.types.ObjectId))
 
-;; find one document by id, as Clojure map
-(mc/find-map-by-id "documents" (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  ;; find one document by id, as Clojure map
+  (mc/find-map-by-id db coll (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
 
-;; find one document by id, as `com.mongodb.DBObject` instance
-(mc/find-by-id "documents" (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
+  ;; find one document by id, as `com.mongodb.DBObject` instance
+  (mc/find-by-id db coll (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
 
-;; find one document as Clojure map
-(mc/find-one-as-map "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+  ;; find one document as Clojure map
+  (mc/find-one-as-map db coll { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 
-;; find one document by id, as `com.mongodb.DBObject` instance
-(mc/find-one "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+  ;; find one document by id, as `com.mongodb.DBObject` instance
+  (mc/find-one db coll { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 
+  ;; all documents  as Clojure maps
+  (mc/find-maps db coll)
 
-;; all documents  as Clojure maps
-(mc/find-maps "documents")
+  ;; all documents  as `com.mongodb.DBObject` instances
+  (mc/find db coll)
 
-;; all documents  as `com.mongodb.DBObject` instances
-(mc/find "documents")
+  ;; with a query, as Clojure maps
+  (mc/find-maps db coll { :year 1998 })
 
-;; with a query, as Clojure maps
-(mc/find-maps "documents" { :year 1998 })
+  ;; with a query, as `com.mongodb.DBObject` instances
+  (mc/find db coll { :year 1998 })
 
-;; with a query, as `com.mongodb.DBObject` instances
-(mc/find "documents" { :year 1998 })
+  ;; with a query that uses operators
+  (mc/find db "products" { :price_in_subunits { $gt 4000 $lte 1200 } })
 
-;; with a query that uses operators
-(mc/find "products" { :price_in_subunits { $gt 4000 $lte 1200 } })
-
-;; with a query that uses operators as strings
-(mc/find "products" { :price_in_subunits { "$gt" 4000 "$lte" 1200 } })
+  ;; with a query that uses operators as strings
+  (mc/find db "products" { :price_in_subunits { "$gt" 4000 "$lte" 1200 } }))
 ```
 
 
 
 ### Counting Documents
 
-Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection/any?`.
+Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection/any?`:
+
+``` clojure
+(ns my.service.finders
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
+
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  ;; removes all documents
+  (mc/remove db coll)
+  (mc/empty? db coll)
+  ;= true
+  (mc/any? db coll)
+  ;= false
+  (mc/insert-and-return db coll {:name "Monger"})
+  (mc/count db coll)
+  ;= 1
+```
 
 
 
@@ -448,8 +551,8 @@ For cases when it is necessary to combine sorting, limiting or offseting results
 like cursor snapshotting or manual index hinting, Monger provides a very powerful query DSL. Here is what it looks like:
 
 ``` clojure
-(with-collection "movies"
-  (find { :year { $lt 2010 $gte 2000 } :revenue { $gt 20000000 } })  
+(with-collection db "movies"
+  (find { :year { $lt 2010 $gte 2000 } :revenue { $gt 20000000 } })
   (fields [ :year :title :producer :cast :budget :revenue ])
   ;; note the use of sorted maps with sort
   (sort (sorted-map :revenue -1))
@@ -464,7 +567,7 @@ took literally less than 10 lines of Clojure code. Here is what it
 looks like:
 
 ``` clojure
-(with-collection coll
+(with-collection db coll
                   (find {})
                   (paginate :page 1 :per-page 3)
                   (sort (sorted-map :title 1))
@@ -477,7 +580,7 @@ Query DSL supports composition, too:
 (let
     [top3               (partial-query (limit 3))
      by-population-desc (partial-query (sort (sorted-map :population -1)))
-     result             (with-collection coll
+     result             (with-collection db coll
                           (find {})
                           (merge top3)
                           (merge by-population-desc))]
@@ -509,7 +612,7 @@ is known:
   (:require [monger.collection :as mc]))
 
 ;; updates a document by id
-(mc/update-by-id "scores" oid {:score 1088})
+(mc/update-by-id db "scores" oid {:score 1088})
 ```
 
 ### Upserts
@@ -523,10 +626,12 @@ upsert with Monger, use `monger.collection/update` function with
   (:require [monger.collection :as mc]))
 
 ;; updates score for player "sam" if it exists; creates a new document otherwise
-(mc/update "scores" {:player "sam"} {:score 1088} :upsert true)
+(mc/update db "scores" {:player "sam"} {:score 1088} :upsert true)
 ```
 
-Note that upsert only inserts one document. Learn more about upserts in [this MongoDB documentation section](http://docs.mongodb.org/manual/core/update/#Updating-update).
+Note that upsert only inserts one document. Learn more about upserts
+in [this MongoDB documentation
+section](http://docs.mongodb.org/manual/core/update/#Updating-update).
 
 
 ### Atomic Modifiers
@@ -543,10 +648,10 @@ for a particular page:
 
 ``` clojure
 (ns my.service
-  (:require [monger.collection :as mc])
-  (:require [monger.operators :refer :all]))
+  (:require [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
-(mc/update "visits" {:url "http://megacorp.com"} {$inc {:visits 1}})
+(mc/update db "visits" {:url "http://megacorp.com"} {$inc {:visits 1}})
 ```
 
 
@@ -558,35 +663,29 @@ Documents are removed using `monger.collection/remove` function.
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.core :refer [connect! connect set-db! get-db]]
+  (:require [monger.core :as mg]
             [monger.collection :refer [insert update update-by-id remove-by-id] :as mc])
-  (:import [org.bson.types ObjectId]
+  (:import org.bson.types.ObjectId
            [com.mongodb DB WriteConcern]))
 
-;; localhost, default port
-(connect!)
-(set-db! (monger.core/get-db "monger-test"))
-
-;; insert a few documents
-(insert "documents" { :language "English" :pages 38 })
-(insert "documents" { :language "Spanish" :pages 78 })
-(insert "documents" { :language "Unknown" :pages 87 })
-
-;; remove multiple documents
-(mc/remove "documents" { :language "English" })
-
-;; remove ALL documents in the collection
-(mc/remove "documents")
-
-;; with a different database
-(let [archive-db (get-db "monger-test.archive")]
-  (mc/remove archive-db "documents" { :readers 0 :pages 0 }))
-
-
-;; remove document by id
-(let [oid (ObjectId.)]
-  (insert "documents" { :language "English" :pages 38 :_id oid })
-  (remove-by-id "documents" oid))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  ;; insert a few documents
+  (mc/insert coll { :language "English" :pages 38 })
+  (mc/insert db coll { :language "Spanish" :pages 78 })
+  (mc/insert db coll { :language "Unknown" :pages 87 })
+  
+  ;; remove multiple documents
+  (mc/remove db coll { :language "English" })
+  
+  ;; remove ALL documents in the collection
+  (mc/remove db coll)
+  
+  ;; remove document by id
+  (let [oid (ObjectId.)]
+    (mc/insert db coll { :language "English" :pages 38 :_id oid })
+    (remove-by-id db coll oid)))
 ```
 
 
