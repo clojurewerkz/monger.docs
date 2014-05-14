@@ -215,8 +215,8 @@ on documents require a database reference as their 1st argument:
 
 (let [conn (mg/connect)
       db   (mg/get-db "monger-test")]
-  (mc/insert "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
-  (mc/insert-and-return "documents" {:name "John" :age 30}))
+  (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
+  (mc/insert-and-return db "documents" {:name "John" :age 30}))
 ```
 
 The same is true for functions operate on databases (they require an explicit connection
@@ -240,7 +240,7 @@ in the `monger.collection` namespace are used.
       db   (mg/get-db "monger-test")]
   ;; with a generated document id, returns the complete
   ;; inserted document
-  (mc/insert-and-return "documents" {:name "John" :age 30})
+  (mc/insert-and-return db "documents" {:name "John" :age 30})
 
   ;; with explicit document id (recommended)
   (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
