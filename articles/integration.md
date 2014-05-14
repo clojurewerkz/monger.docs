@@ -45,7 +45,7 @@ driver data types: `org.bson.types.ObjectId` and `com.mongodb.DBObject` if you o
 To use it, you need to add Chshire dependency to your project, for example (with Leiningen)
 
 ``` clojure
-[cheshire "5.1.1"]
+[cheshire "5.3.1"]
 ```
 
 and then require `monger.json` namespace like so:
