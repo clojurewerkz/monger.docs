@@ -15,13 +15,23 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.8 (including beta releases).
+This guide covers Monger 2.0 (including preview releases).
 
 
 ## Overview
 
-GridFS is a feature for storing large files in MongoDB. It streams files to the database in chunks so it is possible to store very large files
-without having to load the entire file in RAM to store it.
+GridFS is a feature for storing large files in MongoDB. It streams
+files to the database in chunks so it is possible to store very large
+files without having to load the entire file in RAM to store it.
+
+
+## Monger 2.0+ Public API Convention
+
+Monger versions prior to 2.0 used dynamic vars (shared state) to store
+GridFS references. Monger 2.0 is different: it
+accepts them as an explicit argument. Functions that store
+or load files require a GridFS reference as their 1st argument
+in 2.0.
 
 
 ## Storing files in GridFS
@@ -30,18 +40,22 @@ To store a file in MongoDB using Monger, you use a DSL from the `monger.gridfs` 
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]))
+  (:require [monger.core :as mg]
+            [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]))
 
-;; store a file from a local FS path with the given filename, content type and metadata
-(store-file (make-input-file "/path/to/a/local/file.png")
-  (filename "image.png")
-  (metadata {:format "png"})
-  (content-type "image/png"))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      fs   (mg/get-gridfs conn "monger-test")]
+  ;; store a file from a local FS path with the given filename, content type and metadata
+  (store-file (make-input-file fs "/path/to/a/local/file.png")
+    (filename "image.png")
+    (metadata {:format "png"})
+    (content-type "image/png")))
 ```
 
 `monger.gridfs/make-input-file` is a polymorphic function that accepts
-strings, `java.io.File` and `java.io.InputStream` instances as well as
-byte arrays. Strings are treated as a local file path.
+`java.io.File` and `java.io.InputStream` instances as well as
+byte arrays as its content argument.
 
 When a file is stored, md5 chechsum will be calculated for its
 contents automatically.
@@ -71,43 +85,52 @@ disk to treated as input streams:
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]
-            [monger.gridfs :as gfs]))
+  (:require [monger.core :as mg]
+            [monger.gridfs :as gfs :refer [store-file make-input-file filename content-type metadata]]))
 
-(store-file (make-input-file "/path/to/a/local/file.png")
-  (filename "image.png")
-  (metadata {:format "png"})
-  (content-type "image/png"))
-
-;; returns a list of GridFSDBFile instances. Each of them can be stored to
-;; disk using GridFSDBFile#writeTo method or converted to input stream with GridFSDBFile#getInputStream
-(gfs/find {:filename "image.png"})
-
-(-> (gfs/find-one {:filename "image.png"})
-    (.writeTo "/a/new/location.png"))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      fs   (mg/get-gridfs conn "monger-test")]
+  (store-file (make-input-file fs "/path/to/a/local/file.png")
+    (filename "image.png")
+    (metadata {:format "png"})
+    (content-type "image/png"))
+  
+  ;; returns a list of GridFSDBFile instances. Each of them can be stored to
+  ;; disk using GridFSDBFile#writeTo method or converted to input stream with GridFSDBFile#getInputStream
+  (gfs/find fs {:filename "image.png"})
+  
+  (-> (gfs/find-one fs {:filename "image.png"})
+      (.writeTo "/a/new/location.png")))
 ```
 
-If you just need to access file metadata, you can load it directly as Clojure maps using `monger.gridfs/find-maps` and `monger.gridfs/find-one-as-map`:
+If you just need to access file metadata, you can load it directly as
+Clojure maps using `monger.gridfs/find-maps` and
+`monger.gridfs/find-one-as-map`:
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]
-            [monger.gridfs :as gfs]))
+  (:require [monger.core :as mg]
+            [monger.gridfs :as gfs :refer [store-file make-input-file filename content-type metadata]]))
 
-(store-file (make-input-file "/path/to/a/local/file.png")
-  (filename "image.png")
-  (metadata {:format "png"})
-  (content-type "image/png"))
-
-;; returns a list of file metadata documents as Clojure maps
-(gfs/find-maps {:filename "image.png"})
-
-;; same as (first (gridfs/find-maps …))
-(gfs/find-one-as-map {:filename "image.png"})
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      fs   (mg/get-gridfs conn "monger-test")]
+  (store-file (make-input-file fs "/path/to/a/local/file.png")
+    (filename "image.png")
+    (metadata {:format "png"})
+    (content-type "image/png"))
+  
+  ;; returns a list of file metadata documents as Clojure maps
+  (gfs/find-maps fs {:filename "image.png"})
+  
+  ;; same as (first (gridfs/find-maps …))
+  (gfs/find-one-as-map fs {:filename "image.png"}))
 ```
 
 If you want a list of *all* files, use `monger.gridfs/files-as-maps`
-or `monger.gridfs/all-files` functions without arguments.
+or `monger.gridfs/all-files` functions with a single argument: a GridFS
+instance.
 
 
 ## Deleting Files Stored on GridFS
@@ -118,34 +141,23 @@ query condition:
 
 ``` clojure
 (ns my.service
-  (:require [monger.gridfs :refer [store-file make-input-file filename content-type metadata]]
-            [monger.gridfs :as gfs]))
+  (:require [monger.core :as mg]
+            [monger.gridfs :as gfs :refer [store-file make-input-file filename content-type metadata]]))
 
-(store-file (make-input-file "/path/to/a/local/file.png")
-  (filename "image.png")
-  (metadata {:format "png"})
-  (content-type "image/png"))
-
-;; deletes a file
-(gfs/remove {:filename "image.png"})
-
-;; deletes a file by md5 checksum
-(gfs/remove {:md5 "1942f1e69c1d7354f93e2cf805894a9c"})
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      fs   (mg/get-gridfs conn "monger-test")]
+  (store-file (make-input-file fs "/path/to/a/local/file.png")
+    (filename "image.png")
+    (metadata {:format "png"})
+    (content-type "image/png"))
+  
+  ;; deletes a file
+  (gfs/remove fs {:filename "image.png"})
+  
+  ;; deletes a file by md5 checksum
+  (gfs/remove fs {:md5 "1942f1e69c1d7354f93e2cf805894a9c"}))
 ```
-
-
-## Working With Multiple Databases
-
-Monger is optimized for applications that use only one database but it
-is possible to work with multiple ones. For that, use
-[clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
-to rebind `monger.core/*mongodb-database*`,
-`monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
-vars to different values or use convenience functions that do that:
-`monger.core/with-connection`, `monger.core/with-db`,
-`monger.core/with-gridfs`. This is a common practice for Clojure
-libraries. Remember that var bindings are thread-local.
-
 
 
 ## What to read next

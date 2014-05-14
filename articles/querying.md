@@ -8,18 +8,18 @@ layout: article
 This guide covers:
 
  * Querying documents with Monger
- * Working with database cursors
  * Using Monger Query DSL
  * Using query operators with Monger
+ * Working with database cursors
  * Counting documents
- * Working with multiple databases
+ * Database cursor options
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
 
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.8 (including beta releases).
+This guide covers Monger 2.0 (including preview releases).
 
 
 ## Overview
@@ -29,104 +29,139 @@ Monger provides two means of querying:
  * Regular finder functions
  * Query DSL
 
-Regular finder functions are very much similar to those in the MongoDB shell and various MongoDB drivers. For regular finders, Monger does not invent its
-own query language or "syntax": you use the same document structure as you would in the shell. This makes finder functions a lot more predictable,
-easier to learn and follows the convention existing MongoDB drivers have.
+Regular finder functions are very much similar to those in the MongoDB
+shell and various MongoDB drivers. For regular finders, Monger does
+not invent its own query language or "syntax": you use the same
+document structure as you would in the shell. This makes finder
+functions a lot more predictable, easier to learn and follows the
+convention existing MongoDB drivers have.
 
-Finder functions belong to the `monger.collection` namespace and always take collection name as their first argument. Some of them return database
-cursors (that are iterable Java objects and thus [seqable](http://clojuredocs.org/clojure_core/clojure.core/seq)) that produce `DBObjects`, other (much
-more commonly used) return lazy sequences of Clojure maps. This means that with Monger, you work with Clojure data structures
-(collections and maps). It is natural to express documents as maps in Clojure and Monger fully embraces this idea.
+Finder functions belong to the `monger.collection` namespace and
+always take collection name as their first argument. Some of them
+return database cursors (that are iterable Java objects and thus
+[seqable](http://clojuredocs.org/clojure_core/clojure.core/seq)) that
+produce `DBObjects`, other (much more commonly used) return lazy
+sequences of Clojure maps. This means that with Monger, you work with
+Clojure data structures (collections and maps). It is natural to
+express documents as maps in Clojure and Monger fully embraces this
+idea.
 
-Monger Query DSL is expressive and composable (we will demonstrate what it means later in this guide). It was designed for cases when you may need
-to perform a sophisticated query that includes conditions, sorting, limit and/or offset and may benefit from paginating results or using advanced
-MongoDB features like cursor snapshotting.
+Monger Query DSL is expressive and composable (we will demonstrate
+what it means later in this guide). It was designed for cases when you
+may need to perform a sophisticated query that includes conditions,
+sorting, limit and/or offset and may benefit from paginating results
+or using advanced MongoDB features like cursor snapshotting.
 
 
-## Finding documents
+## Finding Documents
 
 To find multiple documents, use `monger.collection/find`:
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.collection :as mc]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-(mc/insert "documents" {:first_name "John"  :last_name "Lennon"})
-(mc/insert "documents" {:first_name "Ringo" :last_name "Starr"})
-
-(mc/find "documents" {:first_name "Ringo"})
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  (mc/insert db coll {:first_name "John"  :last_name "Lennon"})
+  (mc/insert db coll {:first_name "Ringo" :last_name "Starr"})
+  
+  (mc/find db coll {:first_name "Ringo"}))
 ```
 
-`monger.collection/find` takes a collection name and query conditoins and returns a database cursor you can use [clojure.core/seq](http://clojuredocs.org/clojure_core/clojure.core/seq) on.
-Each element of the sequence is a `com.mongodb.DBObject` instance. They can be transformed into Clojure maps using `monger.conversion/from-db-object` fn:
+`monger.collection/find` takes a database, collection name and query
+conditoins and returns a database cursor you can use
+[clojure.core/seq](http://clojuredocs.org/clojure_core/clojure.core/seq)
+on.  Each element of the sequence is a `com.mongodb.DBObject`
+instance. They can be transformed into Clojure maps using
+`monger.conversion/from-db-object` fn:
 
 ``` clojure
 (ns my.service.server
-  (:require [monger.collection :as mc]
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
             [monger.conversion :refer [from-db-object]]))
 
-(mc/insert "documents" {:first_name "John"  :last_name "Lennon"})
-(mc/insert "documents" {:first_name "Ringo" :last_name "Starr"})
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  (mc/insert db coll {:first_name "John"  :last_name "Lennon"})
+  (mc/insert db coll {:first_name "Ringo" :last_name "Starr"})
 
-(from-db-object (mc/find "documents" {:first_name "Ringo"}) true)
+  (from-db-object (mc/find "documents" {:first_name "Ringo"}) true)
 ;= {:first_name "Ringo" :last_name "Starr"}
 ```
 
-Turning the entire result set into Clojure maps is so common, however, that Monger provides a function that works exactly like `monger.collection/find` but
-returns a lazy sequence of maps, `monger.collection/find-maps`:
+Turning the entire result set into Clojure maps is so common, however,
+that Monger provides a function that works exactly like
+`monger.collection/find` but returns a lazy sequence of maps,
+`monger.collection/find-maps`:
 
 ``` clojure
 ;; returns all documents as Clojure maps
-(mc/find-maps "documents")
+(mc/find-maps db "documents")
 
 ;; returns documents with year field value of 1998, as Clojure maps
-(mc/find-maps "documents" { :year 1998 })
+(mc/find-maps db "documents" { :year 1998 })
 ```
 
-Normally you should prefer `monger.collection/find-maps` to `monger.collection/find`, which is considered to be part of the lower-level API.
+Normally you should prefer `monger.collection/find-maps` to
+`monger.collection/find`, which is considered to be part of the
+lower-level API.
 
-### Sorting, limits, offsets
+### Sorting, Limits, Offsets
 
-To use sorting, limit, offset, pagination and so on, please use Monger's Query DSL (covered later in this guide).
+To use sorting, limit, offset, pagination and so on, please use
+Monger's Query DSL (covered later in this guide).
 
 
-## Finding a single document
+## Finding a Single Document
 
-`monger.collection/find-one` finds one document and returns it as a `DBObject` instance:
+`monger.collection/find-one` finds one document and returns it as a
+`DBObject` instance:
 
 ``` clojure
 ;; find one document by id, as `com.mongodb.DBObject` instance
-(mc/find-one "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+(mc/find-one db "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 ```
 
 
 
-`monger.collection/find-one-as-map` is similar to `monger.collection/find-one` but converts `DBObject` instances to Clojure maps:
+`monger.collection/find-one-as-map` is similar to
+`monger.collection/find-one` but converts `DBObject` instances to
+Clojure maps:
 
 ``` clojure
 ;; find one document by id, as a Clojure map
-(mc/find-one-as-map "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+(mc/find-one-as-map db "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 ```
 
 
-A more convenient way of finding a document by id as Clojure map is `monger.collection/find-map-by-id`:
+A more convenient way of finding a document by id as Clojure map is
+`monger.collection/find-map-by-id`:
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all])
-)
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]))
 
-(let [oid (ObjectId.)]
-  (mc/insert "documents" {:_id oid :first_name "John" :last_name "Lennon"})
-  (mc/find-map-by-id "documents" oid))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"
+      oid  (ObjectId.)]
+  (mc/insert db coll {:_id oid :first_name "John" :last_name "Lennon"})
+  (mc/find-map-by-id db coll oid))
 ```
 
-Normally you should prefer `monger.collection/find-one-as-map` and `monger.collection/find-map-by-id` to `monger.collection/find-one`.
+Normally you should prefer `monger.collection/find-one-as-map` and
+`monger.collection/find-map-by-id` to `monger.collection/find-one`.
 
-### Convert a string to a MongoDB (BSON) ObjectId
+### Convert a String to a MongoDB (BSON) ObjectId
 
-To convert a string in the object id form (for example, coming from a Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
+To convert a string in the object id form (for example, coming from a
+Web form) to an `ObjectId`, instantiate `ObjectId` with an argument:
 
 ``` clojure
 (ns my.service.server
@@ -136,55 +171,57 @@ To convert a string in the object id form (for example, coming from a Web form) 
 (ObjectId. "4fea999c0364d8e880c05157") ;; => #<ObjectId 4fea999c0364d8e880c05157>
 ```
 
-Document ids in MongoDB do not have to be of the object id type, they also can be strings, integers and any value you can store that MongoDB
-knows how to compare order (sort). However, using `ObjectId`s is usually a good idea.
+Document ids in MongoDB do not have to be of the object id type, they
+also can be strings, integers and any value you can store that MongoDB
+knows how to compare order (sort). However, using `ObjectId`s is
+usually a good idea.
 
-To coerce an input to `ObjectId` (instantiate one from a string of the input is a string, or just return the input if it is an `ObjectId`), there
-is [monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id).
+To coerce an input to `ObjectId` (instantiate one from a string of the
+input is a string, or just return the input if it is an `ObjectId`),
+there is
+[monger.conversion/to-object-id](http://reference.clojuremongodb.info/monger.conversion.html#var-to-object-id).
 
-### Convert a MongoDB (BSON) ObjectId to a string
+### Convert a MongoDB (BSON) ObjectId to a String
 
-To convert a BSON ObjectId (`org.bson.types.ObjectId` instance) to a string, just use [clojure.core/str](http://clojuredocs.org/clojure_core/clojure.core/str) to
-it or call `org.bson.types.ObjectId#toString` on it.
-
-
-### Alternative API for Working with Multiple Databases
-
-`monger.multi.collection/find-maps` is a twin sister of `monger.collection/find-maps` which takes
-a database as its first argument instead of relying on `monger.core/*mongodb-database*`.
-
-`monger.multi.collection/find-one-as-map`, `monger.multi.collection/find-map-by-id`, and `monger.multi.collection/find-and-modify`
-are also available
+To convert a BSON ObjectId (`org.bson.types.ObjectId` instance) to a
+string, just use
+[clojure.core/str](http://clojuredocs.org/clojure_core/clojure.core/str)
+to it or call `org.bson.types.ObjectId#toString` on it.
 
 
-## Loading a subset of fields
+## Loading a Subset of Fields
 
-Both `monger.collection/find` and `monger.collection/find-maps` take 3rd argument that specifies what fields need to be retrieved:
+Both `monger.collection/find` and `monger.collection/find-maps` take
+an argument that specifies what fields need to be retrieved:
 
 ``` clojure
-(mgcol/find-one-as-map "accounts" {:username "happyjoe"} ["email" "username"])
+(mc/find-one-as-map db "accounts" {:username "happyjoe"} ["email" "username"])
 ```
 
-This is useful to excluding very large fields from loading when you won't operate on them.
+This is useful to excluding very large fields from loading when you
+won't operate on them.
 
-Fields can be specified as a document (just like in the MongoDB shell) but it is more common to pass them as a vector of keywords. Monger
+Fields can be specified as a document (just like in the MongoDB shell)
+but it is more common to pass them as a vector of keywords. Monger
 will transform them into a document for you.
 
 
 ## Reaching Into Nested Documents in Conditions
 
-To "reach into" nested documents and use them in conditions, MongoDB uses the "dot syntax" for fields. For example, with a document
-that looks like this:
+To "reach into" nested documents and use them in conditions, MongoDB
+uses the "dot syntax" for fields. For example, with a document that
+looks like this:
 
 ``` clojure
 {:address {:country "United States of America" :city "New York City" :state "New York" :zip "10001"}}
 ```
 
-it is possible to address the zip field in a condition as `"address.zip"`. This is exactly how you do it in Monger in conditions and arguments for
-operators like `$set`:
+it is possible to address the zip field in a condition as
+`"address.zip"`. This is exactly how you do it in Monger in conditions
+and arguments for operators like `$set`:
 
 ``` clojure
-(monger.collection/find-maps "locations" {"address.zip" "10001"})
+(mc/find-maps db "locations" {"address.zip" "10001"})
 ```
 
 
@@ -218,7 +255,7 @@ cases when exact field names are not known and performance for
 write-heavy workloads.
 
 
-## Using MongoDB query operators
+## Using MongoDB Query Operators
 
 Monger provides a convenient way to use [MongoDB query
 operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators). While
@@ -226,7 +263,7 @@ operators can be used in queries with strings, for example:
 
 ``` clojure
 ;; with a query that uses operators as strings
-(mc/find "products" { :price_in_subunits { "$gt" 1200 "$lte" 4000 } })
+(mc/find db "products" { :price_in_subunits { "$gt" 1200 "$lte" 4000 } })
 ```
 
 there is a better way to do it with Clojure. By using
@@ -239,36 +276,39 @@ compile time. Here is what it looks like with operator macros:
   (:require [monger.operators :refer :all]))
 
 ;; using MongoDB operators as symbols
-(mc/find "products" { :price_in_subunits { $gt 1200 $lte 4000 } })
+(mc/find db "products" { :price_in_subunits { $gt 1200 $lte 4000 } })
 ```
 
-Below are more examples that use various query operators (you can use any operator supported by the MongoDB shell with Monger):
+Below are more examples that use various query operators (you can use
+any operator supported by the MongoDB shell with Monger):
 
 ### <, <=, >, >=
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
-(let [collection "libraries"]
-    (mc/insert-batch collection [{:language "Clojure", :name "monger"   :users 1}
-                                 {:language "Clojure", :name "langohr"  :users 5}
-                                 {:language "Clojure", :name "incanter" :users 15}
-                                 {:language "Scala",   :name "akka"     :users 150}])
-    (mc/find collection {:users { $gt 10 }}) ;= 2 documents
-    (mc/find collection {:users { $gte 5 }}) ;= 3 documents
-    (mc/find collection {:users { $lt 10 }}) ;= 2 documents
-    (mc/find collection {:users { $lte 5 }}) ;= 2 documents
-    (mc/find collection {:users { $gt 10 $lt 150 }})) ;= 1 document
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "libraries"]
+    (mc/insert-batch db coll [{:language "Clojure", :name "monger"   :users 1}
+                              {:language "Clojure", :name "langohr"  :users 5}
+                              {:language "Clojure", :name "incanter" :users 15}
+                              {:language "Scala",   :name "akka"     :users 150}])
+    (mc/find db coll {:users { $gt 10 }}) ;= 2 documents
+    (mc/find db coll {:users { $gte 5 }}) ;= 3 documents
+    (mc/find db coll {:users { $lt 10 }}) ;= 2 documents
+    (mc/find db coll {:users { $lte 5 }}) ;= 2 documents
+    (mc/find db coll {:users { $gt 10 $lt 150 }})) ;= 1 document
 ```
 
 The `$gt`, `$lt`, `$gte`, `$lte` operators work on dates and are very
 commonly used for time range queries. Date values can be
 `java.util.Date` instances or (highly recommended) [Joda
 Time](http://joda-time.sourceforge.net) dates. If you want to use Joda
-Time in Clojure, [clj-time](https://github.com/seancorfield/clj-time)
-is a good option.
+Time in Clojure, clj-time is the most popular option.
 
 ### $exists
 
@@ -296,19 +336,21 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all])
-
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all])
   (:import org.bson.types.ObjectId))
 
-(let [coll "docs"
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "docs"
       doc1 {:_id (ObjectId.) :counter 25}
       doc2 {:_id (ObjectId.) :counter 32}
       doc3 {:_id (ObjectId.) :counter 63}
-      _    (mgcol/insert-batch coll [doc1 doc2 doc3])
-      result1 (mc/find-one-as-map coll {:counter {$mod [10 5]}})
-      result2 (mc/find-one-as-map coll {:counter {$mod [10 2]}})
-      result3 (mc/find-one-as-map coll {:counter {$mod [11 1]}})]
+      _    (mc/insert-batch coll [doc1 doc2 doc3])
+      result1 (mc/find-one-as-map db coll {:counter {$mod [10 5]}})
+      result2 (mc/find-one-as-map db coll {:counter {$mod [10 2]}})
+      result3 (mc/find-one-as-map db coll {:counter {$mod [11 1]}})]
   ;= true
   (= doc1 result1)
   ;= true
@@ -322,16 +364,19 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
-(let [collection "libraries"]
-    (mc/insert-batch collection [{:language "Ruby",    :name "mongoid"  :users 1}
-                                 {:language "Clojure", :name "langohr"  :users 5}
-                                 {:language "Clojure", :name "incanter" :users 15}
-                                 {:language "Scala",   :name "akka"     :users 150}])
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "libraries"]
+    (mc/insert-batch db coll [{:language "Ruby"    :name "mongoid"  :users 1}
+                              {:language "Clojure" :name "langohr"  :users 5}
+                              {:language "Clojure" :name "incanter" :users 15}
+                              {:language "Scala"   :name "akka"     :users 150}])
     ;= 2
-    (mc/count collection {$ne {:language "Clojure"}}))
+    (mc/count db coll {$ne {:language "Clojure"}}))
 ```
 
 
@@ -339,24 +384,26 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all])
-)
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
-(let [collection "libraries"]
-    (mgcol/insert-batch collection [{:language "Clojure" :tags ["functional"]}
-                                    {:language "Scala"   :tags ["functional" "object-oriented"]}
-                                    {:language "Ruby"    :tags ["object-oriented" "dynamic"]}])
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "libraries"]
+    (mc/insert-batch db coll [{:language "Clojure" :tags ["functional"]}
+                              {:language "Scala"   :tags ["functional" "object-oriented"]}
+                              {:language "Ruby"    :tags ["object-oriented" "dynamic"]}])
     ; = "Scala"
-    (:language (first (mgcol/find-maps collection {:tags {$all ["functional" "object-oriented"]}})))
+    (:language (first (mc/find-maps db coll {:tags {$all ["functional" "object-oriented"]}})))
     ;= 3
-    (mc/count collection {:tags {$in ["functional" "object-oriented"]}})
+    (mc/count db coll {:tags {$in ["functional" "object-oriented"]}})
     ;= 2
-    (mc/count collection {:language {$in ["Scala" "Ruby"]}})
+    (mc/count db coll {:language {$in ["Scala" "Ruby"]}})
     ;= 1
-    (mc/count collection {:tags {$nin ["dynamic", "object-oriented"]}})
+    (mc/count db coll {:tags {$nin ["dynamic", "object-oriented"]}})
     ;= 3
-    (mc/count collection {:language {$nin ["C#"]}}))
+    (mc/count db coll {:language {$nin ["C#"]}}))
 ```
 
 
@@ -367,20 +414,22 @@ is a good option.
   (:require [monger.collection :as mc]
     [monger.operators :refer :all]))
 
-(let [collection "libraries"]
-    (mgcol/insert-batch collection [{ :language "Ruby",    :name "mongoid"  :users 1}
-                                    { :language "Clojure", :name "langohr"  :users 5}
-                                    { :language "Clojure", :name "incanter" :users 15}
-                                    { :language "Scala",   :name "akka"     :users 150}])
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "libraries"]
+    (mc/insert-batch db coll [{ :language "Ruby",    :name "mongoid"  :users 1}
+                              { :language "Clojure", :name "langohr"  :users 5}
+                              { :language "Clojure", :name "incanter" :users 15}
+                              { :language "Scala",   :name "akka"     :users 150}])
     ;= 1
-    (mc/count collection {$and [{:language "Clojure"}
-                                {:users {$gt 10}}]})
+    (mc/count db coll {$and [{:language "Clojure"}
+                             {:users {$gt 10}}]})
     ;= 3
-    (mc/count collection {$or [{:language "Clojure"}
-                               {:users {$gt 10}}]})
+    (mc/count db coll {$or [{:language "Clojure"}
+                            {:users {$gt 10}}]})
     ;= 1
-    (mc/count collection {$nor [{:language "Clojure"}
-                                {:users {$gt 10}} ]}))
+    (mc/count db coll {$nor [{:language "Clojure"}
+                             {:users {$gt 10}} ]}))
 ```
 
 
@@ -388,24 +437,27 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
-(let [collection "libraries"]
-    (mc/insert-batch collection [{:language "Ruby"    :name "Mongoid"  :users 1}
-                                 {:language "Clojure" :name "Langohr"  :users 5}
-                                 {:language "Clojure" :name "Incanter" :users 15}
-                                 {:language "Scala"   :name "Akka"     :users 150}])
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "libraries"]
+    (mc/insert-batch db coll [{:language "Ruby"    :name "Mongoid"  :users 1}
+                              {:language "Clojure" :name "Langohr"  :users 5}
+                              {:language "Clojure" :name "Incanter" :users 15}
+                              {:language "Scala"   :name "Akka"     :users 150}])
     ;= 2
-    (mc/count collection {:language {$regex "Clo.*"}})
+    (mc/count db coll {:language {$regex "Clo.*"}})
     ;= 2
-    (mc/count collection {:language {$regex "clo.*" $options "i"}})
+    (mc/count db coll {:language {$regex "clo.*" $options "i"}})
     ;= 1
-    (mc/count collection {:language {$regex "aK.*" $options "i"}})
+    (mc/count db coll {:language {$regex "aK.*" $options "i"}})
     ;= 1
-    (mc/count collection {:language {$regex ".*by"}})
+    (mc/count db coll {:language {$regex ".*by"}})
     ;= 1
-    (mc/count collection {:language {$regex ".*ala.*"}}))
+    (mc/count db coll {:language {$regex ".*ala.*"}}))
 ```
 
 
@@ -413,19 +465,20 @@ is a good option.
 
 ``` clojure
 (ns my.app
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all])
-)
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]))
 
-(let [collection "people"]
-    (mc/insert-batch collection [{:name "Bob" :comments [{:text "Nice!" :rating 1}
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "people"]
+    (mc/insert-batch db coll [{:name "Bob" :comments [{:text "Nice!" :rating 1}
                                                             {:text "Love it" :rating 4}
                                                             {:text "What?":rating -5} ]}
-                                    {:name "Alice" :comments [{:text "Yeah" :rating 2}
-                                                              {:text "Doh" :rating 1}
-                                                              {:text "Agreed" :rating 3}]}])
-    ;= {:name "Bob" :comments [{:text "Nice!" :rating 1} {:text "Love it" :rating 4} {:text "What?":rating -5}]}
-    (mc/find collection {:comments {$elemMatch {:text "Nice!" :rating {$gte 1}}}}))
+                              {:name "Alice" :comments [{:text "Yeah" :rating 2}
+                                                        {:text "Doh" :rating 1}
+                                                        {:text "Agreed" :rating 3}]}])
+    (mc/find db coll {:comments {$elemMatch {:text "Nice!" :rating {$gte 1}}}}))
 ```
 
 
@@ -437,68 +490,79 @@ will be covered in a separate one when MongoDB 2.2 reaches release
 candidate stages.
 
 
-## More examples
+### More Examples
 
 These and other examples of Monger finders in one gist:
 
 ``` clojure
 (ns my.service.finders
-  (:require [monger.collection :as mc]
-    [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.operators :refer :all])
+  (:import org.bson.types.ObjectId))
 
-;; find one document by id, as Clojure map
-(mc/find-map-by-id "documents" (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
+(let [conn (mg/connect)
+      db   (mg/get-db conn "monger-test")
+      coll "documents"]
+  ;; find one document by id, as Clojure map
+  (mc/find-map-by-id db coll (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
 
-;; find one document by id, as `com.mongodb.DBObject` instance
-(mc/find-by-id "documents" (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
+  ;; find one document by id, as `com.mongodb.DBObject` instance
+  (mc/find-by-id db coll (ObjectId. "4ec2d1a6b55634a935ea4ac8"))
 
-;; find one document as Clojure map
-(mc/find-one-as-map "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+  ;; find one document as Clojure map
+  (mc/find-one-as-map db coll { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 
-;; find one document by id, as `com.mongodb.DBObject` instance
-(mc/find-one "documents" { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
+  ;; find one document by id, as `com.mongodb.DBObject` instance
+  (mc/find-one db coll { :_id (ObjectId. "4ec2d1a6b55634a935ea4ac8") })
 
+  ;; all documents  as Clojure maps
+  (mc/find-maps db coll)
 
-;; all documents  as Clojure maps
-(mc/find-maps "documents")
+  ;; all documents  as `com.mongodb.DBObject` instances
+  (mc/find db coll)
 
-;; all documents  as `com.mongodb.DBObject` instances
-(mc/find "documents")
+  ;; with a query, as Clojure maps
+  (mc/find-maps db coll { :year 1998 })
 
-;; with a query, as Clojure maps
-(mc/find-maps "documents" { :year 1998 })
+  ;; with a query, as `com.mongodb.DBObject` instances
+  (mc/find db coll { :year 1998 })
 
-;; with a query, as `com.mongodb.DBObject` instances
-(mc/find "documents" { :year 1998 })
+  ;; with a query that uses operators
+  (mc/find db "products" { :price_in_subunits { $gt 4000 $lte 1200 } })
 
-;; with a query that uses operators
-(mc/find "products" { :price_in_subunits { $gt 4000 $lte 1200 } })
-
-;; with a query that uses operators as strings
-(mc/find "products" { :price_in_subunits { "$gt" 4000 "$lte" 1200 } })
+  ;; with a query that uses operators as strings
+  (mc/find db "products" { :price_in_subunits { "$gt" 4000 "$lte" 1200 } }))
 ```
 
 
 ## Getting Distinct Documents
 
-To get a collection of distinct documents by field or query, use the `monger.collection/distinct` function that returns a lazy sequence
-of documents. There is currently no `monger.collection/distinct-maps` or similar function so to produce a sequence of Clojure maps,
-it is necessary to map (`clojure.core/map`) with `monger.conversion/from-db-object` over the results.
+To get a collection of distinct documents by field or query, use the
+`monger.collection/distinct` function that returns a lazy sequence of
+documents. There is currently no `monger.collection/distinct-maps` or
+similar function so to produce a sequence of Clojure maps, it is
+necessary to map (`clojure.core/map`) with
+`monger.conversion/from-db-object` over the results.
 
 ``` clojure
-(:require [monger.collection :as mc]
-          [monger.conversion :as convert])
+(:require [monger.core :as mg]
+          [monger.collection :as mc]
+          [monger.conversion :refer [from-db-object]])
 
-;; get distinct values from the posts collection for the field category.
-(mc/distinct "posts" "category")
-
-;; get distinct values from the posts collection for the field category with a query.
-(mc/distinct "posts" "category" {:limit 5})
-
-;; convert values to maps using an anonymous function
-(map
-  (fn [cat] (convert/from-db-object cat false))
-  (mc/distinct "posts" "category"))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "posts"]
+  ;; get distinct values from the posts collection for the field category.
+  (mc/distinct db coll "category")
+  
+  ;; get distinct values from the posts collection for the field category with a query.
+  (mc/distinct db coll "category" {:limit 5})
+  
+  ;; convert values to maps using an anonymous function
+  (map
+    (fn [cat] (from-db-object cat false))
+    (mc/distinct db coll "category")))
 ```
 
 
@@ -512,35 +576,40 @@ Monger's Query DSL is heavily inspired by [SQL
 Korma](http://sqlkorma.com/), is composable and easy to extend if
 necessary.
 
-Queries performed via Query DSL always return sequences of Clojure maps, like `monger.collection/find-maps` does.
+Queries performed via Query DSL always return sequences of Clojure
+maps, like `monger.collection/find-maps` does.
 
 Lets take a look at its core features first.
 
-### Sorting, skip and limit
+### Sorting, Skip and Limit
 
 Sorting documents are specified exactly as they are in the MongoDB shell (1 for ascending, -1 for descending ordering):
 
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:require [monger.query :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.query :refer :all]))
 
-;; find top 10 scores that will be returned as Clojure maps
-(with-collection "scores"
-  (find {})
-  (fields [:score :name])
-  ;; it is VERY IMPORTANT to use array maps with sort
-  (sort (array-map :score -1 :name 1))
-  (limit 10))
-
-;; find scores 10 to 20
-(with-collection "scores"
-  (find {})
-  (fields [:score :name])
-  ;; it is VERY IMPORTANT to use array maps with sort
-  (sort (array-map :score -1 :name 1))
-  (limit 10)
-  (skip 10))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "scores"]
+  ;; find top 10 scores that will be returned as Clojure maps
+  (with-collection db coll
+    (find {})
+    (fields [:score :name])
+    ;; it is VERY IMPORTANT to use array maps with sort
+    (sort (array-map :score -1 :name 1))
+    (limit 10))
+  
+  ;; find scores 10 to 20
+  (with-collection db coll
+    (find {})
+    (fields [:score :name])
+    ;; it is VERY IMPORTANT to use array maps with sort
+    (sort (array-map :score -1 :name 1))
+    (limit 10)
+    (skip 10)))
 ```
 
 This example also demonstrates query conditions and fetching a subset
@@ -550,51 +619,63 @@ maps do not have ordering guarantees and this may lead to incorrect
 sorting of results.
 
 
-### Using pagination
+### Using Pagination
 
-Using `skip` and `limit` to do pagination in the query DSL is so common that Monger provides a DSL extension for that:
+Using `skip` and `limit` to do pagination in the query DSL is so
+common that Monger provides a DSL extension for that:
 
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:require [monger.query :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.query :refer :all]))
 
-;; find top 10 scores
-(with-collection "scores"
-  (find {})
-  (fields [:score :name])
-  (sort {:score -1})
-  (paginate :page 1 :per-page 10))
-
-;; find scores 10 to 20
-(with-collection "scores"
-  (find {})
-  (fields [:score :name])
-  (sort {:score -1})
-  (paginate :page 2 :per-page 10))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "scores"]
+  ;; find top 10 scores
+  (with-collection db coll
+    (find {})
+    (fields [:score :name])
+    (sort {:score -1})
+    (paginate :page 1 :per-page 10))
+  
+  ;; find scores 10 to 20
+  (with-collection db coll
+    (find {})
+    (fields [:score :name])
+    (sort {:score -1})
+    (paginate :page 2 :per-page 10)))
 ```
 
 
 ### Read Preference
 
-Read preference lets MongoDB clients specify whether a query should go to the master/primary node (thus guaranteeing consistency but also
-putting extra load on primaries) or it's OK to read from slaves (and thus get eventual consistency, which ocassionally may result
-in slightly out of date data to be returned):
+Read preference lets MongoDB clients specify whether a query should go
+to the master/primary node (thus guaranteeing consistency but also
+putting extra load on primaries) or it's OK to read from slaves (and
+thus get eventual consistency, which ocassionally may result in
+slightly out of date data to be returned):
 
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:require [monger.query :refer :all])
+  (:require [monger.core :as mg]
+            [monger.query :refer :all])
   (:import com.mongodb.ReadPreference))
 
-;; reads from primary (master) to guarantee consistency
-;; (at the cost of putting extra load on the primary)
-(with-collection coll
-                  (find {:email "joe@example.com"})
-                  (read-preference (ReadPreference/primary)))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "scores"]
+  ;; reads from primary (master) to guarantee consistency
+  ;; (at the cost of putting extra load on the primary)
+  (with-collection db coll
+    (find {:email "joe@example.com"})
+    (read-preference (ReadPreference/primary))))
 ```
 
-Possible read preference values are returned by the following static methods:
+Possible read preference values are returned by the following static
+methods:
 
  * `com.mongodb.ReadPreference/primary` (read only from master, throw an error if it is not available)
  * `com.mongodb.ReadPreference/primaryPreferred` (read from master if available, a slave otherwise)
@@ -624,13 +705,16 @@ Here is how to snapshot a cursor with Monger query DSL:
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:require [monger.query :refer :all]
-            [monger.operators :refer :all]))
+  (:require [monger.core :as mg]
+            [monger.query :refer :all]))
 
-;; performs a snapshotted query
-(with-collection "documents"
-                  (find {:email "joe@example.com"})
-                  (snapshot))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "documents"]
+  ;; performs a snapshotted query
+  (with-collection db coll
+                    (find {:email "joe@example.com"})
+                    (snapshot)))
 ```
 
 
@@ -641,14 +725,16 @@ While not necessary in most cases, it is possible to force query to use the give
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:require [monger.query :refer :all]
-            [monger.operators :refer [$gt $lt]])
-  (:import com.mongodb.ReadPreference))
+  (:require [monger.core :as mg]
+            [monger.query :refer :all]
+            [monger.operators :refer [$gt $lt]])))
 
-(with-collection coll
-                  (find {:age_in_days {$gt 365} :number_of_signins {$lt 3}})
-                  (sort {:age_in_days -1 :number_of_signins 1})
-                  (hint {:age_in_days -1 :number_of_signins 1}))
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+  (with-collection db coll
+    (find {:age_in_days {$gt 365} :number_of_signins {$lt 3}})
+    (sort {:age_in_days -1 :number_of_signins 1})
+    (hint {:age_in_days -1 :number_of_signins 1})))
 ```
 
 Hinting only makes sense in the presence of multiple compound indexes
@@ -665,13 +751,16 @@ number of documents returned by the server:
 ``` clojure
 (ns my.service.server
   (:refer-clojure :exclude [sort find])
-  (:require [monger.query :refer :all]
-            [monger.operators :refer [$gt $lt]]))
+  (:require [monger.core :as mg]
+            [monger.query :refer :all]
+            [monger.operators :refer [$gt]])))
 
-(with-collection coll
-                  (find {:age_in_days {$gt 365}})
-                  (sort {:age_in_days -1})
-                  (batch-size 5000)
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")]
+  (with-collection db coll
+     (find {:age_in_days {$gt 365}})
+     (sort {:age_in_days -1})
+     (batch-size 5000))
 ```
 
 If batch size is negative, it will limit of number objects returned,
@@ -683,96 +772,107 @@ in that documents must fit within a maximum size, and it removes the
 need to send a request to close the cursor server-side.
 
 
+
 ## Counting Documents
 
 Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection/any?`:
 
-``` clojure
-(ns my.service.server
-  (:require [monger.collection :as mc]))
-
-(mc/any? "documents")
-;= false
-
-(mc/empty? "documents")
-;= true
-
-(mc/insert "documents" {:first_name "John"  :last_name "Lennon"})
-(mc/insert "documents" {:first_name "Ringo" :last_name "Starr"})
-
-(mc/any? "documents")
-;= true
-
-(mc/empty? "documents")
-;= false
-
-(mc/count "documents" {:first_name "Ringo"})
-;= 1
-
-(mc/count "documents" {:first_name "Adam"})
-;= 0
-
-(mc/any? "documents" {:first_name "Ringo"})
-;= true
-
-(mc/any? "documents" {:first_name "Joe"})
-;= false
+(let [conn (mg/connect)
+      db   (mg/get-db "monger-test")
+      coll "documents"]
+  (mc/any? db coll)
+  ;= false
+  
+  (mc/empty? db coll)
+  ;= true
+  
+  (mc/insert db coll {:first_name "John"  :last_name "Lennon"})
+  (mc/insert db coll {:first_name "Ringo" :last_name "Starr"})
+  
+  (mc/any? db coll)
+  ;= true
+  
+  (mc/empty? db coll)
+  ;= false
+  
+  (mc/count db coll {:first_name "Ringo"})
+  ;= 1
+  
+  (mc/count db coll {:first_name "Adam"})
+  ;= 0
+  
+  (mc/any? db coll {:first_name "Ringo"})
+  ;= true
+  
+  (mc/any? db coll {:first_name "Joe"})
+  ;= false)
 ```
 
 
-## Tweaking query options
 
-There're special cases when you need to tweak the settings of query - for example you have a long running query that needs to run more than 10minutes without getting a timeout exception. You can tweak the options two ways: using the DSL `options` specifier or low-level helpers from `monger.cursor` namespace.
+
+## Tweaking Query Options
+
+There're special cases when you need to tweak the settings of query -
+for example you have a long running query that needs to run more than
+10minutes without getting a timeout exception. You can tweak the
+options two ways: using the DSL `options` specifier or low-level
+helpers from `monger.cursor` namespace.
 
 #### Query DSL
 
-When you are using the query DSL, then it's easy to tweak the options, just add the  option specifier to your query. The option specifier accepts Clojure map, list, keyword or constant value from class `com.mongodb.Bytes` as argument.
+When you are using the query DSL, then it's easy to tweak the options,
+just add the option specifier to your query. The option specifier
+accepts Clojure map, list, keyword or constant value from class
+`com.mongodb.Bytes` as argument.
 
 ```clojure
+(require '[monger.query :refer [with-collection find options]])
 
-  (require '[monger.query :refer [with-collection, find, options]])
-  
-  (with-collection "products"
-    (find {:language "Clojure"})
-    (options {:notimeout true, :slaveok false}) ;;`false` turns option off
-    (options [:notimeout :slaveok])             ;; activate these 2 options
-    (options :notimeout)                        ;; only timeout
-    (options com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT))
+(with-collection db "products"
+  (find {:language "Clojure"})
+  (options {:notimeout true, :slaveok false}) ;;`false` turns option off
+  (options [:notimeout :slaveok])             ;; activate these 2 options
+  (options :notimeout)                        ;; only timeout
+  (options com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT))
 ```
 
-#### Fine-tuning cursors
+#### Fine-tuning Cursors
 
-You can use helpers from `monger.cursor` namespace, when you are working with a low-level finder as `monger.collection/find`, returns the database cursor object. 
+You can use helpers from `monger.cursor` namespace, when you are
+working with a low-level finder as `monger.collection/find`, returns
+the database cursor object.
 
 Here's an example usage of cursor helper
 
 ```clojure
+(require '[monger.collection :as coll]
+         '[monger.cursor :as cur])
 
-  (require '[monger.collection :as coll]
-           '[monger.cursor :as cur])
-  
-  (let [db-cur (coll/find :languages {:language "Clojure"})]
-  	(reset-options db-cur)              ;; cleans previous settings
-  	(add-option! db-cur :notimeout)     ;; adds only one options
-  	(remove-option! db-cur :notimeout)  ;;removes specific option, keep other untouched
-  	(add-options db-cur {:notimeout true :slaveok false})
-  	(add-options db-cur [:notimeout :slaveok])
-  	(add-options db-cur :notimeout)
-  	(add-options db-cur com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT)
-  	(get-options db-cur)                ;; returns map of settings, where values show current state of option
-  	(format-as db-cur :map)             ;; turns lazy-seq of clojure map
-  	)
+(let [db-cur (coll/find db :languages {:language "Clojure"})]
+	(cur/reset-options db-cur)              ;; cleans previous settings
+	(cur/add-option! db-cur :notimeout)     ;; adds only one options
+	(cur/remove-option! db-cur :notimeout)  ;;removes specific option, keep other untouched
+	(cur/add-options db-cur {:notimeout true :slaveok false})
+	(cur/add-options db-cur [:notimeout :slaveok])
+	(cur/add-options db-cur :notimeout)
+	(cur/add-options db-cur com.mongodb.Bytes/QUERYOPTION_NOTIMEOUT)
+	(cur/get-options db-cur)                ;; returns map of settings, where values show current state of option
+	(cur/format-as db-cur :map)             ;; turns lazy-seq of clojure map
+)
 ```
 
-You cannot tweak the query settings for `find-map` or `find-seq`, but you can simulate their functionality by using helpers from the cursor namespace. Here's a little usage example, that simulates the `find-map` functionality:
+You cannot tweak the query settings for `find-map` or `find-seq`, but
+you can simulate their functionality by using helpers from the cursor
+namespace. Here's a little usage example, that simulates the
+`find-map` functionality:
 
 ```clojure
+(require '[monger.cursor :refer [make-db-cursor add-options format-as]])
 
-  (require '[monger.cursor :refer [make-db-cursor add-options format-as]])
-  
-  (let [db-cur (make-db-cursor :languages {:language "Clojure"})]
-   (-> db-cur
-   	 (add-options :notimeout)
+(let [db-cur (make-db-cursor db :languages {:language "Clojure"})]
+ (-> db-cur
+     (add-options :notimeout)
      (format-as :map)))
 ```
 
@@ -787,25 +887,6 @@ keyword      | Bytes class value       |description
 :partial     | QUERYOPTION_PARTIAL     | Use with sharding (mongos).
 :slaveok     | QUERYOPTION_SLAVEOK     | When turned on, read queries will be directed to slave servers instead of the primary server.
 :tailable    | QUERYOPTION_TAILABLE    | Tailable means cursor is not closed when the last data is retrieved.
-
-
-## Working With Multiple Databases
-
-Monger is optimized for applications that use only one database but it
-is possible to work with multiple ones.
-
-For that, use functions in the `monger.multi.collection` namespace: they mirror
-`monger.collection` but take a database as the first argument.
-
-
-It is also possible to use [clojure.core/binding](http://clojuredocs.org/clojure_core/clojure.core/binding)
-to rebind `monger.core/*mongodb-database*`,
-`monger.core/*mongodb-connection*` and `monger.core/*mongodb-gridfs*`
-vars to different values or use convenience functions that do that:
-`monger.core/with-connection`, `monger.core/with-db`,
-`monger.core/with-gridfs`. This is a common practice for Clojure
-libraries. Remember that var bindings are thread-local.
-
 
 
 ## What To Read Next

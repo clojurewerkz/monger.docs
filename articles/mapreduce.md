@@ -16,7 +16,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 1.8 (including beta releases).
+This guide covers Monger 2.0 (including preview releases).
 
 
 ## What version of MongoDB does this guide cover?
@@ -67,15 +67,20 @@ destination collection and one of the output type values (a
 ``` clojure
 (ns monger.docs.examples
   (:require [clojurewerkz.support.js :as js]
-            [monger.core :refer [command]]
-            [monger.collection :refer [map-reduce]]
+            [monger.core :as mg]
+            [monger.collection :as mc]
             [monger.result :refer [ok?]]
             [monger.conversion :refer [from-db-object]])
   (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
 ;; performs a map/reduce query using functions stored in mapper.js and reducer.js
 ;; on the classpath. The result will be returned "inline" (as a collection of documents back to the client).
-(let [output  (mc/map-reduce "events" (js/load-resource "mr/mapper.js") (js/load-resource "mr/reducer.js") "map_reduce_results" MapReduceCommand$OutputType/MERGE {})
+(let [conn    (mg/connect)
+      db      (mg/get-db conn "monger-test")
+      output  (mc/map-reduce db "events" (js/load-resource "mr/mapper.js")
+                                         (js/load-resource "mr/reducer.js")
+                                         "map_reduce_results"
+                                         MapReduceCommand$OutputType/MERGE {})
       result  (from-db-object ^DBObject (.results ^MapReduceOutput output) true))]
   (println (ok? output))
   (println result))
@@ -86,15 +91,17 @@ It is also possible to return results to the client (as "inline output"):
 ``` clojure
 (ns monger.docs.examples
   (:require [clojurewerkz.support.js :as js]
-            [monger.core :refer [command]]
-            [monger.collection :refer [map-reduce]]
+            [monger.core :as mg]
+            [monger.collection :as mc]
             [monger.result :refer [ok?]]
             [monger.conversion :refer [from-db-object]])
   (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
 ;; performs a map/reduce query using functions stored in mapper.js and reducer.js
 ;; on the classpath. The result will be returned "inline" (as a collection of documents back to the client).
-(let [output  (mc/map-reduce "events" (js/load-resource "mr/mapper.js") (js/load-resource "mr/reducer.js") nil MapReduceCommand$OutputType/INLINE {})
+(let [conn    (mg/connect)
+      db      (mg/get-db conn "monger-test")
+      output  (mc/map-reduce "events" (js/load-resource "mr/mapper.js") (js/load-resource "mr/reducer.js") nil MapReduceCommand$OutputType/INLINE {})
       result  (from-db-object ^DBObject (.results ^MapReduceOutput output) true))]
   (println (ok? output))
   (println result))
