@@ -133,14 +133,17 @@ be passed a collection name you want the cache to use:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [clojure.core.cache :refer :all]
+  (:require [monger.core :as mg]
+            [clojure.core.cache :refer :all]
             [monger.cache :refer :all]))
 
 (defn generate-uuid
   []
   (str (java.util.UUID/randomUUID)))
 
-(let [store (basic-monger-cache-factory "cached_items")]
+(let [conn  (mg/connect)
+      db    (mg/get-db conn "monger-test")
+      store (basic-monger-cache-factory db "cached_items")]
   ;; now use the store
   (has? store (genenrate-uuid)) ;= false
   (lookup store "another-key")
@@ -152,37 +155,23 @@ be passed a collection name you want the cache to use:
 Then use the store like you would any other `core.cache` store, database backed or not.
 
 It is common to use capped or TTL collections for caches. Pass
-`monger.cache/basic-monger-cache-factory` a collection name and the
+`monger.cache/basic-monger-cache-factory` a database and collection name, and the
 cache instance will use it:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [clojure.core.cache :refer :all]
+  (:require [monger.core :as mg]
+            [clojure.core.cache :refer :all]
             [monger.cache :refer :all]))
 
 (defn generate-uuid
   []
   (str (java.util.UUID/randomUUID)))
 
-(let [store (basic-monger-cache-factory "myapp.caches")]
+(let [conn  (mg/connect)
+      db    (mg/get-db conn "monger-test")
+      store (basic-monger-cache-factory db "myapp.caches")]
   (comment "The store will now use the myapp.caches collection"))
-```
-
-Monger 1.6 introduces another cache store: `monger.cache/db-aware-monger-cache-factory`, which takes a database and a collection name to use:
-
-``` clojure
-(ns monger.docs.examples
-  (:require [clojure.core.cache :refer :all]
-            [monger.cache :refer :all]
-            [monger.core :as mg]))
-
-(defn generate-uuid
-  []
-  (str (java.util.UUID/randomUUID)))
-
-(let [db    (mg/get-db "altcache")
-      store (db-aware-monger-cache-factory db "myapp.caches")]
-  (comment "The store will now use the myapp.caches collection in the db altcache"))
 ```
 
 To learn more about the [clojure.core.cache](https://github.com/clojure/core.cache) protocol and functions it provides,
@@ -192,76 +181,50 @@ see [clojure.core.cache documentation](https://github.com/clojure/core.cache/wik
 
 ### Using MongoDB-backed Ring session store with Monger 1.0
 
-Monger 1.0 provides a MongoDB-backed session store for [Ring, Clojure's ubiquitous HTTP middleware library](https://github.com/ring-clojure/ring). It can be found in the
-`monger.ring.session-store` namespace. To create a new store, use the `monger.ring.session-store/monger-store` that takes name of the collections
-sessions will be stored in:
+Monger provides a MongoDB-backed session store for [Ring,
+Clojure's ubiquitous HTTP middleware
+library](https://github.com/ring-clojure/ring). It can be found in the
+`monger.ring.session-store` namespace. To create a new store, use the
+`monger.ring.session-store/monger-store` that takes a database and name of the
+collection sessions will be stored in:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.ring.session-store :refer [monger-store]]))
-
-;; create a new store, typically passed to server handlers
-;; with libraries like Noir or Compojure
-(monger-store "sessions")
-```
-
-Below is an example take from [RefHeap](https://github.com/Raynes/refheap), an open source paste app build with Clojure, Noir, MongoDB and Monger and hosted on Heroku.
-**Please note that this example uses Clojure 1.4 features**:
-
-``` clojure
-(ns refheap.server
-  (:require [refheap.config :refer [config]]
-            [noir.server :as server]
-            [noir.trailing-slash :refer [wrap-strip-trailing-slash]]
-            [noir.canonical-host :refer [wrap-canonical-host]]
-            [noir.force-ssl :refer [wrap-force-ssl]]
-            [monger.core :as mg]
-            [monger.collection :as mc]
+  (:require [monger.core :as mg]
             [monger.ring.session-store :refer [monger-store]]))
 
-(let [uri (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1/refheap_development")]
-  (mg/connect-via-uri! uri))
-
-(mc/ensure-index "pastes" {:user 1 :date 1})
-(mc/ensure-index "pastes" {:private 1})
-(mc/ensure-index "pastes" {:id 1})
-(mc/ensure-index "pastes" {:paste-id 1})
-
-(server/load-views "src/refheap/views/")
-(server/add-middleware wrap-strip-trailing-slash)
-
-(defn -main [& m]
-  (let [mode (keyword (or (first m) :dev))
-        port (Integer. (or (System/getenv "PORT") (str (config :port))))]
-    (when (= mode :prod)
-      (server/add-middleware wrap-canonical-host (System/getenv "CANONICAL_HOST"))
-      (server/add-middleware wrap-force-ssl))
-    (server/start port {:mode mode
-                        :ns 'refheap
-                        ;; use Monger's session store
-                        :session-store (monger-store "sessions")})))
-
+;; create a new store, typically passed to server handlers
+;; with libraries like Compojure
+(let [conn  (mg/connect)
+      db    (mg/get-db conn "monger-test")]
+  (monger-store db "sessions"))
 ```
 
 
-### Using MongoDB-backed Ring Session Store With Monger 1.1+
+### Using MongoDB-backed Ring Session Store With Monger
 
-Monger `1.1.0-beta1` and later versions provide the same MongoDB-backed session store for Ring as 1.0 but also has an alternative store that uses Clojure reader serialization.
-This means this store stores data in a way that non-Clojure applications won't be able to read easily but also supports edge cases in Clojure
-data type serialization that Monger itself does not, for example, namespaced keywords (like `::identity`).
+Monger provides an alternative MongoDB-backed Ring session store that
+uses Clojure reader serialization. This means this store stores data
+in a way that non-Clojure applications won't be able to read easily
+but also supports edge cases in Clojure data type serialization that
+Monger itself does not, for example, namespaced keywords (like
+`::identity`).
 
-This is the Ring session store you should use if you want to use Monger with [Friend, a popular authentication and authorization library for Clojure](https://github.com/cemerick/friend/).
+This is the Ring session store you should use if you want to use
+Monger with [Friend, a popular authentication and authorization
+library for Clojure](https://github.com/cemerick/friend/).
 
-
-It works exactly the same way but the name of the function that creates a store is different:
+It works exactly the same way but the name of the function that
+creates a store is different:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.ring.session-store :refer [session-store]]))
+  (:require [monger.core :as mg]
+            [monger.ring.session-store :refer [session-store]]))
 
-;; create a new store, typically passed to server handlers
-;; with libraries like Noir or Compojure
-(session-store "sessions")
+(let [conn  (mg/connect)
+      db    (mg/get-db conn "monger-test")]
+  (session-store db "sessions"))
 ```
 
 
