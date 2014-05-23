@@ -44,7 +44,7 @@ a database, collection name and document to insert:
 
 (let [conn (mg/connect)
       db   (mg/get-db "monger-test")]
-  (mc/insert "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" }))
+  (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" }))
 ```
 
 `monger.collection/insert` returns write result that
@@ -62,7 +62,7 @@ generated document id:
 
 (let [conn (mg/connect)
       db   (mg/get-db "monger-test")]
-  (mc/insert-and-return "documents" {:name "John" :age 30}))
+  (mc/insert-and-return db "documents" {:name "John" :age 30}))
 ```
 
 Because `monger.collection/insert-and-return` returns the document
