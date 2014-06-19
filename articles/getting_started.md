@@ -179,7 +179,7 @@ and password as char array:
   (:require [monger.core :as mg]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       u    "username"
       p    (.toCharArray "password")]
   (mg/authenticate db u p))
