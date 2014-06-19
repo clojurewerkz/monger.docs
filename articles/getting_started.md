@@ -127,7 +127,7 @@ To choose a database, use `monger.core/get-db`:
   (:require [monger.core :as mg]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")])
+      db   (mg/get-db conn "monger-test")])
 ```
 
 
@@ -214,7 +214,7 @@ on documents require a database reference as their 1st argument:
   (:import org.bson.types.ObjectId))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" })
   (mc/insert-and-return db "documents" {:name "John" :age 30}))
 ```
@@ -288,7 +288,7 @@ key set. If you need a generated object id. You do so by instantiating
   (:import org.bson.types.ObjectId))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       oid  (ObjectId.)
       doc  {:first_name "John" :last_name "Lennon"}]
   (mc/insert db "documents" (merge doc {:_id oid})))
