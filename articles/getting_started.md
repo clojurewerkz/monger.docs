@@ -155,18 +155,18 @@ It can be used to connect with or without authentication, for example:
 
 ;; connect with authentication
 (let [uri               "mongodb://clojurewerkz/monger!:monger!@127.0.0.1/monger-test4"
-      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
+      {:keys [conn db]} (mg/connect-via-uri uri)])
 
 ;; connect using connection URI stored in an env variable, in this case, MONGOHQ_URL
 (let [uri               (System/genenv "MONGOHQ_URL")
-      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
+      {:keys [conn db]} (mg/connect-via-uri uri)])
 ```
 
 It is also possible to pass connection options as query parameters:
 
 ``` clojure
 (let [uri               "mongodb://localhost/test?maxPoolSize=128&waitQueueMultiple=5;waitQueueTimeoutMS=150;socketTimeoutMS=5500&autoConnectRetry=true;safe=false&w=1;wtimeout=2500;fsync=true"
-      {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
+      {:keys [conn db]} (mg/connect-via-uri uri)])
 ```
 
 ## Authentication
@@ -678,13 +678,13 @@ Documents are removed using `monger.collection/remove` function.
   (mc/insert coll { :language "English" :pages 38 })
   (mc/insert db coll { :language "Spanish" :pages 78 })
   (mc/insert db coll { :language "Unknown" :pages 87 })
-  
+
   ;; remove multiple documents
   (mc/remove db coll { :language "English" })
-  
+
   ;; remove ALL documents in the collection
   (mc/remove db coll)
-  
+
   ;; remove document by id
   (let [oid (ObjectId.)]
     (mc/insert db coll { :language "English" :pages 38 :_id oid })
