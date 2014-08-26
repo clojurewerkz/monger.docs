@@ -18,7 +18,7 @@ It should take about 10 minutes to read and study the provided code examples. Th
  * Feature of Monger, why Monger was created
  * Clojure and MongoDB version requirements
  * How to add Monger dependency to your project
- * Basic operations (created, read, update, delete)
+ * Basic operations (create, read, update, delete)
  * Overview of Monger Query DSL
  * Overview of how Monger integrates with libraries like clojure.data.json and JodaTime.
 
