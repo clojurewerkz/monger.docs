@@ -629,7 +629,7 @@ upsert with Monger, use `monger.collection/update` function with
   (:require [monger.collection :as mc]))
 
 ;; updates score for player "sam" if it exists; creates a new document otherwise
-(mc/update db "scores" {:player "sam"} {:score 1088} :upsert true)
+(mc/update db "scores" {:player "sam"} {:score 1088} {:upsert true})
 ```
 
 Note that upsert only inserts one document. Learn more about upserts
