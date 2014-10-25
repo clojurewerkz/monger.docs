@@ -237,7 +237,7 @@ in the `monger.collection` namespace are used.
 
 ;; localhost, default port
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   ;; with a generated document id, returns the complete
   ;; inserted document
   (mc/insert-and-return db "documents" {:name "John" :age 30})
