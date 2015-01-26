@@ -43,7 +43,7 @@ a database, collection name and document to insert:
   (:import org.bson.types.ObjectId))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   (mc/insert db "documents" { :_id (ObjectId.) :first_name "John" :last_name "Lennon" }))
 ```
 
@@ -61,7 +61,7 @@ generated document id:
   (:import org.bson.types.ObjectId))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   (mc/insert-and-return db "documents" {:name "John" :age 30}))
 ```
 
@@ -82,7 +82,7 @@ libraries (for example), you can insert those:
            java.util.ArrayList))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       db-obj (doto (BasicDBObject.)
                (.put "int" 101)
                (.put "dblist" (doto (BasicDBList.)
@@ -111,7 +111,7 @@ key set. If you need a generated object id. You do so by instantiating
   (:import org.bson.types.ObjectId))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       oid  (ObjectId.)
       doc  {:first_name "John" :last_name "Lennon"}]
   (mc/insert db "documents" (merge doc {:_id oid})))
