@@ -20,14 +20,11 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 ## What version of MongoDB does this guide cover?
 
-This guide covers one feature (TTL collections) that is going to be introduced with the release of MongoDB 2.2. Support for it was developed using
-2.1.x releases (developer previews).
-
-All other features are available in MongoDB 2.0.
+Some of the features covered in this guide require MongoDB 2.2.
 
 
 ## Overview

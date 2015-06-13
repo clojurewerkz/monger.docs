@@ -7,7 +7,7 @@ layout: article
 
 This guide covers:
 
- * Using MongoDB 2.2 Aggregation Framework with Clojure
+ * Using MongoDB Aggregation Framework with Clojure
 
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/monger.docs).
@@ -15,7 +15,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What Version of Monger Does This Guide Cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 
 ## What Version of MongoDB Does This Guide Cover?

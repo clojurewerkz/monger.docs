@@ -18,7 +18,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 
 ## Overview
@@ -186,7 +186,7 @@ It is also possible to pass connection options as query parameters:
       {:keys [conn db]} (mg/connect-via-uri "mongodb://127.0.0.1/monger-test4")])
 ```
 
-## Connecting To A Replica Set
+## Connecting to a Replica Set
 
 Monger supports connecting to replica sets using one or more seeds
 when calling `monger.core/connect` with a collection of server
@@ -210,27 +210,45 @@ addresses instead of just a single one:
 
 ## Authentication
 
-With Monger, authentication is performed on database instance.
-`monger.core/authenticate` is the function used for that. It takes a
-database instance, a username and a password (as char array):
+Monger supports authenticated connections. Authentication uses
+a set of credentials and happens against a database.
+`monger.core/connect-with-credentials` is the function that opens
+a connection with authentication. Some `monger.core/connect` overloads
+accept a set of credentials as well.
+
+Starting with version 3.0, MongoDB Java client supports multiple credential types.
+Monger provides convenient helpers for two most commonly used ones:
+
+ * Plan (username and password)
+ * [x509 certificates](http://docs.mongodb.org/manual/tutorial/configure-x509-client-authentication/)
+
+
+`monger.credentials` is the namespace with functions that return
+credentials accepted by `monger.core/connect-with-credentials`.
+
+### Plain Credentials (Username and Password)
+
+In the example above, a connection is opened with a set of plain credentials:
+username `"username"`, password `"password"`, and database `"some-db"`:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.core :as mg]))
+  (:require [monger.core :as mg]
+            [monger.credentials :as mcred]))
 
-(let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+(let [db   "some-db"
       u    "username"
-      p    (.toCharArray "password")]
-  (mg/authenticate db u p))
+      p    "password"]
+  (mg/connect-with-credentials "127.0.0.1" (mcred/for u db p))
 ```
 
-The function will return `true` if authentication succeeds and `false`
-otherwise.
+`monger.core/connect-with-credentials` will return a connection if authentication succeeds and
+throw an exception otherwise.
 
 To connect to a replicate set that requires authentication with
-Monger, use example in the section above to connect, then authenticate
-the same way.
+Monger, use `monger.core/connect` with 3 arguments: a set of endpoints,
+connection optoins, and a set of credentials. See the "Connecting to a Replica Set"
+section above.
 
 
 ## Disconnecting

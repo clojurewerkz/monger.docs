@@ -23,7 +23,7 @@ Github](https://github.com/clojurewerkz/monger.docs).
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 
 
@@ -48,7 +48,7 @@ a database, collection name and document to insert:
 ```
 
 `monger.collection/insert` returns write result that
-`monger.result/ok?` and similar functions can operate on.
+`monger.result/acknowledged?` and similar functions can operate on.
 
 `monger.collection/insert-and-return` is an alternative insertion
 function that returns the exact documented inserted, including the
@@ -66,8 +66,7 @@ generated document id:
 ```
 
 Because `monger.collection/insert-and-return` returns the document
-inserted and not a write result, it's necessary to use
-`monger.core/get-last-error` to check for errors.
+inserted and not a write result.
 
 Document can be either a Clojure map (in the majority of cases, it is)
 or an instance of `com.mongodb.DBObject` (referred to later as
@@ -91,6 +90,16 @@ libraries (for example), you can insert those:
                (.put "list" (ArrayList. ["red" "green" "blue"])))]
   (mc/insert db "documents" db-obj))
 ```
+
+### Write Failures
+
+When a write fails, with a write concern that doesn't ignore errors,
+an exception will be thrown.
+
+For the list of available options, see [MongoDB Java driver API
+reference on
+WriteConcern](http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html).
+
 
 ### Document IDs (ObjectId)
 
@@ -258,15 +267,14 @@ MongoDB responses for success:
 (ns doc.examples
   (:require [monger.core :as mg]
             [monger.collection :as mc]
-            [monger.result :refer [ok? has-error?]]))
+            [monger.result :refer [acknowledged?]]))
 
 (let [conn (mg/connect)
       db   (mg/get-db conn "monger-test")]
   (mc/insert-batch db "documents" [{:name "Alan" :age 27 :score 17772}
                                    {:name "Joe" :age 32 :score 8277}
                                    {:name "Macy" :age 29 :score 8837777}])
-  (println (ok? response))
-  (println (has-error? response)))
+  (println (acknowledged? response)))
 ```
 
 Please note that responses will carry error/success information only

@@ -16,7 +16,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 
 ## Overview
@@ -40,7 +40,7 @@ support, and some are administrative in nature, like reindexing a
 collection.
 
 With Monger, you use `monger.core/command` function to run
-commands. `monger.result/ok?` can be used to determine if a command
+commands. `monger.result/acknowledged?` can be used to determine if a command
 succeeded or not, `monger.conversion/from-db-object` is used to
 convert a command results to a Clojure map. Here is an example that
 demonstrates all three:
@@ -48,7 +48,7 @@ demonstrates all three:
 ``` clojure
 (ns monger.docs.examples
   (:require [monger.core :as mg]
-            [monger.result :refer [ok?]]
+            [monger.result :refer [acknowledged?]]
             [monger.conversion :refer [from-db-object]]))
 
 (let [conn       (mg/connect)
@@ -56,7 +56,7 @@ demonstrates all three:
       raw-result (mg/command db (sorted-map :isMaster 1))
       result     (from-db-object raw-result true)]
   ;= true
-  (ok? raw-result)
+  (acknowledged? raw-result)
   ;; {:serverUsed 127.0.0.1:27017, :ismaster true, :maxBsonObjectSize 16777216, :ok 1.0}
   (println result))
 ```
