@@ -48,14 +48,14 @@ complexity. It also fits MongoDB data model very well.
 
 ## Supported Clojure Versions
 
-Monger requires Clojure 1.4+. The most recent stable release is highly
+Monger requires Clojure 1.6+. The most recent stable release is highly
 recommended.
 
 
 ## Supported MongoDB Versions
 
-Monger uses MongoDB Java driver 2.x under the hood and
-thus supports MongoDB 2.0 and later versions. Please note that some
+Monger uses MongoDB Java driver 3.x under the hood and
+thus supports MongoDB 2.2 and later versions. Please note that some
 features may be specific to recent MongoDB releases.
 
 
@@ -66,7 +66,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 ### With Leiningen
 
 ``` clojure
-[com.novemberain/monger "2.0.0"]
+[com.novemberain/monger "3.0.0-rc1"]
 ```
 
 ### With Maven
@@ -86,7 +86,7 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>monger</artifactId>
-  <version>2.0.0</version>
+  <version>3.0.0-rc1</version>
 </dependency>
 ```
 
