@@ -24,7 +24,7 @@ Github](https://github.com/clojurewerkz/monger.docs).
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 
 ## Monger Overview
@@ -257,16 +257,25 @@ in the `monger.collection` namespace are used.
 ```
 
 `monger.collection/insert` returns write result that
-`monger.result/ok?` and similar functions can operate on.
+`monger.result/acknowledged?` and other `monger.result` functions can operate on.
 
 `monger.collection/insert-and-return` returns the exact documented
-inserted, including the generated document id. It is convenient
-but requires manual checking for errors with `monger.core/get-last-error`.
+inserted, including the generated document id.
 
 `monger.collection/insert-batch` is a recommended way of inserting
 batches of documents (from tens to hundreds of thousands) because it
 is very efficient compared to sequentially or even concurrently
 inserting documents one by one.
+
+
+### Write Failures
+
+When a write fails, with a write concern that doesn't ignore errors,
+an exception will be thrown.
+
+For the list of available options, see [MongoDB Java driver API
+reference on
+WriteConcern](http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html).
 
 
 ### Document ids (ObjectId)

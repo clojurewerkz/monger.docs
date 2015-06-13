@@ -16,7 +16,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 2.0 (including preview releases).
+This guide covers Monger 3.0 (including preview releases).
 
 
 ## What version of MongoDB does this guide cover?
@@ -69,7 +69,7 @@ destination collection and one of the output type values (a
   (:require [clojurewerkz.support.js :as js]
             [monger.core :as mg]
             [monger.collection :as mc]
-            [monger.result :refer [ok?]]
+            [monger.result :refer [acknowledged?]]
             [monger.conversion :refer [from-db-object]])
   (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
@@ -82,7 +82,7 @@ destination collection and one of the output type values (a
                                          "map_reduce_results"
                                          MapReduceCommand$OutputType/MERGE {})
       result  (from-db-object ^DBObject (.results ^MapReduceOutput output) true))]
-  (println (ok? output))
+  (println (acknowledged? output))
   (println result))
 ```
 
@@ -93,7 +93,7 @@ It is also possible to return results to the client (as "inline output"):
   (:require [clojurewerkz.support.js :as js]
             [monger.core :as mg]
             [monger.collection :as mc]
-            [monger.result :refer [ok?]]
+            [monger.result :refer [acknowledged?]]
             [monger.conversion :refer [from-db-object]])
   (:import [com.mongodb MapReduceCommand$OutputType MapReduceOutput]))
 
@@ -103,7 +103,7 @@ It is also possible to return results to the client (as "inline output"):
       db      (mg/get-db conn "monger-test")
       output  (mc/map-reduce "events" (js/load-resource "mr/mapper.js") (js/load-resource "mr/reducer.js") nil MapReduceCommand$OutputType/INLINE {})
       result  (from-db-object ^DBObject (.results ^MapReduceOutput output) true))]
-  (println (ok? output))
+  (println (acknowledged? output))
   (println result))
 ```
 
