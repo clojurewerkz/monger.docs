@@ -239,7 +239,7 @@ username `"username"`, password `"password"`, and database `"some-db"`:
 (let [db   "some-db"
       u    "username"
       p    "password"]
-  (mg/connect-with-credentials "127.0.0.1" (mcred/for u db p))
+  (mg/connect-with-credentials "127.0.0.1" (mcred/create u db p))
 ```
 
 `monger.core/connect-with-credentials` will return a connection if authentication succeeds and

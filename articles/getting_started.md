@@ -138,7 +138,7 @@ the only way to connect to MongoDB is via connection URI.
 
 Monger provides `monger.core/connect-via-uri` function that combines
 `monger.core/connect`, `monger.core/get-db`, and
-`monger.core/authenticate` and works with string URIs like
+authentication and works with string URIs like
 `mongodb://userb71148a:0da0a696f23a4ce1ecf6d11382633eb2049d728e@cluster1.mongohost.com:27034/app81766662`.
 
 `monger.core/connect-via-uri` returns a map with two keys:
