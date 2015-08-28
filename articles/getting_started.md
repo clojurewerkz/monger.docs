@@ -90,6 +90,18 @@ And then the dependency:
 </dependency>
 ```
 
+### Caveats
+
+From the `3.0.0-beta` MongoDB Java driver, all logging was switched to 
+SLF4J 
+([reference](https://groups.google.com/d/msg/mongodb-user/_t5rHlaxYxI/aNdlMVIrcR0J)).
+To get ride of the verbose logging from the driver, add the following
+artifact to your dependencies:
+
+``` clojure
+[org.slf4j/slf4j-nop "1.7.12"]
+```
+
 ## Connecting to MongoDB
 
 Before using Monger, you need to connect to MongoDB and choose a database to
