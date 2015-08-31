@@ -114,7 +114,7 @@ To connect, use `monger.core/connect` function which returns a connection:
 
 ;; using MongoOptions allows fine-tuning connection parameters,
 ;; like automatic reconnection (highly recommended for production environment)
-(let [^MongoOptions opts (mg/mongo-options :threads-allowed-to-block-for-connection-multiplier 300)
+(let [^MongoOptions opts (mg/mongo-options {:threads-allowed-to-block-for-connection-multiplier 300})
       ^ServerAddress sa  (mg/server-address "127.0.0.1" 27017)
       conn               (mg/connect sa opts)]
   )
@@ -820,6 +820,7 @@ We recommend that you read the following guides first, if possible, in this orde
  * [GridFS support](/articles/gridfs.html)
  * [Using MongoDB Aggregation Framework](/articles/aggregation.html)
  * [Using MongoDB commands](/articles/commands.html)
+ * [Miscellaneous topics](/articles/misc.html)
 
 
 ## Tell Us What You Think!
