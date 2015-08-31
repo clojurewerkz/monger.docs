@@ -143,6 +143,13 @@ This guide covers:
 
 
 
+### [Miscellaneous](/articles/misc.html)
+
+This guide covers miscellaneous topics:
+
+ * Logging configuration
+
+
 
 
 ## Tell Us What You Think!
