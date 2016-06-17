@@ -168,7 +168,7 @@ your own data types that implement `java.util.List`:
 
 (let [conn (mg/connect)
       db   (mg/get-db conn "monger-test")]
-  (mc/insert db "owners" {:name "John" :age 30 :pets ["Sam" "Chelsie"]})
+  (mc/insert db "owners" {:name "John" :age 30 :pets ["Sam" "Chelsie"]}))
 ```
 
 
