@@ -23,7 +23,7 @@ Github](https://github.com/clojurewerkz/monger.docs).
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 3.0 (including preview releases).
+This guide covers Monger 3.1 (including preview releases).
 
 
 

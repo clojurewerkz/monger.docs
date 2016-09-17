@@ -12,7 +12,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What Version of Monger Does This Guide Cover?
 
-This guide covers Monger 3.0 (including preview releases).
+This guide covers Monger 3.1 (including preview releases).
 
 
 ## What Version of MongoDB Does This Guide Cover?

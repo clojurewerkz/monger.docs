@@ -24,7 +24,7 @@ Github](https://github.com/clojurewerkz/monger.docs).
 
 ## What version of Monger does this guide cover?
 
-This guide covers Monger 3.0 (including preview releases).
+This guide covers Monger 3.1 (including preview releases).
 
 
 ## Monger Overview
@@ -66,7 +66,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/com.novemberain/m
 ### With Leiningen
 
 ``` clojure
-[com.novemberain/monger "3.0.2"]
+[com.novemberain/monger "3.1.0"]
 ```
 
 ### With Maven
@@ -86,7 +86,7 @@ And then the dependency:
 <dependency>
   <groupId>com.novemberain</groupId>
   <artifactId>monger</artifactId>
-  <version>3.0.2</version>
+  <version>3.1.0</version>
 </dependency>
 ```
 
