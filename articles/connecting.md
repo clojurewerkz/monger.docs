@@ -51,7 +51,7 @@ To choose a database, use `monger.core/get-db`:
   (:require [monger.core :as mg]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")])
+      db   (mg/get-db conn "monger-test")])
 ```
 
 ## Connecting To Mongodb Using Connection Options
