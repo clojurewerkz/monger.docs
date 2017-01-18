@@ -551,7 +551,7 @@ necessary to map (`clojure.core/map`) with
           [monger.conversion :refer [from-db-object]])
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "posts"]
   ;; get distinct values from the posts collection for the field category.
   (mc/distinct db coll "category")
@@ -592,7 +592,7 @@ Sorting documents are specified exactly as they are in the MongoDB shell (1 for 
             [monger.query :refer :all]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "scores"]
   ;; find top 10 scores that will be returned as Clojure maps
   (with-collection db coll
@@ -631,7 +631,7 @@ common that Monger provides a DSL extension for that:
             [monger.query :refer :all]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "scores"]
   ;; find top 10 scores
   (with-collection db coll
@@ -665,7 +665,7 @@ slightly out of date data to be returned):
   (:import com.mongodb.ReadPreference))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "scores"]
   ;; reads from primary (master) to guarantee consistency
   ;; (at the cost of putting extra load on the primary)
@@ -709,7 +709,7 @@ Here is how to snapshot a cursor with Monger query DSL:
             [monger.query :refer :all]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "documents"]
   ;; performs a snapshotted query
   (with-collection db coll
@@ -730,7 +730,7 @@ While not necessary in most cases, it is possible to force query to use the give
             [monger.operators :refer [$gt $lt]])))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   (with-collection db coll
     (find {:age_in_days {$gt 365} :number_of_signins {$lt 3}})
     (sort {:age_in_days -1 :number_of_signins 1})
@@ -756,7 +756,7 @@ number of documents returned by the server:
             [monger.operators :refer [$gt]])))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   (with-collection db coll
      (find {:age_in_days {$gt 365}})
      (sort {:age_in_days -1})
@@ -778,7 +778,7 @@ need to send a request to close the cursor server-side.
 Use `monger.collection/count`, `monger.collection/empty?` and `monger.collection/any?`:
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "documents"]
   (mc/any? db coll)
   ;= false

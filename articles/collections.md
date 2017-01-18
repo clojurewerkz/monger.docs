@@ -56,7 +56,7 @@ To create an index on a collection, use `monger.collection/ensure-index`. It wil
             [monger.collection :as mc]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")
+      db   (mg/get-db conn "monger-test")
       coll "documents"]
   ;; create an index
   ;; the index created as { :language 1 } will be named "language_1"
@@ -94,7 +94,7 @@ To drop an index or all indexes on a collection, use
             [monger.collection :as mc]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   ;; drop all indexes from a collection
   (mc/drop-indexes db "events")
 
@@ -118,7 +118,7 @@ function like so:
             [monger.collection :as mc]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   (mc/create db "recent_events" {}))
 ```
 
@@ -153,7 +153,7 @@ To create a collection as capped, use the same
   (* n 1024 1024))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
 
   ;; creates a collection capped at 16 megabytes
   (mc/create db "recent_events" {:capped true :size (-> 16 megabytes)})
@@ -178,7 +178,7 @@ field with the `:expireAfterSeconds` option:
             [monger.collection :as mc]))
 
 (let [conn (mg/connect)
-      db   (mg/get-db "monger-test")]
+      db   (mg/get-db conn "monger-test")]
   ;; expire documents with the `created-at` field value 120 seconds or more in the past.
   ;; expiration operation is performed about once a minute
   (mc/ensure-index db "recent_events" {:created-at 1} {:expireAfterSeconds 120})
