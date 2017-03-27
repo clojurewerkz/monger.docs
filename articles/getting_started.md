@@ -171,21 +171,23 @@ It is also possible to pass connection options as query parameters:
 
 ## Authentication
 
-To authenticate, use `monger.core/authenticate` which takes a database, username,
+To authenticate, use `monger.credentials/create` which takes the admin database, username,
 and password as char array:
 
 ``` clojure
 (ns monger.docs.examples
-  (:require [monger.core :as mg]))
+  (:require [monger.core :as mg]
+            [monger.credentials :as mcr]))
 
-(let [conn (mg/connect)
-      db   (mg/get-db conn "monger-test")
+(let [admin-db   "admin"
       u    "username"
-      p    (.toCharArray "password")]
-  (mg/authenticate db u p))
+      p    (.toCharArray "password")
+      cred (mcr/create u admin-db p)
+      host "127.0.0.1"]
+  (mg/connect-with-credentials host cred))
 ```
 
-The function will return `true` if authentication succeeds and `false` otherwise.
+The function will return a `MongoClient` object if authentication succeeds and raises an exception if authentication fails.
 
 ## Disconnecting
 
