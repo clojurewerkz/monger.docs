@@ -244,9 +244,9 @@ have numeric values:
 ```
 
 
-### Using $pushAll Operator
+### Using $push and $each Operators
 
-`$pushAll` operator adds multiple values to an array field (and allows for duplicates):
+`$push` and `$each` operators can be combined to add multiple values to an array field (and allows for duplicates):
 
 ``` clojure
 (ns my.service
@@ -258,7 +258,7 @@ have numeric values:
       db   (mg/get-db conn "monger-test")
       coll "people"]
   ;; adds multiple items to an array field
-  (mc/update db coll {:_id oid} {$pushAll {:items ["Glass Star" "See No Evil"]}}))
+  (mc/update db coll {:_id oid} {$push {:items {$each ["Glass Star" "See No Evil"]}}}))
 ```
 
 
