@@ -58,7 +58,7 @@ DEPENDENCIES
   iconv
   jekyll (~> 3.6.3)
   pygments.rb
-  rake (~> 12.0)
+  rake (~> 12.3)
   redcarpet
 
 BUNDLED WITH
